@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../Ollama-Web-UI/frontend"
+		}
+	],
+	"settings": {}
+}
