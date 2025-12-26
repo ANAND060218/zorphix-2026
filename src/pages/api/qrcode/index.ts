@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import QRCode from 'qrcode';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getEmailTemplate } from '../../../../utils/emailTemplate';
+import { getEmailTemplate, getUpdatedQREmailTemplate } from '../../../../utils/emailTemplate';
 
 // Configure Nodemailer
 const transporter = nodemailer.createTransport({
@@ -26,6 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         contactNo,
         collegeName,
         degree,
+        isProfileUpdate,
       } = req.body;
 
       // Combine all fields into an object for the QR code
@@ -46,11 +47,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Extract pure base64 (remove "data:image/png;base64," prefix)
       const base64Image = qrCodeBase64.split(',')[1];
 
+      // Choose email template and subject based on whether it's a profile update
+      const emailSubject = isProfileUpdate
+        ? "Your Updated QR Code - Zorphix 2025"
+        : "Welcome to Zorphix 2025!";
+      const emailHtml = isProfileUpdate
+        ? getUpdatedQREmailTemplate(name)
+        : getEmailTemplate(name);
+
       // Send the email with the QR code as base64 attachment
       await transporter.sendMail({
         to: email,
-        subject: "Welcome to Zorphix 2024!",
-        html: getEmailTemplate(name),
+        subject: emailSubject,
+        html: emailHtml,
         attachments: [
           {
             filename: `${uid}.png`,
@@ -70,4 +79,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(405).json({ message: 'Method not allowed' });
   }
 }
-

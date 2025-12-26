@@ -186,6 +186,7 @@ export default function ProfilePage() {
                     contactNo: editData.contactNo,
                     collegeName: editData.collegeName,
                     degree: editData.degree,
+                    isProfileUpdate: true,
                 }),
             });
 
