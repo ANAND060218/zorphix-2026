@@ -1,3 +1,5 @@
+// Email templates for Zorphix 2025
+
 export const getEmailTemplate = (name: string) => `
 <!-- Banner Image -->
 <img src="your-banner-url.jpg" alt="Zorphix Symposium Banner" class="banner-image">
