@@ -1,4 +1,5 @@
 // Email templates for Zorphix 2025
+// Updated: Profile QR code generation feature
 
 export const getEmailTemplate = (name: string) => `
 <!-- Banner Image -->
