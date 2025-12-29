@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+@layer utilities {
+    .perspective-1000 {
+        perspective: 1000px;
+    }
+
+    .transform-style-3d {
+        transform-style: preserve-3d;
+    }
+
+    .backface-hidden {
+        backface-visibility: hidden;
+    }
+
+    .animate-ticker {
+        animation: ticker 30s linear infinite;
+    }
+
+    .animate-tunnel {
+        animation: tunnel 20s linear infinite;
+    }
+
+    .animate-spin-slow {
+        animation: spin 15s linear infinite;
+    }
+
+    .animate-spin-reverse-slow {
+        animation: spin 15s linear infinite reverse;
+    }
+
+    .animate-float {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .animate-glitch {
+        animation: glitch 1s linear infinite;
+    }
+
+    .animate-scanline {
+        animation: scanline 8s linear infinite;
+    }
+
+    .animate-pulse-fast {
+        animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+}
+
+@keyframes ticker {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes tunnel {
+    0% {
+        transform: perspective(1000px) rotateX(0deg) translateZ(0);
+    }
+
+    100% {
+        transform: perspective(1000px) rotateX(0deg) translateZ(1000px);
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes glitch {
+
+    2%,
+    64% {
+        transform: translate(2px, 0) skew(0deg);
+    }
+
+    4%,
+    60% {
+        transform: translate(-2px, 0) skew(0deg);
+    }
+
+    62% {
+        transform: translate(0, 0) skew(5deg);
+    }
+}
+
+@keyframes scanline {
+    0% {
+        transform: translateY(-100%);
+    }
+
+    100% {
+        transform: translateY(100%);
+    }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #e33e33;
+}
