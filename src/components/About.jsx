@@ -22,7 +22,6 @@ const About = () => {
     ];
 
     const stats = [
-        { label: "PARTICIPANTS", value: "500+", color: "#e33e33" },
         { label: "EVENTS", value: "25+", color: "#97b85d" },
         { label: "WORKSHOPS", value: "15+", color: "#e33e33" },
         { label: "SPONSORS", value: "30+", color: "#97b85d" },
@@ -124,7 +123,7 @@ const About = () => {
 
             {/* Main Content */}
             <div className="relative z-40 max-w-7xl mx-auto px-6 py-16">
-                
+
                 {/* Header Section */}
                 <div className="text-center mb-20">
                     <div className="inline-block relative group mb-6">
@@ -135,22 +134,22 @@ const About = () => {
                         </h1>
                     </div>
                     <p className="text-gray-400 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
-                        A cutting-edge technical symposium where innovation meets execution. 
-                        <span className="text-[#97b85d]"> Symposium '26 </span> 
+                        A cutting-edge technical symposium where innovation meets execution.
+                        <span className="text-[#97b85d]"> Symposium '26 </span>
                         brings together the brightest minds in technology.
                     </p>
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
                     {stats.map((stat, index) => (
-                        <div 
+                        <div
                             key={index}
                             className="relative group"
                         >
                             <div className="absolute -inset-1 bg-gradient-to-r from-[#e33e33] to-[#97b85d] rounded-lg opacity-20 blur group-hover:opacity-40 transition duration-300"></div>
                             <div className="relative bg-black/60 backdrop-blur-xl border border-white/10 rounded-lg p-6 text-center hover:border-white/30 transition-all duration-300">
-                                <div 
+                                <div
                                     className="text-4xl md:text-5xl font-bold mb-2 font-mono"
                                     style={{ color: stat.color }}
                                 >
@@ -172,14 +171,14 @@ const About = () => {
                                 <h2 className="text-3xl md:text-4xl font-bold text-white tracking-wider">MISSION STATEMENT</h2>
                             </div>
                             <p className="text-gray-300 text-lg leading-relaxed mb-4">
-                                To create an immersive platform where technology enthusiasts, developers, and innovators 
-                                converge to share knowledge, showcase cutting-edge projects, and collaborate on solutions 
+                                To create an immersive platform where technology enthusiasts, developers, and innovators
+                                converge to share knowledge, showcase cutting-edge projects, and collaborate on solutions
                                 that shape the future of computing.
                             </p>
                             <p className="text-gray-400 leading-relaxed">
-                                Through hands-on workshops, competitive events, and expert-led sessions, we aim to 
-                                <span className="text-[#e33e33]"> inspire innovation</span>, 
-                                <span className="text-[#97b85d]"> foster collaboration</span>, and 
+                                Through hands-on workshops, competitive events, and expert-led sessions, we aim to
+                                <span className="text-[#e33e33]"> inspire innovation</span>,
+                                <span className="text-[#97b85d]"> foster collaboration</span>, and
                                 <span className="text-[#e33e33]"> empower the next generation</span> of tech leaders.
                             </p>
                         </div>
@@ -193,12 +192,12 @@ const About = () => {
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {teamMembers.map((member, index) => (
-                            <div 
+                            <div
                                 key={index}
                                 className="relative group perspective-1000"
                             >
                                 <div className="absolute -inset-1 bg-gradient-to-r from-[#e33e33] to-[#97b85d] rounded-lg opacity-20 blur group-hover:opacity-40 transition duration-300"></div>
-                                <div 
+                                <div
                                     className="relative bg-black/60 backdrop-blur-xl border border-white/10 rounded-lg p-6 hover:border-white/30 transition-all duration-300 transform hover:scale-105"
                                     style={{
                                         transform: `rotateX(${mousePos.y * 0.5}deg) rotateY(${mousePos.x * 0.5}deg)`
@@ -209,14 +208,14 @@ const About = () => {
                                         <div className="w-2 h-2 bg-[#97b85d] rounded-full animate-pulse-fast shadow-[0_0_10px_rgba(151,184,93,0.5)]"></div>
                                         <span className="text-[#97b85d] text-xs tracking-widest">{member.status}</span>
                                     </div>
-                                    
+
                                     {/* Avatar Placeholder */}
                                     <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-[#e33e33] to-[#97b85d] rounded-full flex items-center justify-center">
                                         <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center">
                                             <span className="text-2xl font-bold text-white">{member.name.charAt(0)}</span>
                                         </div>
                                     </div>
-                                    
+
                                     <div className="text-center">
                                         <div className="text-white font-bold text-sm mb-1 tracking-wider">{member.name}</div>
                                         <div className="text-gray-400 text-xs tracking-widest">{member.role}</div>
@@ -250,7 +249,7 @@ const About = () => {
                                 icon: "🌐"
                             }
                         ].map((offer, index) => (
-                            <div 
+                            <div
                                 key={index}
                                 className="relative group"
                             >
@@ -274,21 +273,25 @@ const About = () => {
                                 READY TO <span className="text-[#97b85d]">JOIN US?</span>
                             </h3>
                             <p className="text-gray-400 mb-6 max-w-2xl">
-                                Be part of the most anticipated technical symposium of 2026. 
+                                Be part of the most anticipated technical symposium of 2026.
                                 Register now and secure your access pass.
                             </p>
                             <div className="flex gap-6 justify-center flex-wrap">
-                                <Link 
-                                    to="/"
-                                    className="relative px-8 py-3 bg-transparent border border-[#e33e33] text-[#e33e33] font-bold uppercase tracking-widest hover:bg-[#e33e33] hover:text-white transition-all duration-300 group overflow-hidden"
-                                >
-                                    <span className="relative z-10">Back to Home</span>
-                                    <div className="absolute inset-0 bg-[#e33e33] transform -translate-x-full skew-x-12 group-hover:translate-x-0 transition-transform duration-300"></div>
-                                </Link>
-                                <button className="relative px-8 py-3 bg-transparent border border-[#97b85d] text-[#97b85d] font-bold uppercase tracking-widest hover:bg-[#97b85d] hover:text-black transition-all duration-300 group overflow-hidden">
-                                    <span className="relative z-10">Register Now</span>
-                                    <div className="absolute inset-0 bg-[#97b85d] transform translate-x-full skew-x-12 group-hover:translate-x-0 transition-transform duration-300"></div>
-                                </button>
+                                <div className="group/button">
+                                    <Link
+                                        to="/"
+                                        className="relative px-8 py-3 bg-transparent border border-[#e33e33] text-[#e33e33] group-hover:text-white font-bold uppercase tracking-widest group-hover/button:!text-black transition-all duration-300 overflow-hidden inline-block"
+                                    >
+                                        <span className="relative z-20">Back to Home</span>
+                                        <div className="absolute inset-0 bg-[#e33e33] transform -translate-x-full skew-x-12 group-hover/button:translate-x-0 transition-transform duration-300"></div>
+                                    </Link>
+                                </div>
+                                <div className="group/button">
+                                    <button className="relative px-8 py-3 bg-transparent border border-[#97b85d] text-[#97b85d] group-hover:text-white font-bold uppercase tracking-widest group-hover/button:!text-black transition-all duration-300 overflow-hidden">
+                                        <span className="relative z-20">Register Now</span>
+                                        <div className="absolute inset-0 bg-[#97b85d] transform translate-x-full skew-x-12 group-hover/button:translate-x-0 transition-transform duration-300"></div>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
