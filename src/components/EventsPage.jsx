@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaBolt, FaPalette, FaTools, FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaTrophy } from 'react-icons/fa';
+
 import Background from './Background';
+import EventModal from './EventModal';
 
 const EventsPage = () => {
     const [activeTab, setActiveTab] = useState('technical');
+    const [selectedEvent, setSelectedEvent] = useState(null);
 
     const categories = [
         { id: 'technical', label: 'TECHNICAL', icon: FaBolt, color: '#e33e33' },
@@ -14,24 +17,123 @@ const EventsPage = () => {
 
     const events = {
         technical: [
-            { id: 1, title: 'CODE WARS', date: 'March 15', venue: 'Main Lab', team: '2-3', prize: '₹15,000', desc: 'The ultimate competitive coding battle. Solve complex algorithms and climb the leaderboard.' },
-            { id: 2, title: 'CYBER HEIST', date: 'March 16', venue: 'Security Lab', team: '4', prize: '₹10,000', desc: 'A CTF challenge where you hack into secure systems to retrieve the flags.' },
-            { id: 3, title: 'AI NEXUS', date: 'March 15', venue: 'Seminar Hall', team: '2', prize: '₹12,000', desc: 'Build and showcase innovative AI models to solve real-world problems.' },
-            { id: 4, title: 'WEB WIZARDS', date: 'March 16', venue: 'Browsing Centre', team: '2-3', prize: '₹8,000', desc: 'Design and deploy a stunning web application within a set timeframe.' },
-            { id: 5, title: 'ROBO RUMBLE', date: 'March 15', venue: 'Open Ground', team: '4', prize: '₹20,000', desc: 'Heavy metal mayhem. Build robots to destroy your opponents in the arena.' },
-            { id: 6, title: 'CIRCUITRIX', date: 'March 16', venue: 'Hardware Lab', team: '2', prize: '₹7,000', desc: 'Debug complex circuits and design efficient hardware solutions.' },
+            {
+                id: 1, title: 'CODE WARS', date: 'March 15', venue: 'Main Lab', team: '2-3', prize: '₹15,000', desc: 'The ultimate competitive coding battle. Solve complex algorithms and climb the leaderboard.',
+                rules: [
+                    'Participants must have a valid symposium ID.',
+                    'Use of ChatGPT or any AI tools is strictly prohibited.',
+                    'Teams must consist of 2-3 members.',
+                    'The decision of the judges is final.'
+                ]
+            },
+            {
+                id: 2, title: 'CYBER HEIST', date: 'March 16', venue: 'Security Lab', team: '4', prize: '₹10,000', desc: 'A CTF challenge where you hack into secure systems to retrieve the flags.',
+                rules: [
+                    'Do not attack the game infrastructure.',
+                    'Flag sharing is strictly prohibited.',
+                    'Tools like Metasploit, Burp Suite, etc., are allowed.'
+                ]
+            },
+            {
+                id: 3, title: 'AI NEXUS', date: 'March 15', venue: 'Seminar Hall', team: '2', prize: '₹12,000', desc: 'Build and showcase innovative AI models to solve real-world problems.',
+                rules: [
+                    'Model must be trained on open-source datasets.',
+                    'Plagiarism will lead to immediate disqualification.',
+                    'Presentation time is limited to 10 minutes.'
+                ]
+            },
+            {
+                id: 4, title: 'WEB WIZARDS', date: 'March 16', venue: 'Browsing Centre', team: '2-3', prize: '₹8,000', desc: 'Design and deploy a stunning web application within a set timeframe.',
+                rules: [
+                    'No pre-made templates allowed.',
+                    'Code must be pushed to GitHub repository.',
+                    'Responsive design is a key evaluation metric.'
+                ]
+            },
+            {
+                id: 5, title: 'ROBO RUMBLE', date: 'March 15', venue: 'Open Ground', team: '4', prize: '₹20,000', desc: 'Heavy metal mayhem. Build robots to destroy your opponents in the arena.',
+                rules: [
+                    'Robot weight must not exceed 15kg.',
+                    'No flamethrowers or explosives allowed.',
+                    'Wireless control is mandatory.'
+                ]
+            },
+            {
+                id: 6, title: 'CIRCUITRIX', date: 'March 16', venue: 'Hardware Lab', team: '2', prize: '₹7,000', desc: 'Debug complex circuits and design efficient hardware solutions.',
+                rules: [
+                    'Components will be provided at the venue.',
+                    'Bring your own breadboard and multimeter if possible.',
+                    'Circuit must be functional to qualify.'
+                ]
+            },
         ],
         'non-technical': [
-            { id: 7, title: 'LENS LEGENDS', date: 'March 15', venue: 'Campus wide', team: '1', prize: '₹5,000', desc: 'Capture the essence of the symposium through your lens. Photography contest.' },
-            { id: 8, title: 'MEME MASTERS', date: 'Online', venue: 'Discord', team: '1', prize: '₹3,000', desc: 'Create the most hilarious and relatable tech memes.' },
-            { id: 9, title: 'GAMING ARENA', date: 'March 15-16', venue: 'Gaming Zone', team: '5', prize: '₹15,000', desc: 'Valorant and BGMI tournaments. Dominate the server.' },
-            { id: 10, title: 'TREASURE HUNT', date: 'March 16', venue: 'Campus wide', team: '3', prize: '₹6,000', desc: 'Solve riddles and follow clues to find the hidden treasure.' },
-            { id: 11, title: 'QUIZ BOWL', date: 'March 15', venue: 'Auditorium', team: '2', prize: '₹4,000', desc: 'Test your general knowledge and tech trivia skills.' },
+            {
+                id: 7, title: 'LENS LEGENDS', date: 'March 15', venue: 'Campus wide', team: '1', prize: '₹5,000', desc: 'Capture the essence of the symposium through your lens. Photography contest.',
+                rules: [
+                    'Photos must be taken during the symposium event.',
+                    'Basic editing is allowed, but manipulation is not.',
+                    'Submit raw files for verification.'
+                ]
+            },
+            {
+                id: 8, title: 'MEME MASTERS', date: 'Online', venue: 'Discord', team: '1', prize: '₹3,000', desc: 'Create the most hilarious and relatable tech memes.',
+                rules: [
+                    'Content must be original and related to tech/college life.',
+                    'No offensive or political content.',
+                    'Memes must be submitted by 5 PM.'
+                ]
+            },
+            {
+                id: 9, title: 'GAMING ARENA', date: 'March 15-16', venue: 'Gaming Zone', team: '5', prize: '₹15,000', desc: 'Valorant and BGMI tournaments. Dominate the server.',
+                rules: [
+                    'Bring your own peripherals (mouse, headphones).',
+                    'Toxic behavior will result in a ban.',
+                    'Matches will be spectated by moderators.'
+                ]
+            },
+            {
+                id: 10, title: 'TREASURE HUNT', date: 'March 16', venue: 'Campus wide', team: '3', prize: '₹6,000', desc: 'Solve riddles and follow clues to find the hidden treasure.',
+                rules: [
+                    'Teams must stay together at all times.',
+                    'Do not damage college property.',
+                    'Time penalty for wrong guesses.'
+                ]
+            },
+            {
+                id: 11, title: 'QUIZ BOWL', date: 'March 15', venue: 'Auditorium', team: '2', prize: '₹4,000', desc: 'Test your general knowledge and tech trivia skills.',
+                rules: [
+                    'No mobile phones allowed during the quiz.',
+                    'Questions range from tech, sci-fi to general knowledge.',
+                    'Buzzer round rules will be explained on spot.'
+                ]
+            },
         ],
         workshops: [
-            { id: 12, title: 'ETHICAL HACKING', date: 'March 15', venue: 'Lab 1', team: 'Individual', prize: 'Certificate', desc: 'Learn the fundamentals of cybersecurity and penetration testing.' },
-            { id: 13, title: 'APP DEV', date: 'March 16', venue: 'Lab 2', team: 'Individual', prize: 'Certificate', desc: 'Master Flutter and build cross-platform mobile applications.' },
-            { id: 14, title: 'BLOCKCHAIN', date: 'March 15', venue: 'Lab 3', team: 'Individual', prize: 'Certificate', desc: 'Understand the decentralized web and build your first DApp.' },
+            {
+                id: 12, title: 'ETHICAL HACKING', date: 'March 15', venue: 'Lab 1', team: 'Individual', prize: 'Certificate', desc: 'Learn the fundamentals of cybersecurity and penetration testing.',
+                rules: [
+                    'Laptop is mandatory.',
+                    'Pre-install Kali Linux (VM or Dual boot).',
+                    'Do not attack college network.'
+                ]
+            },
+            {
+                id: 13, title: 'APP DEV', date: 'March 16', venue: 'Lab 2', team: 'Individual', prize: 'Certificate', desc: 'Master Flutter and build cross-platform mobile applications.',
+                rules: [
+                    'Laptop with VS Code and Flutter SDK installed.',
+                    'Basic knowledge of programming is recommended.',
+                    'Certificate provided upon completion.'
+                ]
+            },
+            {
+                id: 14, title: 'BLOCKCHAIN', date: 'March 15', venue: 'Lab 3', team: 'Individual', prize: 'Certificate', desc: 'Understand the decentralized web and build your first DApp.',
+                rules: [
+                    'Laptop required.',
+                    'Node.js and Metamask wallet must be installed.',
+                    'Introduction to Solidity and Smart Contracts.'
+                ]
+            },
         ]
     };
 
@@ -179,7 +281,10 @@ const EventsPage = () => {
 
                                 {/* Actions Below Card */}
                                 <div className="mt-4 flex gap-3">
-                                    <button className="flex-1 py-3 bg-[#1a1a1a] rounded-lg border border-[#e33e33] text-[#e33e33] font-mono text-xs font-bold uppercase tracking-widest hover:bg-[#e33e33] hover:text-white transition-all duration-300 shadow-[0_0_10px_rgba(227,62,51,0.2)] hover:shadow-[0_0_20px_rgba(227,62,51,0.6)]">
+                                    <button
+                                        onClick={() => setSelectedEvent(event)}
+                                        className="flex-1 py-3 bg-[#1a1a1a] rounded-lg border border-[#e33e33] text-[#e33e33] font-mono text-xs font-bold uppercase tracking-widest hover:bg-[#e33e33] hover:text-white transition-all duration-300 shadow-[0_0_10px_rgba(227,62,51,0.2)] hover:shadow-[0_0_20px_rgba(227,62,51,0.6)]"
+                                    >
                                         Know More
                                     </button>
                                     <button className="flex-1 py-3 bg-[#1a1a1a] rounded-lg border border-[#97b85d] text-[#97b85d] font-mono text-xs font-bold uppercase tracking-widest hover:bg-[#97b85d] hover:text-black transition-all duration-300 shadow-[0_0_10px_rgba(151,184,93,0.2)] hover:shadow-[0_0_20px_rgba(151,184,93,0.6)]">
@@ -209,7 +314,8 @@ const EventsPage = () => {
                 /* Glitch effect keys would go here or in global css */
                 
                 .custom-scrollbar::-webkit-scrollbar {
-                    height: 2px;
+                    width: 6px;
+                    height: 6px;
                 }
                 .custom-scrollbar::-webkit-scrollbar-track {
                     background: rgba(255, 255, 255, 0.05);
@@ -222,6 +328,12 @@ const EventsPage = () => {
                     background: #97b85d;
                 }
             `}</style>
+
+            <EventModal
+                isOpen={!!selectedEvent}
+                onClose={() => setSelectedEvent(null)}
+                event={selectedEvent}
+            />
         </div >
     );
 };
