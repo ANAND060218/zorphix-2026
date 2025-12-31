@@ -1,14 +1,16 @@
-import React from 'react'
+import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
-import Hero from './components/Hero'
-import EventsShowcase from './components/EventsShowcase'
+import Home from './components/Home'
+import About from './components/About'
 
 const App = () => {
   return (
     <div>
       <Navbar />
-      <Hero />
-      <EventsShowcase />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+      </Routes>
     </div>
   )
 }

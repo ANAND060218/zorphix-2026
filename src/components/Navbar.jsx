@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import zorphixLogo from '../assets/zorphix-logo.png';
 
 const Navbar = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const navLinks = [
-        { name: 'Home', href: '#home' },
-        { name: 'About', href: '#about' },
-        { name: 'Events', href: '#events' },
-        { name: 'Register', href: '#register' }
+        { name: 'Home', href: '/' },
+        { name: 'About', href: '/about' },
+        { name: 'Events', href: '/events' },
+        { name: 'Register', href: '/register' }
     ];
 
     const toggleSidebar = () => {
@@ -30,14 +31,14 @@ const Navbar = () => {
                         {/* Desktop Navigation Links */}
                         <div className="hidden md:flex items-center gap-8">
                             {navLinks.map((link) => (
-                                <a
+                                <Link
                                     key={link.name}
-                                    href={link.href}
+                                    to={link.href.replace('#', '/').replace('//', '/')}
                                     className="text-gray-300 hover:text-white transition-colors duration-300 font-mono uppercase text-sm tracking-wider relative group"
                                 >
                                     {link.name}
                                     <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-gradient-to-r from-[#e33e33] to-[#97b85d] group-hover:w-full transition-all duration-300"></span>
-                                </a>
+                                </Link>
                             ))}
                         </div>
 
@@ -117,9 +118,9 @@ const Navbar = () => {
                 {/* Sidebar Navigation Links */}
                 <div className="flex flex-col p-6 gap-4">
                     {navLinks.map((link, index) => (
-                        <a
+                        <Link
                             key={link.name}
-                            href={link.href}
+                            to={link.href.replace('#', '/').replace('//', '/')}
                             onClick={toggleSidebar}
                             className="text-gray-300 hover:text-white hover:bg-white/5 px-4 py-3 rounded-lg transition-all duration-300 font-mono uppercase text-sm tracking-wider border border-transparent hover:border-white/10 group"
                             style={{ animationDelay: `${index * 50}ms` }}
@@ -140,7 +141,7 @@ const Navbar = () => {
                                     />
                                 </svg>
                             </div>
-                        </a>
+                        </Link>
                     ))}
                 </div>
 
