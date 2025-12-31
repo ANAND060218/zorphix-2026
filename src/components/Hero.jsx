@@ -5,7 +5,6 @@ import zorphixName from '../assets/zorphix.png';
 
 const Hero = () => {
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const containerRef = useRef(null);
 
     const [targetDate] = useState(() => {
@@ -31,14 +30,6 @@ const Hero = () => {
         return () => clearInterval(interval);
     }, [targetDate]);
 
-    const handleMouseMove = (e) => {
-        if (!containerRef.current) return;
-        const { left, top, width, height } = containerRef.current.getBoundingClientRect();
-        const x = (e.clientX - left - width / 2) / 25;
-        const y = (e.clientY - top - height / 2) / 25;
-        setMousePos({ x, y });
-    };
-
     const stockTickerItems = [
         { symbol: "CSBS", value: "+24.5%", up: true },
         { symbol: "TECH", value: "+12.8%", up: true },
@@ -58,81 +49,18 @@ const Hero = () => {
     return (
         <div
             className="relative min-h-screen bg-black text-white overflow-hidden font-mono perspective-1000 pt-20 md:pt-16"
-            onMouseMove={handleMouseMove}
             ref={containerRef}
         >
-            {/* Dynamic Market Graph Background */}
-            <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-30">
-                {/* Moving Line Graph */}
-                <svg className="absolute w-full h-64 md:h-96 top-1/3" viewBox="0 0 1000 200" preserveAspectRatio="none">
-                    <path
-                        d="M0,100 Q100,50 200,100 T400,100 T600,100 T800,100 T1000,100"
-                        fill="none"
-                        stroke="#e33e33"
-                        strokeWidth="3"
-                        className="animate-pulse-graph drop-shadow-[0_0_10px_rgba(227,62,51,0.5)]"
-                    />
-                    <path
-                        d="M0,100 Q150,150 300,100 T600,100 T900,100"
-                        fill="none"
-                        stroke="#97b85d"
-                        strokeWidth="3"
-                        className="animate-pulse-graph animation-delay-2000 drop-shadow-[0_0_10px_rgba(151,184,93,0.5)]"
-                        style={{ opacity: 0.5 }}
-                    />
-                </svg>
+            {/* Ambient Animated Background */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                {/* Gradient Blobs */}
+                <div className="absolute top-[-20%] left-[-10%] w-[70vw] h-[70vw] md:w-[800px] md:h-[800px] bg-[#e33e33]/20 rounded-full mix-blend-screen blur-[100px] animate-blob filter"></div>
+                <div className="absolute top-[-20%] right-[-10%] w-[70vw] h-[70vw] md:w-[800px] md:h-[800px] bg-[#97b85d]/20 rounded-full mix-blend-screen blur-[100px] animate-blob animation-delay-2000 filter"></div>
+                <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-[70vw] h-[70vw] md:w-[800px] md:h-[800px] bg-[#e33e33]/10 rounded-full mix-blend-screen blur-[100px] animate-blob animation-delay-4000 filter"></div>
 
-                {/* Vertical Bar Graph */}
-                <div className="absolute inset-0 flex items-end justify-between px-2 pb-20">
-                    {[...Array(40)].map((_, i) => (
-                        <div
-                            key={`bar-${i}`}
-                            className="w-1 md:w-4 bg-gradient-to-t from-[#e33e33]/20 to-[#97b85d]/20 rounded-t-lg animate-graph-bar backdrop-blur-sm border-t border-white/10"
-                            style={{
-                                height: `${Math.random() * 50 + 10}%`,
-                                animationDelay: `${Math.random() * 2}s`,
-                                animationDuration: `${Math.random() * 3 + 2}s`
-                            }}
-                        ></div>
-                    ))}
-                </div>
+                {/* Subtle Grid Pattern */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_80%)]"></div>
             </div>
-
-            {/* Matrix Code Rain */}
-            <div className="absolute inset-0 pointer-events-none opacity-20">
-                {[...Array(30)].map((_, i) => (
-                    <div
-                        key={`code-${i}`}
-                        className="absolute text-[#97b85d] font-mono text-xs animate-code-rain whitespace-nowrap"
-                        style={{
-                            left: `${(i * 100) / 30}%`,
-                            animationDelay: `${Math.random() * 5}s`,
-                            animationDuration: `${Math.random() * 5 + 5}s`
-                        }}
-                    >
-                        {Array.from({ length: 20 }, () => String.fromCharCode(Math.floor(Math.random() * 94) + 33)).join('')}
-                    </div>
-                ))}
-            </div>
-
-            {/* Grid Floor with Perspective */}
-            <div
-                className="absolute bottom-0 left-0 right-0 h-[50vh] opacity-30 pointer-events-none transform-style-3d"
-                style={{
-                    transform: `rotateX(60deg) translateZ(-200px) translateY(${mousePos.y * 20}px)`,
-                    backgroundImage: `
-                        linear-gradient(to right, #e33e33 1px, transparent 1px),
-                        linear-gradient(to bottom, #97b85d 1px, transparent 1px)
-                    `,
-                    backgroundSize: '50px 50px'
-                }}
-            >
-                <div className="absolute inset-0 bg-gradient-to-t from-transparent to-black"></div>
-            </div>
-
-            {/* Scanline Overlay */}
-            <div className="absolute inset-0 pointer-events-none z-50 bg-[linear-gradient(to_bottom,rgba(255,255,255,0),rgba(255,255,255,0)_50%,rgba(0,0,0,0.2)_50%,rgba(0,0,0,0.2))] bg-[size:100%_4px]"></div>
-            <div className="absolute inset-0 pointer-events-none z-50 bg-gradient-to-b from-transparent via-[#e33e33]/10 to-transparent h-[10%] w-full animate-scanline"></div>
 
             {/* Vignette Effect */}
             <div className="absolute inset-0 pointer-events-none z-40 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.7)_100%)]"></div>
