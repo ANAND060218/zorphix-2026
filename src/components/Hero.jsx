@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import zorphixLogo from '../assets/zorphix-logo.png';
 import zorphixName from '../assets/zorphix.png';
 
@@ -135,6 +136,18 @@ const Hero = () => {
 
             {/* Vignette Effect */}
             <div className="absolute inset-0 pointer-events-none z-40 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.7)_100%)]"></div>
+
+            {/* Navigation Bar */}
+            <nav className="relative z-50 flex justify-between items-center px-8 py-6 border-b border-white/10 bg-black/40 backdrop-blur-md">
+                <Link to="/" className="flex items-center gap-4 group">
+                    <img src={zorphixLogo} alt="Logo" className="w-10 h-10 group-hover:drop-shadow-[0_0_15px_rgba(227,62,51,0.5)] transition-all duration-300" />
+                    <span className="text-xl font-bold tracking-widest text-white group-hover:text-[#e33e33] transition-colors">ZORPHIX</span>
+                </Link>
+                <div className="flex gap-6">
+                    <Link to="/" className="text-[#e33e33] border-b-2 border-[#e33e33] tracking-wider">HOME</Link>
+                    <Link to="/about" className="text-gray-400 hover:text-[#97b85d] transition-colors tracking-wider">ABOUT</Link>
+                </div>
+            </nav>
 
             {/* Main Content - Holographic HUD */}
             <div className="relative z-40 flex flex-col items-center justify-center min-h-screen pointer-events-none">
