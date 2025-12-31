@@ -16,14 +16,30 @@ const Navbar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
 
+    const stockTickerItems = [
+        { symbol: "CSBS", value: "+24.5%", up: true },
+        { symbol: "TECH", value: "+12.8%", up: true },
+        { symbol: "INNO", value: "+8.4%", up: true },
+        { symbol: "CODE", value: "-2.1%", up: false },
+        { symbol: "DATA", value: "+15.3%", up: true },
+        { symbol: "ALGO", value: "+32.7%", up: true },
+        { symbol: "NETW", value: "-0.5%", up: false },
+        { symbol: "SYMP", value: "+100%", up: true },
+        { symbol: "FUTR", value: "+45.2%", up: true },
+        { symbol: "AI", value: "+67.9%", up: true },
+    ];
+
+    // Generate a long string for the tunnel walls
+    const tickerString = stockTickerItems.map(item => `${item.symbol} ${item.value}`).join(' • ').repeat(10);
+
     return (
         <>
             {/* Desktop Navbar */}
             <nav className="fixed top-0 left-0 right-0 z-[100] bg-black/80 backdrop-blur-md border-b border-white/10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-16">
+                    <div className="flex items-center justify-end md:justify-between h-16">
                         {/* Logo */}
-                        <div className="flex items-center gap-3">
+                        <div className="hidden md:flex items-center gap-3">
                             <img src={zorphixLogo} alt="Zorphix Logo" className="w-10 h-10 drop-shadow-[0_0_10px_rgba(227,62,51,0.5)]" />
                             <span className="text-white font-bold text-xl tracking-wider">ZORPHIX</span>
                         </div>
@@ -78,14 +94,14 @@ const Navbar = () => {
             {/* Mobile Sidebar Overlay */}
             {isSidebarOpen && (
                 <div
-                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] md:hidden"
+                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[105] md:hidden"
                     onClick={toggleSidebar}
                 ></div>
             )}
 
             {/* Mobile Sidebar */}
             <div
-                className={`fixed top-0 right-0 h-full w-64 bg-black/95 backdrop-blur-xl border-l border-white/10 z-[95] transform transition-transform duration-300 ease-in-out md:hidden ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'
+                className={`fixed top-0 right-0 h-full w-64 bg-black/95 backdrop-blur-xl border-l border-white/10 z-[110] transform transition-transform duration-300 ease-in-out md:hidden ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'
                     }`}
             >
                 {/* Sidebar Header */}
@@ -154,6 +170,29 @@ const Navbar = () => {
                             <div className="w-2 h-2 rounded-full bg-[#97b85d] animate-pulse" style={{ animationDelay: '0.5s' }}></div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            {/* Top Scrolling Ticker */}
+            <div className="fixed top-16 w-full bg-black/80 border-b border-white/10 backdrop-blur-md py-1 md:py-2 z-50">
+                <div className="flex animate-ticker whitespace-nowrap text-xs md:text-sm font-mono">
+                    <span className="mx-4 text-[#e33e33]">WARNING: MARKET VOLATILITY DETECTED</span>
+                    {stockTickerItems.map((item, i) => (
+                        <span key={i} className="mx-4">
+                            <span className="text-gray-400">{item.symbol}</span>
+                            <span className={`ml-2 ${item.up ? 'text-[#97b85d]' : 'text-[#e33e33]'}`}>
+                                {item.value} {item.up ? '▲' : '▼'}
+                            </span>
+                        </span>
+                    ))}
+                    {stockTickerItems.map((item, i) => (
+                        <span key={`dup-${i}`} className="mx-4">
+                            <span className="text-gray-400">{item.symbol}</span>
+                            <span className={`ml-2 ${item.up ? 'text-[#97b85d]' : 'text-[#e33e33]'}`}>
+                                {item.value} {item.up ? '▲' : '▼'}
+                            </span>
+                        </span>
+                    ))}
                 </div>
             </div>
         </>
