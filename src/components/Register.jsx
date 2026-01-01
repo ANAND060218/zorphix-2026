@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { auth, googleProvider, db } from '../firebase';
 import { signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
-import { FaGoogle, FaUser, FaEnvelope, FaUniversity, FaGraduationCap, FaPhone, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
-import Background from './Background';
+import { FaGoogle, FaUserTie, FaUniversity, FaBuilding, FaPhone, FaCheckCircle, FaChartLine, FaBriefcase, FaWallet, FaHandshake } from 'react-icons/fa';
 
 const Register = () => {
     const [user, setUser] = useState(null);
@@ -22,13 +21,10 @@ const Register = () => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             setUser(currentUser);
             if (currentUser) {
-                // Check if user is already registered
                 const docRef = doc(db, 'registrations', currentUser.uid);
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
                     setSubmitted(true);
-                    // Optionally populate form with existing data if you want to allow edits
-                    // setFormData(docSnap.data());
                 }
             }
             setLoading(false);
@@ -41,13 +37,20 @@ const Register = () => {
             await signInWithPopup(auth, googleProvider);
         } catch (error) {
             console.error("Error signing in with Google", error);
-            alert(`Sign-in failed: ${error.message}\n\nCheck if 'localhost' is added to Authorized Domains in Firebase Console.`);
+            alert(`Sign-In Failed: ${error.message}`);
         }
     };
 
     const handleSignOut = () => {
         signOut(auth);
         setSubmitted(false);
+        setFormData({
+            college: '',
+            department: '',
+            year: '1',
+            phone: '',
+            events: []
+        });
     };
 
     const handleChange = (e) => {
@@ -75,18 +78,16 @@ const Register = () => {
                 displayName: user.displayName,
                 email: user.email,
                 photoURL: user.photoURL,
-                registeredAt: serverTimestamp()
+                registeredAt: serverTimestamp(),
+                portfolioValue: 'PENDING VALUATION'
             });
-            console.log("Registration saved to Firestore");
             setSubmitted(true);
         } catch (error) {
             console.error("Error saving registration:", error);
-            // Optionally set an error state here to show to the user
-            alert("Failed to save registration. Please try again.");
+            alert("Transaction Failed. Retry.");
         }
     };
 
-    // List of events for selection (could be imported from a shared constant)
     const eventOptions = [
         'Code Wars', 'Cyber Heist', 'AI Nexus', 'Web Wizards',
         'Robo Rumble', 'Circuitrix', 'Lens Legends', 'Meme Masters',
@@ -94,183 +95,326 @@ const Register = () => {
     ];
 
     if (loading) {
-        return <div className="min-h-screen bg-black flex items-center justify-center text-white font-mono">Loading...</div>;
+        return (
+            <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center text-[#e33e33] font-serif">
+                <FaChartLine className="text-5xl mb-4 animate-bounce" />
+                <div className="text-2xl tracking-widest uppercase">Loading Registration...</div>
+            </div>
+        );
     }
 
     return (
-        <div className="min-h-screen bg-black text-white font-mono relative overflow-hidden">
-            <Background />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)] pointer-events-none"></div>
+        <div className="min-h-screen bg-[#0a0f0d] text-white font-serif relative overflow-hidden selection:bg-[#e33e33] selection:text-black">
+            {/* Background Elements */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#1a2e26,transparent_50%)]"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,#1f1a0e,transparent_50%)]"></div>
 
-            <div className="relative z-10 container mx-auto px-4 py-24 md:py-32 flex flex-col items-center justify-center min-h-screen">
+            {/* Floating Currency Symbols */}
+            <CurrencyShower />
 
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="w-full max-w-lg"
-                >
-                    <h1 className="text-4xl md:text-5xl font-bold text-center mb-8 tracking-widest glitch-text" data-text="REGISTRATION">
-                        REGISTRATION
-                    </h1>
+            <div className="relative z-10 container mx-auto px-4 pt-32 pb-12 flex flex-col items-center justify-center min-h-screen">
 
+                <AnimatePresence mode='wait'>
                     {!user ? (
-                        // Unauthenticated View
-                        <div className="bg-[#0a0a0a] border border-white/10 p-8 rounded-2xl shadow-2xl backdrop-blur-md relative overflow-hidden group">
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#e33e33]/10 to-[#97b85d]/10 opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        /* ================== UNAUTHENTICATED VIEW ================== */
+                        <motion.div
+                            key="login"
+                            initial={{ y: 50, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            exit={{ y: -50, opacity: 0 }}
+                            className="w-full max-w-lg"
+                        >
+                            <div className="bg-[#111] border border-[#e33e33]/50 rounded-lg p-12 text-center relative shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden">
+                                {/* Red Shine */}
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#e33e33]/20 to-transparent rounded-bl-full"></div>
 
-                            <div className="relative z-10 text-center space-y-6">
-                                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-[#e33e33] to-[#97b85d] rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(227,62,51,0.5)]">
-                                    <FaUser className="text-3xl text-white" />
+                                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-[#e33e33] to-[#991b1b] rounded-full flex items-center justify-center mb-8 shadow-2xl shadow-[#e33e33]/20">
+                                    <FaBuilding className="text-3xl text-black" />
                                 </div>
-                                <h2 className="text-xl text-gray-300 tracking-wider">Please Sign In to Continue</h2>
-                                <p className="text-sm text-gray-500">
-                                    You need to verify your identity with Google before accessing the registration form.
+
+                                <h1 className="text-4xl font-serif text-white mb-2 tracking-wide">
+                                    EVENT REGISTRATION
+                                </h1>
+                                <p className="text-[#e33e33] text-sm tracking-[0.2em] uppercase mb-12">
+                                    Official Zorphix Portal
                                 </p>
 
-                                <button
-                                    onClick={handleGoogleSignIn}
-                                    className="w-full py-4 bg-white text-black font-bold uppercase tracking-widest rounded-lg flex items-center justify-center gap-3 hover:bg-gray-200 transition-all shadow-[0_0_15px_rgba(255,255,255,0.3)]"
-                                >
-                                    <FaGoogle className="text-[#e33e33]" /> Sign in with Google
-                                </button>
-                            </div>
-                        </div>
-                    ) : !submitted ? (
-                        // Registration Form
-                        <div className="bg-[#0a0a0a] border border-white/10 p-6 md:p-8 rounded-2xl shadow-2xl backdrop-blur-md relative">
-                            <div className="flex items-center gap-4 mb-6 border-b border-white/10 pb-4">
-                                <img src={user.photoURL} alt={user.displayName} className="w-12 h-12 rounded-full border-2 border-[#97b85d]" />
-                                <div>
-                                    <h2 className="text-lg font-bold text-white tracking-wider">{user.displayName}</h2>
-                                    <p className="text-xs text-gray-400 font-mono">{user.email}</p>
-                                </div>
-                                <button onClick={handleSignOut} className="ml-auto text-xs text-[#e33e33] hover:underline">Sign Out</button>
-                            </div>
-
-                            <form onSubmit={handleSubmit} className="space-y-4">
-                                <div>
-                                    <label className="text-xs text-gray-400 uppercase tracking-widest mb-1 block">College Name</label>
-                                    <div className="relative">
-                                        <FaUniversity className="absolute left-3 top-3 text-gray-500" />
-                                        <input
-                                            type="text"
-                                            name="college"
-                                            value={formData.college}
-                                            onChange={handleChange}
-                                            required
-                                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 pl-10 pr-4 text-sm text-white focus:border-[#97b85d] focus:outline-none focus:ring-1 focus:ring-[#97b85d] transition-all"
-                                            placeholder="Enter your college"
-                                        />
+                                <div className="space-y-6">
+                                    <div className="border border-[#333] p-4 rounded text-xs text-gray-400 font-mono text-left bg-[#080808]">
+                                        <p className="mb-2">READY TO REGISTER?</p>
+                                        <p className="mb-2">SIGN IN TO CONTINUE...</p>
+                                        <p className="text-[#e33e33]">WAITING FOR LOGIN</p>
                                     </div>
+
+                                    <button
+                                        onClick={handleGoogleSignIn}
+                                        className="w-full py-4 bg-white text-black font-bold uppercase tracking-widest rounded transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-[0_10px_20px_rgba(255,255,255,0.2)] flex items-center justify-center gap-3 group relative overflow-hidden"
+                                    >
+                                        <span className="relative z-10 flex items-center gap-2">
+                                            <FaGoogle /> Sign In with Google
+                                        </span>
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#e33e33]/30 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></div>
+                                    </button>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="text-xs text-gray-400 uppercase tracking-widest mb-1 block">Department</label>
-                                        <div className="relative">
-                                            <FaGraduationCap className="absolute left-3 top-3 text-gray-500" />
-                                            <input
-                                                type="text"
-                                                name="department"
-                                                value={formData.department}
-                                                onChange={handleChange}
-                                                required
-                                                className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 pl-10 pr-4 text-sm text-white focus:border-[#97b85d] focus:outline-none focus:ring-1 focus:ring-[#97b85d] transition-all"
-                                                placeholder="Dept."
-                                            />
+                                <p className="mt-8 text-[10px] text-gray-600 tracking-widest">
+                                    SECURE REGISTRATION SYSTEM
+                                </p>
+                            </div>
+                        </motion.div>
+                    ) : (
+                        /* ================== AUTHENTICATED / FORM VIEW ================== */
+                        !submitted ? (
+                            <motion.div
+                                key="form"
+                                initial={{ scale: 0.95, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                className="w-full max-w-5xl"
+                            >
+                                <div className="bg-[#111] border border-[#e33e33]/30 rounded-lg shadow-2xl relative overflow-hidden">
+                                    {/* Header */}
+                                    <div className="bg-[#0f0f0f] p-8 border-b border-[#333] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                        <div className="flex items-center gap-4">
+                                            <img src={user.photoURL} alt="Profile" className="w-16 h-16 rounded-full border-2 border-[#e33e33]" />
+                                            <div>
+                                                <h2 className="text-xl font-serif text-white flex items-center gap-2">
+                                                    {user.displayName} <FaCheckCircle className="text-[#e33e33] text-sm" />
+                                                </h2>
+                                                <p className="text-gray-500 font-mono text-xs tracking-wider">USER ID: {user.uid.slice(0, 8).toUpperCase()}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-4">
+                                            <div className="text-right">
+                                                <p className="text-[10px] text-gray-500 uppercase tracking-wider">Status</p>
+                                                <p className="text-xl text-[#97b85d] font-mono font-bold">VERIFIED</p>
+                                            </div>
+                                            <button onClick={handleSignOut} className="px-4 py-2 border border-[#e33e33] text-[#e33e33] text-xs uppercase tracking-widest hover:bg-[#e33e33] hover:text-black transition-colors">
+                                                Sign Out
+                                            </button>
                                         </div>
                                     </div>
-                                    <div>
-                                        <label className="text-xs text-gray-400 uppercase tracking-widest mb-1 block">Year</label>
-                                        <select
-                                            name="year"
-                                            value={formData.year}
-                                            onChange={handleChange}
-                                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-4 text-sm text-white focus:border-[#97b85d] focus:outline-none focus:ring-1 focus:ring-[#97b85d] transition-all appearance-none"
-                                        >
-                                            <option value="1" className="bg-black">1st Year</option>
-                                            <option value="2" className="bg-black">2nd Year</option>
-                                            <option value="3" className="bg-black">3rd Year</option>
-                                            <option value="4" className="bg-black">4th Year</option>
-                                        </select>
+
+                                    {/* Form Content */}
+                                    <div className="p-8 md:p-12 bg-[#080808]">
+                                        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-12 gap-12">
+
+                                            {/* Left Column - Personal Details */}
+                                            <div className="md:col-span-7 space-y-8">
+                                                <div className="flex items-center gap-2 mb-6">
+                                                    <FaUserTie className="text-[#e33e33]" />
+                                                    <h3 className="text-sm text-gray-400 uppercase tracking-[0.2em] font-serif">Participant Details</h3>
+                                                </div>
+
+                                                <div className="space-y-6">
+                                                    <div className="relative group">
+                                                        <label className="text-[10px] text-[#e33e33] uppercase tracking-widest mb-1 block">College Name</label>
+                                                        <FaUniversity className="absolute left-0 bottom-3 text-gray-600 group-focus-within:text-white transition-colors" />
+                                                        <input
+                                                            type="text"
+                                                            name="college"
+                                                            value={formData.college}
+                                                            onChange={handleChange}
+                                                            required
+                                                            className="w-full bg-transparent border-b border-gray-700 py-2 pl-6 pr-4 text-white placeholder-gray-700 focus:outline-none focus:border-[#e33e33] transition-all font-serif"
+                                                            placeholder="Enter College Name"
+                                                        />
+                                                    </div>
+
+                                                    <div className="grid grid-cols-2 gap-6">
+                                                        <div className="relative group">
+                                                            <label className="text-[10px] text-[#e33e33] uppercase tracking-widest mb-1 block">Department</label>
+                                                            <FaBriefcase className="absolute left-0 bottom-3 text-gray-600 group-focus-within:text-white transition-colors" />
+                                                            <input
+                                                                type="text"
+                                                                name="department"
+                                                                value={formData.department}
+                                                                onChange={handleChange}
+                                                                required
+                                                                className="w-full bg-transparent border-b border-gray-700 py-2 pl-6 pr-4 text-white placeholder-gray-700 focus:outline-none focus:border-[#e33e33] transition-all font-serif"
+                                                                placeholder="Enter Department"
+                                                            />
+                                                        </div>
+                                                        <div className="relative group">
+                                                            <label className="text-[10px] text-[#e33e33] uppercase tracking-widest mb-1 block">Year of Study</label>
+                                                            <select
+                                                                name="year"
+                                                                value={formData.year}
+                                                                onChange={handleChange}
+                                                                className="w-full bg-transparent border-b border-gray-700 py-2 px-2 text-white placeholder-gray-700 focus:outline-none focus:border-[#e33e33] transition-all font-serif appearance-none cursor-pointer"
+                                                            >
+                                                                <option value="1" className="bg-black">1st Year</option>
+                                                                <option value="2" className="bg-black">2nd Year</option>
+                                                                <option value="3" className="bg-black">3rd Year</option>
+                                                                <option value="4" className="bg-black">4th Year</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="relative group">
+                                                        <label className="text-[10px] text-[#e33e33] uppercase tracking-widest mb-1 block">Phone Number</label>
+                                                        <FaPhone className="absolute left-0 bottom-3 text-gray-600 group-focus-within:text-white transition-colors" />
+                                                        <input
+                                                            type="tel"
+                                                            name="phone"
+                                                            value={formData.phone}
+                                                            onChange={handleChange}
+                                                            required
+                                                            className="w-full bg-transparent border-b border-gray-700 py-2 pl-6 pr-4 text-white placeholder-gray-700 focus:outline-none focus:border-[#e33e33] transition-all font-serif"
+                                                            placeholder="Contact Number"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Right Column - Asset Selection */}
+                                            <div className="md:col-span-5 bg-[#111] p-6 rounded border border-[#333]">
+                                                <div className="flex items-center gap-2 mb-6">
+                                                    <FaWallet className="text-[#97b85d]" />
+                                                    <h3 className="text-sm text-gray-400 uppercase tracking-[0.2em] font-serif">Select Events</h3>
+                                                </div>
+
+                                                <div className="space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar">
+                                                    {eventOptions.map(event => (
+                                                        <label key={event} className={`flex items-center justify-between p-3 border rounded cursor-pointer transition-all ${formData.events.includes(event)
+                                                            ? 'border-[#97b85d] bg-[#97b85d]/10'
+                                                            : 'border-[#333] hover:border-gray-500'
+                                                            }`}>
+                                                            <span className={`text-xs font-mono uppercase ${formData.events.includes(event) ? 'text-white' : 'text-gray-500'
+                                                                }`}>{event}</span>
+
+                                                            <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${formData.events.includes(event) ? 'border-[#97b85d] bg-[#97b85d]' : 'border-gray-600'
+                                                                }`}>
+                                                                {formData.events.includes(event) && <FaCheckCircle className="text-black text-[10px]" />}
+                                                            </div>
+                                                            <input
+                                                                type="checkbox"
+                                                                value={event}
+                                                                checked={formData.events.includes(event)}
+                                                                onChange={handleEventChange}
+                                                                className="hidden"
+                                                            />
+                                                        </label>
+                                                    ))}
+                                                </div>
+
+                                                <div className="mt-6 pt-6 border-t border-[#333] flex justify-between items-center text-xs">
+                                                    <span className="text-gray-500 uppercase tracking-wider">Total Selected</span>
+                                                    <span className="text-[#97b85d] font-mono font-bold">{formData.events.length} EVENTS</span>
+                                                </div>
+
+                                                <button
+                                                    type="submit"
+                                                    className="w-full mt-6 py-4 bg-gradient-to-r from-[#e33e33] to-[#97b85d] hover:from-[#c2352b] hover:to-[#86a352] text-white font-bold uppercase tracking-[0.2em] rounded shadow-[0_5px_15px_rgba(227,62,51,0.3)] transition-all transform hover:-translate-y-1"
+                                                >
+                                                    Register Now
+                                                </button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
+                            </motion.div>
+                        ) : (
+                            /* ================== SUCCESS VIEW ================== */
+                            <motion.div
+                                key="success"
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                className="w-full max-w-lg"
+                            >
+                                <div className="bg-[#111] border-2 border-[#97b85d] p-10 text-center relative shadow-[0_0_50px_rgba(151,184,93,0.2)]">
+                                    <div className="w-20 h-20 mx-auto bg-[#97b85d] rounded-full flex items-center justify-center mb-6">
+                                        <FaHandshake className="text-4xl text-black" />
+                                    </div>
 
-                                <div>
-                                    <label className="text-xs text-gray-400 uppercase tracking-widest mb-1 block">Phone Number</label>
-                                    <div className="relative">
-                                        <FaPhone className="absolute left-3 top-3 text-gray-500" />
-                                        <input
-                                            type="tel"
-                                            name="phone"
-                                            value={formData.phone}
-                                            onChange={handleChange}
-                                            required
-                                            className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 pl-10 pr-4 text-sm text-white focus:border-[#97b85d] focus:outline-none focus:ring-1 focus:ring-[#97b85d] transition-all"
-                                            placeholder="Mobile Number"
-                                        />
+                                    <h2 className="text-3xl font-serif text-white tracking-wide mb-2">
+                                        REGISTRATION SUCCESSFUL
+                                    </h2>
+
+                                    <p className="text-[#97b85d] font-mono text-xs tracking-wider mb-8">
+                                        REGISTRATION ID: #{user.uid.slice(0, 6).toUpperCase()}
+                                    </p>
+
+                                    <div className="bg-[#080808] p-6 rounded border border-[#333] mb-8">
+                                        <p className="text-gray-400 text-sm italic leading-relaxed font-serif">
+                                            "Welcome aboard, {user.displayName.split(' ')[0]}. You have successfully registered for the events. Check your email for details."
+                                        </p>
+                                    </div>
+
+                                    <div className="flex gap-4 justify-center">
+                                        <button onClick={() => setSubmitted(false)} className="text-xs text-gray-500 hover:text-[#e33e33] uppercase tracking-widest underline">
+                                            Register Another
+                                        </button>
+                                        <button className="px-6 py-2 border border-white text-white text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-colors">
+                                            Return Home
+                                        </button>
                                     </div>
                                 </div>
-
-                                <div>
-                                    <label className="text-xs text-gray-400 uppercase tracking-widest mb-2 block">Select Events</label>
-                                    <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto custom-scrollbar p-1 border border-white/5 rounded-lg">
-                                        {eventOptions.map(event => (
-                                            <label key={event} className="flex items-center space-x-2 text-xs text-gray-300 cursor-pointer hover:text-white">
-                                                <input
-                                                    type="checkbox"
-                                                    value={event}
-                                                    checked={formData.events.includes(event)}
-                                                    onChange={handleEventChange}
-                                                    className="form-checkbox bg-transparent border-gray-600 text-[#e33e33] rounded focus:ring-0"
-                                                />
-                                                <span>{event}</span>
-                                            </label>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    className="w-full py-3 mt-4 bg-gradient-to-r from-[#e33e33] to-[#97b85d] rounded-lg text-white font-bold uppercase tracking-widest hover:shadow-[0_0_20px_rgba(227,62,51,0.5)] transition-all duration-300 transform hover:-translate-y-1"
-                                >
-                                    Complete Registration
-                                </button>
-                            </form>
-                        </div>
-                    ) : (
-                        // Success View
-                        <div className="bg-[#0a0a0a] border border-[#97b85d]/30 p-8 rounded-2xl shadow-[0_0_30px_rgba(151,184,93,0.2)] backdrop-blur-md text-center">
-                            <div className="w-16 h-16 mx-auto bg-[#97b85d] rounded-full flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(151,184,93,0.5)]">
-                                <FaCheckCircle className="text-3xl text-black" />
-                            </div>
-                            <h2 className="text-2xl font-bold text-white tracking-wider mb-2">REGISTRATION SUCCESSFUL</h2>
-                            <p className="text-gray-400 mb-6">
-                                Thank you for registering, <span className="text-[#97b85d]">{user.displayName}</span>!
-                                <br />We will verify your details and send a confirmation email shortly.
-                            </p>
-                            <div className="flex justify-center gap-4">
-                                <button onClick={() => setSubmitted(false)} className="text-sm text-gray-500 hover:text-white underline">Register Another</button>
-                                <button className="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm text-white transition-colors">Go to Home</button>
-                            </div>
-                        </div>
+                            </motion.div>
+                        )
                     )}
-                </motion.div>
+                </AnimatePresence>
             </div>
 
             <style jsx>{`
-                .custom-scrollbar::-webkit-scrollbar {
-                    width: 4px;
+                @keyframes float-up {
+                    0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+                    10% { opacity: 0.8; }
+                    90% { opacity: 0.6; }
+                    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
                 }
-                .custom-scrollbar::-webkit-scrollbar-track {
-                    background: rgba(255, 255, 255, 0.05);
+                .currency-symbol {
+                    position: absolute;
+                    font-family: 'Times New Roman', serif;
+                    font-weight: bold;
+                    pointer-events: none;
+                    text-shadow: 0 0 5px currentColor;
+                }
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 3px;
                 }
                 .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: #555;
-                    border-radius: 10px;
+                    background: #333;
                 }
             `}</style>
+        </div>
+    );
+};
+
+// Text standardized
+// UI Theme: Red/Green Zorphix colors
+const CurrencyShower = () => {
+    // Increased variety and mix of crypto/fiat
+    const symbols = ['$', '€', '£', '¥', '₹', '₿', 'Ξ', '◈', '∞'];
+
+    return (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {/* Increased count for simplified 'more nice' look */}
+            {[...Array(50)].map((_, i) => {
+                // Randomize color between Zorphix Red and Green
+                const isGreen = Math.random() > 0.5;
+                const color = isGreen ? '#97b85d' : '#e33e33';
+                const duration = 15 + Math.random() * 20; // Slower, more majestic float
+                const delay = Math.random() * 20;
+                const size = 15 + Math.random() * 30;
+                const left = Math.random() * 100;
+
+                return (
+                    <div
+                        key={i}
+                        className="currency-symbol"
+                        style={{
+                            color: color,
+                            left: `${left}%`,
+                            animation: `float-up ${duration}s linear infinite`,
+                            animationDelay: `-${delay}s`, // Negative delay to start mid-animation
+                            fontSize: `${size}px`,
+                            zIndex: 0
+                        }}
+                    >
+                        {symbols[Math.floor(Math.random() * symbols.length)]}
+                    </div>
+                );
+            })}
         </div>
     );
 };
