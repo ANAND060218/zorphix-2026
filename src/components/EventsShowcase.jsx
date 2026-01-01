@@ -152,7 +152,7 @@ const EventsShowcase = () => {
                 {/* Bottom CTA */}
                 <div className="mt-20 text-center">
                     <button className="relative px-12 py-4 bg-transparent border-2 border-white/20 text-white font-bold uppercase tracking-widest hover:border-[#e33e33] transition-all duration-300 group overflow-hidden rounded-lg">
-                        <span className="relative z-10">Register Now</span>
+                        <a href="/register" className="relative z-10">Register Now</a>
                         <div className="absolute inset-0 bg-gradient-to-r from-[#e33e33] to-[#97b85d] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
                     </button>
                 </div>
