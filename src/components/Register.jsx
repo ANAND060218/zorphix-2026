@@ -97,9 +97,25 @@ const Register = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center text-[#e33e33] font-serif">
-                <FaChartLine className="text-5xl mb-4 animate-bounce" />
-                <div className="text-2xl tracking-widest uppercase">Loading Registration...</div>
+            <div className="min-h-screen bg-[#0a0f0d] text-white font-serif relative overflow-hidden flex flex-col items-center justify-center selection:bg-[#e33e33] selection:text-black">
+                {/* Background Elements */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#1a2e26,transparent_50%)]"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,#1f1a0e,transparent_50%)]"></div>
+
+                <CurrencyBackground />
+
+                <div className="relative z-10 flex flex-col items-center justify-center text-[#e33e33]">
+                    <FaChartLine className="text-3xl md:text-5xl mb-6 md:mb-8 animate-bounce drop-shadow-[0_0_10px_rgba(227,62,51,0.5)]" />
+
+                    <div className="bg-black/50 border border-[#e33e33]/30 backdrop-blur-md px-8 py-4 rounded-lg shadow-[0_0_30px_rgba(227,62,51,0.1)]">
+                        <div className="text-sm md:text-xl tracking-[0.3em] uppercase text-white font-bold">
+                            Loading Registration
+                        </div>
+                        <div className="h-1 w-full bg-[#333] mt-3 rounded-full overflow-hidden">
+                            <div className="h-full bg-[#e33e33] animate-progress w-1/2"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
