@@ -87,60 +87,63 @@ const Hero = () => {
                         className="w-full h-full relative transform-style-3d transition-transform duration-100 ease-out shadow-[0_0_50px_rgba(227,62,51,0.3)]"
                     >
                         {/* Card Front */}
-                        <div className="absolute inset-0 bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden backface-hidden flex flex-col p-5 sm:p-6 md:p-8">
-                            {/* Holographic Overlay */}
+                        <div className="absolute inset-0 bg-[#0a0f0d]/80 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden backface-hidden flex flex-col p-5 sm:p-6 md:p-8 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+                            {/* Holographic Overlay & Grid */}
+                            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none"></div>
                             <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5 pointer-events-none"></div>
-                            <div className="absolute -inset-full bg-gradient-to-r from-transparent via-white/10 to-transparent rotate-45 animate-scanline opacity-30"></div>
 
-                            {/* Card Header */}
-                            <div className="flex justify-between items-start mb-4">
+                            {/* Animated Sparkline Background */}
+                            <svg className="absolute bottom-0 left-0 w-full h-32 opacity-20 pointer-events-none" viewBox="0 0 100 20" preserveAspectRatio="none">
+                                <path d="M0 15 Q10 10 20 18 T40 12 T60 16 T80 8 T100 14" fill="none" stroke="#e33e33" strokeWidth="0.5" className="animate-pulse" />
+                                <path d="M0 18 Q15 12 30 16 T60 10 T90 15 T100 12" fill="none" stroke="#97b85d" strokeWidth="0.5" className="animate-pulse" style={{ animationDelay: '1s' }} />
+                                <defs>
+                                    <linearGradient id="grid-fade" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stopColor="transparent" />
+                                        <stop offset="100%" stopColor="rgba(151,184,93,0.1)" />
+                                    </linearGradient>
+                                </defs>
+                                <path d="M0 18 L100 18 L100 20 L0 20 Z" fill="url(#grid-fade)" />
+                            </svg>
+
+                            {/* Card Header: Market Status */}
+                            <div className="flex justify-between items-start mb-4 relative z-10">
                                 <div className="flex items-center gap-3">
-                                    {/* Chip */}
-                                    <div className="w-12 h-9 md:w-14 md:h-10 bg-gradient-to-br from-yellow-200 to-yellow-600 rounded-md border border-yellow-700 flex items-center justify-center overflow-hidden shadow-inner">
-                                        <div className="w-full h-[1px] bg-black/30 my-[3px]"></div>
-                                        <div className="absolute w-[1px] h-full bg-black/30 mx-[3px]"></div>
+                                    {/* Live Indicator */}
+                                    <div className="flex items-center gap-2 px-2 py-1 bg-black/40 rounded border border-white/10 backdrop-blur-sm">
+                                        <div className="w-2 h-2 rounded-full bg-[#e33e33] animate-ping"></div>
+                                        <div className="w-2 h-2 rounded-full bg-[#e33e33] absolute"></div>
+                                        <span className="text-[8px] md:text-[10px] font-mono text-[#e33e33] font-bold tracking-widest">PRE-MARKET</span>
                                     </div>
-                                    <div className="flex flex-col">
-                                        <span className="text-white/80 text-[10px] md:text-xs tracking-[0.2em] font-bold">ACCESS PASS</span>
-                                        <span className="text-[#e33e33] text-xs md:text-sm font-bold tracking-widest">VIP TIER</span>
-                                    </div>
-                                </div>
-                                <img src={zorphixLogo} alt="Logo" className="w-10 h-10 md:w-12 md:h-12 opacity-80" />
-                            </div>
-
-                            {/* Card Body - Countdown */}
-                            <div className="flex-1 flex items-center justify-center my-2">
-                                <div className="flex gap-4 md:gap-6 text-center">
-                                    <div>
-                                        <div className="text-3xl md:text-4xl font-bold text-white font-mono">{String(timeLeft.days).padStart(2, '0')}</div>
-                                        <div className="text-[10px] md:text-[10px] text-[#97b85d] tracking-widest mt-1">DAYS</div>
-                                    </div>
-                                    <div className="text-3xl md:text-4xl font-bold text-white/30">:</div>
-                                    <div>
-                                        <div className="text-3xl md:text-4xl font-bold text-white font-mono">{String(timeLeft.hours).padStart(2, '0')}</div>
-                                        <div className="text-[10px] md:text-[10px] text-[#97b85d] tracking-widest mt-1">HRS</div>
-                                    </div>
-                                    <div className="text-3xl md:text-4xl font-bold text-white/30">:</div>
-                                    <div>
-                                        <div className="text-3xl md:text-4xl font-bold text-white font-mono">{String(timeLeft.minutes).padStart(2, '0')}</div>
-                                        <div className="text-[10px] md:text-[10px] text-[#97b85d] tracking-widest mt-1">MIN</div>
-                                    </div>
-                                    <div className="text-3xl md:text-4xl font-bold text-white/30">:</div>
-                                    <div>
-                                        <div className="text-3xl md:text-4xl font-bold text-white font-mono">{String(timeLeft.seconds).padStart(2, '0')}</div>
-                                        <div className="text-[10px] md:text-[10px] text-[#97b85d] tracking-widest mt-1">SEC</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Card Footer */}
-                            <div className="flex justify-between items-end mt-auto">
-                                <div className="font-mono text-white/60 text-xs md:text-sm tracking-widest">
-                                    **** **** **** 2026
                                 </div>
                                 <div className="text-right">
-                                    <div className="text-[8px] md:text-[10px] text-gray-400">HOLDER</div>
-                                    <div className="text-white text-xs md:text-sm font-bold tracking-wider">SYMPOSIUM ATTENDEE</div>
+                                    <div className="text-[8px] md:text-[10px] text-gray-500 font-mono">SESSION ID</div>
+                                    <div className="text-white/80 text-[10px] md:text-xs font-mono tracking-widest">ZP-26-TRD-X</div>
+                                </div>
+                            </div>
+
+                            {/* Main Content: Countdown Ticker */}
+                            <div className="flex-1 flex flex-col items-center justify-center my-2 relative z-10">
+                                <span className="text-[10px] md:text-xs text-[#97b85d] tracking-[0.3em] uppercase mb-2 font-bold animate-pulse">Market Opens In</span>
+                                <div className="flex gap-2 md:gap-4 text-center">
+                                    <TickerUnit value={timeLeft.days} label="DAYS" />
+                                    <div className="text-2xl md:text-4xl font-bold text-white/20 self-start mt-1">:</div>
+                                    <TickerUnit value={timeLeft.hours} label="HRS" />
+                                    <div className="text-2xl md:text-4xl font-bold text-white/20 self-start mt-1">:</div>
+                                    <TickerUnit value={timeLeft.minutes} label="MIN" />
+                                    <div className="text-2xl md:text-4xl font-bold text-white/20 self-start mt-1">:</div>
+                                    <TickerUnit value={timeLeft.seconds} label="SEC" highlight />
+                                </div>
+                            </div>
+
+                            {/* Card Footer: Financial Data */}
+                            <div className="flex justify-between items-end mt-auto relative z-10 border-t border-white/5 pt-3">
+                                <div className="flex flex-col">
+                                    <span className="text-[8px] text-gray-500 font-mono uppercase">Volume</span>
+                                    <span className="text-[10px] md:text-xs text-white font-mono">24.5M <span className="text-[#97b85d]">▲</span></span>
+                                </div>
+                                <div className="flex flex-col items-end">
+                                    <span className="text-[8px] text-gray-500 font-mono uppercase">Volatility</span>
+                                    <span className="text-[10px] md:text-xs text-[#e33e33] font-mono">HIGH</span>
                                 </div>
                             </div>
                         </div>
@@ -175,3 +178,12 @@ const Hero = () => {
 };
 
 export default Hero;
+
+const TickerUnit = ({ value, label, highlight = false }) => (
+    <div className="flex flex-col items-center group">
+        <div className={`text-3xl md:text-5xl font-bold font-mono transition-colors duration-300 ${highlight ? 'text-[#e33e33]' : 'text-white group-hover:text-[#97b85d]'}`}>
+            {String(value).padStart(2, '0')}
+        </div>
+        <div className="text-[8px] md:text-[10px] text-gray-500 tracking-widest mt-1 uppercase">{label}</div>
+    </div>
+);
