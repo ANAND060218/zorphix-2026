@@ -124,9 +124,12 @@ const EventsShowcase = () => {
                                         }}
                                     ></div>
 
-                                    {/* Icon */}
-                                    <div className="mb-4 relative z-10">
+                                    {/* Icon and Asset Badge */}
+                                    <div className="flex justify-between items-start mb-4 relative z-10">
                                         <Icon className="w-16 h-16" style={{ color: category.color }} />
+                                        <div className="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] font-mono text-gray-400 uppercase tracking-widest">
+                                            ASSET CLASS: {category.id.toUpperCase()}
+                                        </div>
                                     </div>
 
                                     {/* Count */}
@@ -140,8 +143,15 @@ const EventsShowcase = () => {
                                     </div>
 
                                     {/* Description */}
-                                    <div className="text-gray-400 text-sm leading-relaxed relative z-10">
+                                    <div className="text-gray-400 text-sm leading-relaxed relative z-10 mb-4">
                                         {category.description}
+                                    </div>
+
+                                    {/* Market Data Footer */}
+                                    <div className="flex items-center gap-4 text-[10px] font-mono text-gray-600 border-t border-white/5 pt-3 mt-auto">
+                                        <span>ROI: <span className="text-[#97b85d]">High</span></span>
+                                        <span>RISK: <span className="text-[#97b85d]">Low</span></span>
+                                        <span className="ml-auto opacity-50">TRD-VOL-24H</span>
                                     </div>
                                 </div>
                             </div>

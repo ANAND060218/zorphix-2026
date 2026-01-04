@@ -130,18 +130,6 @@ const Hero = () => {
                                     <TickerUnit value={timeLeft.seconds} label="SEC" highlight />
                                 </div>
                             </div>
-
-                            {/* Card Footer: Financial Data */}
-                            <div className="flex justify-between items-end mt-auto relative z-10 border-t border-white/5 pt-3">
-                                <div className="flex flex-col">
-                                    <span className="text-[8px] text-gray-500 font-mono uppercase">Volume</span>
-                                    <span className="text-[10px] md:text-xs text-white font-mono">24.5M <span className="text-[#97b85d]">▲</span></span>
-                                </div>
-                                <div className="flex flex-col items-end">
-                                    <span className="text-[8px] text-gray-500 font-mono uppercase">Volatility</span>
-                                    <span className="text-[10px] md:text-xs text-[#e33e33] font-mono">HIGH</span>
-                                </div>
-                            </div>
                         </div>
 
                         {/* Card Back (Reflection/Depth) */}
