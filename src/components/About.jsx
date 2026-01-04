@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import CurrencyBackground from './CurrencyBackground';
+import CoinBackground from './CoinBackground';
+import zorphixName from '../assets/zorphix.png';
 
 const About = () => {
     const [tickerTime, setTickerTime] = useState(new Date());
@@ -34,7 +36,9 @@ const About = () => {
     return (
         <div className="relative min-h-screen bg-[#0a0a0a] text-white font-sans overflow-x-hidden selection:bg-[#97b85d] selection:text-black">
 
+            {/* Background Layers */}
             <CurrencyBackground />
+            <CoinBackground />
 
             {/* Subtle Grid Overlay */}
             <div className="fixed inset-0 pointer-events-none z-0 opacity-20" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '60px 60px' }}></div>
@@ -59,9 +63,13 @@ const About = () => {
                             <div className="w-2 h-2 bg-[#97b85d] rounded-full animate-pulse"></div>
                             <span className="text-[#97b85d] text-sm font-medium tracking-widest">STATUS: PRE-REGISTRATION</span>
                         </div>
-                        <h1 className="text-6xl md:text-8xl font-bold tracking-tight leading-none text-white">
+                        <h1 className="text-6xl md:text-8xl font-bold tracking-tight leading-none text-white flex flex-col items-start gap-2">
                             ABOUT <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">ZORPHIX</span>
+                            <img
+                                src={zorphixName}
+                                alt="ZORPHIX"
+                                className="h-16 md:h-24 w-auto object-contain opacity-90 filter brightness-110 mt-2"
+                            />
                         </h1>
                         <p className="text-xl text-gray-400 max-w-xl leading-relaxed">
                             A cutting-edge technical symposium where innovation meets execution. We are building the infrastructure for the next generation of tech leaders.
