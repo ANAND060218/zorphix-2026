@@ -76,6 +76,27 @@ const EventModal = ({ isOpen, onClose, event }) => {
                                 </div>
 
                                 <div>
+                                    <h3 className="text-[#e33e33] font-bold tracking-widest uppercase mb-3 text-sm">Event Heads</h3>
+                                    <p className="text-gray-300 font-mono text-sm">{event.heads}</p>
+                                </div>
+
+                                {event.rounds && (
+                                    <div>
+                                        <h3 className="text-[#97b85d] font-bold tracking-widest uppercase mb-3 text-sm">Rounds</h3>
+                                        <ul className="space-y-2">
+                                            {Array.isArray(event.rounds) ? event.rounds.map((round, index) => (
+                                                <li key={index} className="flex gap-3 text-sm text-gray-400">
+                                                    <span className="text-[#97b85d] font-mono mt-0.5">{`R${index + 1}`}</span>
+                                                    <span>{round}</span>
+                                                </li>
+                                            )) : (
+                                                <li className="text-sm text-gray-400">{event.rounds}</li>
+                                            )}
+                                        </ul>
+                                    </div>
+                                )}
+
+                                <div>
                                     <h3 className="text-[#e33e33] font-bold tracking-widest uppercase mb-3 text-sm">Rules & Guidelines</h3>
                                     <ul className="space-y-2">
                                         {event.rules && event.rules.map((rule, index) => (

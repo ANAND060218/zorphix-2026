@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaBolt, FaPalette, FaTools, FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaTrophy } from 'react-icons/fa';
+import {
+    FaCode,
+    FaTerminal,
+    FaLaptopCode,
+    FaUndo,
+    FaCoffee,
+    FaPuzzlePiece,
+    FaProjectDiagram,
+    FaBolt
+} from 'react-icons/fa';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
@@ -8,7 +17,6 @@ import { doc, getDoc } from 'firebase/firestore';
 import EventModal from './EventModal';
 
 const EventsPage = () => {
-    const [activeTab, setActiveTab] = useState('technical');
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [selectedEventsList, setSelectedEventsList] = useState(() => {
         try {
@@ -31,8 +39,8 @@ const EventsPage = () => {
                     if (docSnap.exists()) {
                         const data = docSnap.data();
                         if (data.events && Array.isArray(data.events)) {
-                            // Database has Mixed Case (e.g. "Code Wars"), mapped to Upper Case for local logic
-                            const dbEvents = data.events.map(e => e.toUpperCase());
+                            // Database has Mixed Case (e.g. "Pixel Reforge"), mapped to title for local logic
+                            const dbEvents = data.events;
 
                             // Update state
                             setRegisteredEventsList(dbEvents);
@@ -57,149 +65,164 @@ const EventsPage = () => {
 
     const handleAddeEvent = (event) => {
         // Prevent removing/toggling if already registered
-        if (registeredEventsList.includes(event.title)) return;
+        if (registeredEventsList.includes(event.name)) return;
 
         let updatedList;
-        // Check if event is already in list (case-insensitive check for robustness, though we prefer exact match based on strategy)
-        // We decided to store UPPERCASE. event.title is 'CODE WARS' (uppercase).
-        if (selectedEventsList.includes(event.title)) {
+        if (selectedEventsList.includes(event.name)) {
             // Remove
-            updatedList = selectedEventsList.filter(title => title !== event.title);
+            updatedList = selectedEventsList.filter(title => title !== event.name);
         } else {
             // Add
-            updatedList = [...selectedEventsList, event.title];
+            updatedList = [...selectedEventsList, event.name];
         }
         setSelectedEventsList(updatedList);
         localStorage.setItem('selectedEvents', JSON.stringify(updatedList));
     };
 
-    const categories = [
-        { id: 'technical', label: 'TECHNICAL', icon: FaBolt, color: '#e33e33' },
-        { id: 'non-technical', label: 'NON-TECHNICAL', icon: FaPalette, color: '#97b85d' },
-        { id: 'workshops', label: 'WORKSHOPS', icon: FaTools, color: '#ffa500' },
+    const technicalEvents = [
+        {
+            id: 'pixel-reforge',
+            name: 'Pixel Reforge',
+            subtitle: 'UI Revamp',
+            icon: FaCode, // Changed to Code/Palette related
+            color: '#e33e33',
+            desc: 'A two-stage UI engineering challenge that evaluates participants’ frontend fundamentals first, followed by real-world UI enhancement skills using AI as an accelerator.',
+            heads: 'S. Aishwarya, Mohanapriya D',
+            rounds: [
+                'Round 1 – Core UI Fundamentals (No AI)',
+                'Round 2 – Advanced UI Enhancement (AI Allowed)'
+            ],
+            rules: [
+                'Only shortlisted teams from Round 1 may participate',
+                'Time limit: 45 minutes',
+                'AI tools are allowed (ChatGPT, Copilot, design generators, etc.)',
+                'Teams must enhance the same UI from Round 1',
+                'Mandatory benchmark enhancements must be met'
+            ]
+        },
+        {
+            id: 'promptcraft',
+            name: 'PromptCraft',
+            subtitle: 'Promptopia',
+            icon: FaTerminal,
+            color: '#97b85d',
+            desc: 'A two-round prompt engineering challenge that tests how effectively teams can translate visual understanding into precise prompts.',
+            heads: 'Ashanthika Raja, Jyotsna S',
+            rounds: [
+                'Round 1 – Open Prompt Recreation (No Prompt Restrictions)',
+                'Round 2 – Constrained Prompt Engineering (With Restrictions)'
+            ],
+            rules: [
+                'Teams must bring their own laptops and internet access.',
+                'AI accounts and tools must be personally owned by participants.',
+                'Sharing prompts or outputs with other teams is prohibited.',
+                'Any form of plagiarism or copying prompts from other teams is prohibited.',
+                'Judges’ decision is final and binding.'
+            ]
+        },
+        {
+            id: 'algopulse',
+            name: 'AlgoPulse',
+            subtitle: 'Algo Rhythm',
+            icon: FaLaptopCode,
+            color: '#ffa500',
+            desc: 'A competitive algorithmic coding event designed to test logical thinking, problem-solving ability, and implementation skills under strict proctoring, with zero AI assistance.',
+            heads: 'Kiruthika M, Amirthavarshini H',
+            rounds: [
+                'Round 1 – Algorithmic Screening',
+                'Round 2 – Advanced Algorithm Challenge'
+            ],
+            rules: [
+                'Participants are recommended/preferred to bring their own laptops and chargers.',
+                'Computers will also be provided for participants if required.',
+                'Stable internet connectivity is mandatory.',
+                'One team member must be prepared to explain the solution if asked.',
+                'Judges’ decisions are final and binding.',
+                'Any form of misconduct leads to immediate disqualification.'
+            ]
+        },
+        {
+            id: 'codeback',
+            name: 'CodeBack',
+            subtitle: 'Reverse Coding',
+            icon: FaUndo,
+            color: '#e33e33',
+            desc: 'A reverse-engineering coding challenge that tests participants’ ability to deduce hidden logic from outputs, reconstruct algorithms, and implement correct and efficient solutions.',
+            heads: 'Gayathri R, Subha Shree B',
+            rounds: [
+                'Round 1 – Logic Deduction & Reconstruction',
+                'Round 2 – Advanced Reverse Engineering'
+            ],
+            rules: [
+                'Participants are recommended/preferred to bring their own laptops and chargers.',
+                'Computers will also be provided for participants if required.',
+                'Participants must have an HackerRank account.',
+                'Judges’ decisions are final and binding.',
+                'Fair play is expected; teams should work independently.'
+            ]
+        },
+        {
+            id: 'sip-to-survive',
+            name: 'Sip to Survive',
+            subtitle: 'Mark Is Testing',
+            icon: FaCoffee,
+            color: '#97b85d',
+            desc: 'A fast-paced technical endurance challenge where teams solve continuous coding, debugging, and logic-based tasks while handling intentional distractions through timed beverage consumption.',
+            heads: 'Maneesh, Anand',
+            rounds: [
+                'Fast-paced technical endurance challenge',
+                'Continuous coding, debugging, and logic-based tasks'
+            ],
+            rules: [
+                'Teams must bring their own laptops and chargers.',
+                'Only tools explicitly allowed by organizers may be used.',
+                'Judges’ and organizers’ decisions are final and binding.',
+                'Any rule violation results in immediate disqualification.'
+            ]
+        },
+        {
+            id: 'codecrypt',
+            name: 'CodeCrypt',
+            subtitle: 'Snippet Clues',
+            icon: FaPuzzlePiece,
+            color: '#ffa500',
+            desc: 'A multi-round technical puzzle challenge where teams analyze code snippets to uncover hidden clues. Each round progressively increases in difficulty.',
+            heads: 'Manisha, Diya Akshita, Sangeetha B',
+            rounds: [
+                'Round 1 – Entry Level',
+                'Round 2 – Intermediate',
+                'Round 3 – Advanced'
+            ],
+            rules: [
+                'No AI tools allowed',
+                'No internet allowed',
+                'No collaboration with other teams',
+                'Teams must use only the provided code',
+                'Laptops and chargers required',
+                'Judges’ decisions are final'
+            ]
+        },
+        {
+            id: 'linklogic',
+            name: 'LinkLogic',
+            subtitle: 'Connections',
+            icon: FaProjectDiagram,
+            color: '#e33e33',
+            desc: 'A multi-round technical reasoning challenge where participants identify hidden relationships between technical terms, concepts, or code elements.',
+            heads: 'Muthaiah Pandi RP, Shreyas Manivannan, Joel Niruban Isaac',
+            rounds: [
+                'Round 1 – Basic Technical Connections',
+                'Round 2 – Intermediate Concept Mapping'
+            ],
+            rules: [
+                'Only teams clearing Round 1 advance.',
+                'Sets may include algorithms, data structures, APIs, error messages, or outputs.',
+                'Teams must explain how each element is connected, not just state the final answer.',
+                'Partial explanations may earn partial credit.',
+                'Time-based scoring applies.'
+            ]
+        }
     ];
-
-    const events = {
-        technical: [
-            {
-                id: 1, title: 'CODE WARS', date: 'March 15', venue: 'Main Lab', team: '2-3', prize: '₹15,000', price: '149', desc: 'The ultimate competitive coding battle. Solve complex algorithms and climb the leaderboard.',
-                rules: [
-                    'Participants must have a valid symposium ID.',
-                    'Use of ChatGPT or any AI tools is strictly prohibited.',
-                    'Teams must consist of 2-3 members.',
-                    'The decision of the judges is final.'
-                ]
-            },
-            {
-                id: 2, title: 'CYBER HEIST', date: 'March 16', venue: 'Security Lab', team: '4', prize: '₹10,000', price: '149', desc: 'A CTF challenge where you hack into secure systems to retrieve the flags.',
-                rules: [
-                    'Do not attack the game infrastructure.',
-                    'Flag sharing is strictly prohibited.',
-                    'Tools like Metasploit, Burp Suite, etc., are allowed.'
-                ]
-            },
-            {
-                id: 3, title: 'AI NEXUS', date: 'March 15', venue: 'Seminar Hall', team: '2', prize: '₹12,000', price: '149', desc: 'Build and showcase innovative AI models to solve real-world problems.',
-                rules: [
-                    'Model must be trained on open-source datasets.',
-                    'Plagiarism will lead to immediate disqualification.',
-                    'Presentation time is limited to 10 minutes.'
-                ]
-            },
-            {
-                id: 4, title: 'WEB WIZARDS', date: 'March 16', venue: 'Browsing Centre', team: '2-3', prize: '₹8,000', price: '149', desc: 'Design and deploy a stunning web application within a set timeframe.',
-                rules: [
-                    'No pre-made templates allowed.',
-                    'Code must be pushed to GitHub repository.',
-                    'Responsive design is a key evaluation metric.'
-                ]
-            },
-            {
-                id: 5, title: 'ROBO RUMBLE', date: 'March 15', venue: 'Open Ground', team: '4', prize: '₹20,000', price: '149', desc: 'Heavy metal mayhem. Build robots to destroy your opponents in the arena.',
-                rules: [
-                    'Robot weight must not exceed 15kg.',
-                    'No flamethrowers or explosives allowed.',
-                    'Wireless control is mandatory.'
-                ]
-            },
-            {
-                id: 6, title: 'CIRCUITRIX', date: 'March 16', venue: 'Hardware Lab', team: '2', prize: '₹7,000', price: '149', desc: 'Debug complex circuits and design efficient hardware solutions.',
-                rules: [
-                    'Components will be provided at the venue.',
-                    'Bring your own breadboard and multimeter if possible.',
-                    'Circuit must be functional to qualify.'
-                ]
-            },
-        ],
-        'non-technical': [
-            {
-                id: 7, title: 'LENS LEGENDS', date: 'March 15', venue: 'Campus wide', team: '1', prize: '₹5,000', price: '99', desc: 'Capture the essence of the symposium through your lens. Photography contest.',
-                rules: [
-                    'Photos must be taken during the symposium event.',
-                    'Basic editing is allowed, but manipulation is not.',
-                    'Submit raw files for verification.'
-                ]
-            },
-            {
-                id: 8, title: 'MEME MASTERS', date: 'Online', venue: 'Discord', team: '1', prize: '₹3,000', price: '99', desc: 'Create the most hilarious and relatable tech memes.',
-                rules: [
-                    'Content must be original and related to tech/college life.',
-                    'No offensive or political content.',
-                    'Memes must be submitted by 5 PM.'
-                ]
-            },
-            {
-                id: 9, title: 'GAMING ARENA', date: 'March 15-16', venue: 'Gaming Zone', team: '5', prize: '₹15,000', price: '99', desc: 'Valorant and BGMI tournaments. Dominate the server.',
-                rules: [
-                    'Bring your own peripherals (mouse, headphones).',
-                    'Toxic behavior will result in a ban.',
-                    'Matches will be spectated by moderators.'
-                ]
-            },
-            {
-                id: 10, title: 'TREASURE HUNT', date: 'March 16', venue: 'Campus wide', team: '3', prize: '₹6,000', price: '99', desc: 'Solve riddles and follow clues to find the hidden treasure.',
-                rules: [
-                    'Teams must stay together at all times.',
-                    'Do not damage college property.',
-                    'Time penalty for wrong guesses.'
-                ]
-            },
-            {
-                id: 11, title: 'QUIZ BOWL', date: 'March 15', venue: 'Auditorium', team: '2', prize: '₹4,000', price: '99', desc: 'Test your general knowledge and tech trivia skills.',
-                rules: [
-                    'No mobile phones allowed during the quiz.',
-                    'Questions range from tech, sci-fi to general knowledge.',
-                    'Buzzer round rules will be explained on spot.'
-                ]
-            },
-        ],
-        workshops: [
-            {
-                id: 12, title: 'ETHICAL HACKING', date: 'March 15', venue: 'Lab 1', team: 'Individual', prize: 'Certificate', price: '199', desc: 'Learn the fundamentals of cybersecurity and penetration testing.',
-                rules: [
-                    'Laptop is mandatory.',
-                    'Pre-install Kali Linux (VM or Dual boot).',
-                    'Do not attack college network.'
-                ]
-            },
-            {
-                id: 13, title: 'APP DEV', date: 'March 16', venue: 'Lab 2', team: 'Individual', prize: 'Certificate', price: '199', desc: 'Master Flutter and build cross-platform mobile applications.',
-                rules: [
-                    'Laptop with VS Code and Flutter SDK installed.',
-                    'Basic knowledge of programming is recommended.',
-                    'Certificate provided upon completion.'
-                ]
-            },
-            {
-                id: 14, title: 'BLOCKCHAIN', date: 'March 15', venue: 'Lab 3', team: 'Individual', prize: 'Certificate', price: '199', desc: 'Understand the decentralized web and build your first DApp.',
-                rules: [
-                    'Laptop required.',
-                    'Node.js and Metamask wallet must be installed.',
-                    'Introduction to Solidity and Smart Contracts.'
-                ]
-            },
-        ]
-    };
 
     return (
         <div className="min-h-screen text-white font-mono relative overflow-x-hidden">
@@ -220,34 +243,9 @@ const EventsPage = () => {
                     </h1>
                     <div className="h-1 w-32 mx-auto bg-gradient-to-r from-[#e33e33] via-[#97b85d] to-[#e33e33]"></div>
                     <p className="mt-4 text-gray-400 max-w-2xl mx-auto text-sm md:text-base">
-                        Explore our lineup of competitions and workshops designed to challenge your skills and ignite your passion.
+                        Explore our lineup of cutting-edge technical challenges designed to test your skills at Zorphix '26
                     </p>
                 </motion.div>
-
-                {/* Tabs */}
-                <div className="flex flex-nowrap overflow-x-auto justify-start md:justify-center gap-4 mb-16 pb-4 px-4 custom-scrollbar">
-                    {categories.map((cat) => (
-                        <button
-                            key={cat.id}
-                            onClick={() => setActiveTab(cat.id)}
-                            className={`flex-shrink-0 relative px-6 py-3 md:px-8 md:py-4 clip-path-polygon transition-all duration-300 group overflow-hidden ${activeTab === cat.id
-                                ? 'text-black font-bold'
-                                : 'text-gray-400 hover:text-white bg-black/50 border border-white/10'
-                                }`}
-                            style={{
-                                backgroundColor: activeTab === cat.id ? cat.color : 'transparent',
-                                borderColor: activeTab === cat.id ? cat.color : '',
-                            }}
-                        >
-                            <span className="relative z-10 flex items-center gap-2 tracking-widest text-xs md:text-sm whitespace-nowrap">
-                                <cat.icon className="text-lg" /> {cat.label}
-                            </span>
-                            {activeTab !== cat.id && (
-                                <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                            )}
-                        </button>
-                    ))}
-                </div>
 
                 {/* Events Grid */}
                 <motion.div
@@ -255,26 +253,25 @@ const EventsPage = () => {
                     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
                 >
                     <AnimatePresence mode="popLayout">
-                        {events[activeTab].map((event) => (
+                        {technicalEvents.map((event, index) => (
                             <motion.div
                                 key={event.id}
                                 layout
                                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.9, y: -20 }}
-                                transition={{ duration: 0.3 }}
+                                transition={{ duration: 0.3, delay: index * 0.1 }}
                                 className="group relative"
                             >
                                 {/* Card Background - Massive Realistic Metal Card */}
-                                <div className={`relative w-full aspect-[1.58/1] bg-gradient-to-br from-[#1c1c1c] via-[#0d0d0d] to-[#000] rounded-2xl overflow-hidden shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] flex flex-col transition-all duration-500 transform group-hover:scale-[1.05] group-hover:-translate-y-2 ${registeredEventsList.includes(event.title)
+                                <div className={`relative w-full aspect-[1.58/1] bg-gradient-to-br from-[#1c1c1c] via-[#0d0d0d] to-[#000] rounded-2xl overflow-hidden shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] flex flex-col transition-all duration-500 transform group-hover:scale-[1.05] group-hover:-translate-y-2 ${registeredEventsList.includes(event.name)
                                     ? 'border-2 border-blue-500/50 shadow-[0_0_30px_rgba(59,130,246,0.2)] grayscale-[0.3]'
-                                    : selectedEventsList.includes(event.title)
+                                    : selectedEventsList.includes(event.name)
                                         ? 'border-2 border-[#97b85d] shadow-[0_0_30px_rgba(151,184,93,0.3)]'
                                         : 'border border-white/5 group-hover:shadow-[0_20px_50px_rgba(227,62,51,0.15)]'
                                     }`}>
 
                                     {/* Registered Watermark */}
-                                    {registeredEventsList.includes(event.title) && (
+                                    {registeredEventsList.includes(event.name) && (
                                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none rotate-[-30deg]">
                                             <span className="text-6xl md:text-8xl font-black text-blue-500/10 tracking-widest border-4 border-blue-500/10 px-8 py-2 rounded-xl">
                                                 REGISTERED
@@ -289,32 +286,29 @@ const EventsPage = () => {
                                     {/* Holographic Sheen */}
                                     <div className="absolute -inset-[200%] bg-gradient-to-r from-transparent via-white/10 to-transparent rotate-[25deg] translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-[1.5s] ease-in-out pointer-events-none blur-sm"></div>
 
-                                    {/* World Map Pattern (Subtle) */}
-                                    <div className="absolute inset-0 opacity-[0.07] bg-[url('https://upload.wikimedia.org/wikipedia/commons/8/87/World_map_blank_gmt.svg')] bg-cover bg-center mix-blend-overlay"></div>
-
                                     {/* Card Content */}
                                     <div className="p-5 md:p-7 flex-1 flex flex-col justify-between relative z-10 h-full">
 
                                         {/* Top Header */}
                                         <div className="flex justify-between items-start">
                                             <div className="flex items-center gap-3">
-                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center shadow-inner border border-white/10 ${registeredEventsList.includes(event.title)
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center shadow-inner border border-white/10 ${registeredEventsList.includes(event.name)
                                                     ? 'bg-gradient-to-br from-blue-600 to-blue-900'
-                                                    : selectedEventsList.includes(event.title)
+                                                    : selectedEventsList.includes(event.name)
                                                         ? 'bg-gradient-to-br from-[#97b85d] to-[#4a5c2d]'
                                                         : 'bg-gradient-to-br from-[#e33e33] to-[#800000]'
                                                     }`}>
-                                                    <FaBolt className="text-white text-xs" />
+                                                    <event.icon className="text-white text-xs" />
                                                 </div>
                                                 <div className="flex flex-col">
                                                     <span className="text-xs font-bold tracking-[0.25em] text-gray-300 uppercase font-mono text-shadow-sm leading-none">ZORPHIX BANK</span>
-                                                    <span className={`text-[6px] tracking-[0.2em] uppercase font-mono mt-1 ${registeredEventsList.includes(event.title)
+                                                    <span className={`text-[6px] tracking-[0.2em] uppercase font-mono mt-1 ${registeredEventsList.includes(event.name)
                                                         ? 'text-blue-400'
-                                                        : selectedEventsList.includes(event.title)
+                                                        : selectedEventsList.includes(event.name)
                                                             ? 'text-[#97b85d]'
                                                             : 'text-[#e33e33]'
                                                         }`}>
-                                                        {registeredEventsList.includes(event.title) ? 'REGISTERED MEMBER' : 'WORLD ELITE'}
+                                                        {registeredEventsList.includes(event.name) ? 'REGISTERED MEMBER' : 'WORLD ELITE'}
                                                     </span>
                                                 </div>
                                             </div>
@@ -343,7 +337,7 @@ const EventsPage = () => {
                                             </div>
 
                                             <h3 className="text-xl md:text-2xl lg:text-3xl font-mono text-transparent bg-clip-text bg-gradient-to-b from-white via-gray-200 to-gray-400 tracking-[0.15em] uppercase truncate drop-shadow-[2px_4px_6px_rgba(0,0,0,0.8)] filter shadow-inner font-bold" style={{ textShadow: '-1px -1px 0 rgba(255,255,255,0.1), 2px 2px 4px rgba(0,0,0,0.8)' }}>
-                                                {event.title}
+                                                {event.name}
                                             </h3>
 
                                             <div className="flex gap-4 mt-2 mb-4">
@@ -360,7 +354,7 @@ const EventsPage = () => {
                                                 </div>
                                                 <div>
                                                     <span className="block text-[5px] md:text-[6px] text-gray-400 uppercase tracking-widest mb-0.5">VALID THRU</span>
-                                                    <span className="text-xs md:text-sm text-white font-mono tracking-wider">{event.date}</span>
+                                                    <span className="text-xs md:text-sm text-white font-mono tracking-wider">03/26</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -371,13 +365,11 @@ const EventsPage = () => {
                                                 <div className="w-6 h-4 bg-white/10 rounded-sm flex items-center justify-center border border-white/5">
                                                     <span className="text-[6px] text-white/50 font-bold">VIP</span>
                                                 </div>
-                                                <div className="text-[10px] md:text-xs text-gray-300 font-mono uppercase tracking-wider">{event.venue}</div>
+                                                <div className="text-[10px] md:text-xs text-gray-300 font-mono uppercase tracking-wider">{event.subtitle}</div>
                                             </div>
 
                                             <div className="text-right flex items-center gap-3">
                                                 <div className="text-white/30 font-bold italic text-lg md:text-xl tracking-tighter">VISA</div>
-                                                <div className="h-6 w-[1px] bg-white/10"></div>
-                                                <div className="text-lg md:text-2xl font-bold text-[#e33e33] font-mono tracking-widest drop-shadow-lg">₹{event.price}</div>
                                             </div>
                                         </div>
 
@@ -394,39 +386,35 @@ const EventsPage = () => {
                                     </button>
                                     <button
                                         onClick={() => handleAddeEvent(event)}
-                                        disabled={registeredEventsList.includes(event.title)}
-                                        className={`flex-1 py-3 rounded-lg border font-mono text-xs font-bold uppercase tracking-widest transition-all duration-300 ${registeredEventsList.includes(event.title)
+                                        disabled={registeredEventsList.includes(event.name)}
+                                        className={`flex-1 py-3 rounded-lg border font-mono text-xs font-bold uppercase tracking-widest transition-all duration-300 ${registeredEventsList.includes(event.name)
                                             ? 'bg-gradient-to-r from-gray-800 to-gray-900 border-gray-600 text-gray-400 shadow-none cursor-not-allowed opacity-80'
-                                            : selectedEventsList.includes(event.title)
+                                            : selectedEventsList.includes(event.name)
                                                 ? 'bg-[#97b85d] text-black border-[#97b85d] shadow-[0_0_10px_rgba(151,184,93,0.2)]'
                                                 : 'bg-[#1a1a1a] border-[#97b85d] text-[#97b85d] hover:bg-[#97b85d] hover:text-black shadow-[0_0_10px_rgba(151,184,93,0.2)] hover:shadow-[0_0_20px_rgba(151,184,93,0.6)]'
                                             }`}>
-                                        {registeredEventsList.includes(event.title)
+                                        {registeredEventsList.includes(event.name)
                                             ? 'REGISTERED'
-                                            : selectedEventsList.includes(event.title) ? 'ADDED' : 'ADD'}
+                                            : selectedEventsList.includes(event.name) ? 'ADDED' : 'ADD'}
                                     </button>
                                 </div>
                             </motion.div>
                         ))}
                     </AnimatePresence>
                 </motion.div>
-            </div >
+            </div>
 
             {/* Scrolling decorative text */}
-            < div className="fixed -right-20 top-1/2 -translate-y-1/2 rotate-90 opacity-10 pointer-events-none hidden lg:block" >
+            <div className="fixed -right-20 top-1/2 -translate-y-1/2 rotate-90 opacity-10 pointer-events-none hidden lg:block">
                 <span className="text-9xl font-bold text-transparent stroke-text-white tracking-widest">
                     SYMPOSIUM '26
                 </span>
-            </div >
+            </div>
 
             <style jsx>{`
-                .clip-path-polygon {
-                    clip-path: polygon(10% 0, 100% 0, 100% 80%, 90% 100%, 0 100%, 0 20%);
-                }
                 .stroke-text-white {
                     -webkit-text-stroke: 2px rgba(255,255,255,0.2);
                 }
-                /* Glitch effect keys would go here or in global css */
                 
                 .custom-scrollbar::-webkit-scrollbar {
                     width: 6px;
@@ -449,7 +437,7 @@ const EventsPage = () => {
                 onClose={() => setSelectedEvent(null)}
                 event={selectedEvent}
             />
-        </div >
+        </div>
     );
 };
 

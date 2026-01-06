@@ -10,12 +10,16 @@ import { FaGoogle, FaUserTie, FaUniversity, FaBuilding, FaPhone, FaCheckCircle, 
 const Register = () => {
     // Defined properly at the top or outside to be accessible
     const eventOptions = [
-        { name: 'Code Wars', type: 'tech', price: 149 },
-        { name: 'Cyber Heist', type: 'tech', price: 149 },
-        { name: 'AI Nexus', type: 'tech', price: 149 },
-        { name: 'Web Wizards', type: 'tech', price: 149 },
-        { name: 'Robo Rumble', type: 'tech', price: 149 },
-        { name: 'Circuitrix', type: 'tech', price: 149 },
+        // Technical Events (from EventsPage.jsx)
+        { name: 'Pixel Reforge', type: 'tech', price: 149 },
+        { name: 'PromptCraft', type: 'tech', price: 149 },
+        { name: 'AlgoPulse', type: 'tech', price: 149 },
+        { name: 'CodeBack', type: 'tech', price: 149 },
+        { name: 'Sip to Survive', type: 'tech', price: 149 },
+        { name: 'CodeCrypt', type: 'tech', price: 149 },
+        { name: 'LinkLogic', type: 'tech', price: 149 },
+
+        // Keeping existing Non-Tech and Workshops for now
         { name: 'Lens Legends', type: 'non-tech', price: 99 },
         { name: 'Meme Masters', type: 'non-tech', price: 99 },
         { name: 'Gaming Arena', type: 'non-tech', price: 99 },
@@ -125,9 +129,8 @@ const Register = () => {
         setFormData({ ...formData, events: newEvents });
 
         // Sync with localStorage
-        // Convert to UPPERCASE to match EventsPage format
-        const storedEvents = newEvents.map(name => name.toUpperCase());
-        localStorage.setItem('selectedEvents', JSON.stringify(storedEvents));
+        // Save exact names to match EventsPage format (Mixed Case)
+        localStorage.setItem('selectedEvents', JSON.stringify(newEvents));
     };
 
     const handleSubmit = async (e) => {
