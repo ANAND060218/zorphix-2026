@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { auth, googleProvider, db } from '../firebase';
 import { signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
-import { FaGoogle, FaUserTie, FaUniversity, FaBuilding, FaPhone, FaCheckCircle, FaChartLine, FaBriefcase, FaWallet, FaHandshake, FaTicketAlt } from 'react-icons/fa';
+import { FaGoogle, FaUserTie, FaUniversity, FaBuilding, FaPhone, FaCheckCircle, FaChartLine, FaBriefcase, FaWallet, FaHandshake, FaTicketAlt, FaDownload } from 'react-icons/fa';
+import * as htmlToImage from 'html-to-image';
 
 
 const Register = () => {
@@ -102,6 +103,34 @@ const Register = () => {
     const [submitted, setSubmitted] = useState(false);
     const [showTicket, setShowTicket] = useState(false);
     const [alreadyRegistered, setAlreadyRegistered] = useState([]);
+
+    const ticketRef = useRef(null);
+
+    const handleDownloadTicket = async () => {
+        if (!ticketRef.current) return;
+        try {
+            // Hide action buttons temporarily
+            const actionsEl = ticketRef.current.querySelector('.ticket-actions');
+            if (actionsEl) actionsEl.style.display = 'none';
+
+            const dataUrl = await htmlToImage.toPng(ticketRef.current, {
+                quality: 1,
+                pixelRatio: 2,
+                backgroundColor: '#111111'
+            });
+
+            // Restore actions
+            if (actionsEl) actionsEl.style.display = '';
+
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = `Zorphix26_Ticket_${user?.uid || 'user'}.png`;
+            link.click();
+        } catch (err) {
+            console.error("Failed to save ticket:", err);
+            alert("Could not save ticket image.");
+        }
+    };
 
     // Sync with localStorage on mount (in case of navigation without full reload)
     useEffect(() => {
@@ -339,7 +368,7 @@ const Register = () => {
                                 <div className="w-full max-w-5xl flex justify-end px-2">
                                     <button
                                         onClick={() => setShowTicket(true)}
-                                            className="px-6 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#222] border border-[#97b85d]/30 text-[#97b85d] font-mono text-xs uppercase tracking-widest hover:bg-[#97b85d] hover:text-[#e33e33] transition-all shadow-lg hover:shadow-[#97b85d]/20 flex items-center gap-2 rounded-full backdrop-blur-md"
+                                        className="px-6 py-3 bg-gradient-to-r from-[#1a1a1a] to-[#222] border border-[#97b85d]/30 text-[#97b85d] font-mono text-xs uppercase tracking-widest hover:bg-[#97b85d] hover:text-[#e33e33] transition-all shadow-lg hover:shadow-[#97b85d]/20 flex items-center gap-2 rounded-full backdrop-blur-md"
                                     >
                                         <FaTicketAlt /> Show My Ticket
                                     </button>
@@ -359,7 +388,7 @@ const Register = () => {
                                             {/* Header */}
                                             <div className="bg-[#0f0f0f] p-8 border-b border-[#333] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                                                 <div className="flex items-center gap-4">
-                                                    <img src={user.photoURL} alt="Profile" className="w-16 h-16 rounded-full border-2 border-[#e33e33]" />
+                                                    <img src={user.photoURL} alt="Profile" crossOrigin="anonymous" className="w-16 h-16 rounded-full border-2 border-[#e33e33]" />
                                                     <div>
                                                         <h2 className="text-xl font-serif text-white flex items-center gap-2">
                                                             {user.displayName} <FaCheckCircle className="text-[#e33e33] text-sm" />
@@ -537,14 +566,15 @@ const Register = () => {
                                         key="success"
                                         initial={{ scale: 0.9, opacity: 0 }}
                                         animate={{ scale: 1, opacity: 1 }}
+                                        transition={{ type: "spring", stiffness: 260, damping: 20 }}
                                         className="w-full max-w-4xl"
                                     >
-                                        <div className="flex flex-col md:flex-row bg-[#111] rounded-3xl overflow-hidden shadow-[0_0_80px_rgba(227,62,51,0.15)] border border-[#333]">
+                                        <div ref={ticketRef} className="flex flex-col md:flex-row bg-[#111] rounded-3xl overflow-hidden shadow-[0_0_80px_rgba(227,62,51,0.15)] border border-[#333]">
                                             {/* Left Side: Ticket Details */}
                                             <div className="flex-1 p-8 md:p-12 relative overflow-hidden">
                                                 {/* Background Texture */}
                                                 <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay"></div>
-                                                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#e33e33]/10 to-transparent rounded-bl-full pointer-events-none"></div>
+                                                <div className="absolute top-0 right-0 w-64 h-64 rounded-bl-full pointer-events-none" style={{ background: 'linear-gradient(to bottom right, rgba(227,62,51,0.1), transparent)' }}></div>
 
                                                 <div className="relative z-10 flex flex-col h-full justify-between">
                                                     <div>
@@ -609,6 +639,7 @@ const Register = () => {
                                                     <img
                                                         src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${user.uid}`}
                                                         alt="Entry QR Code"
+                                                        crossOrigin="anonymous"
                                                         className="w-32 h-32 md:w-40 md:h-40"
                                                     />
                                                 </div>
@@ -617,15 +648,24 @@ const Register = () => {
                                                     {user.uid}
                                                 </p>
 
-                                                <button
-                                                    onClick={() => {
-                                                        setShowTicket(false);
-                                                        // Do not clear events; let useEffect sync persist
-                                                    }}
-                                                    className="w-full py-3 bg-[#111] text-white font-bold uppercase tracking-widest text-xs hover:bg-[#e33e33] transition-colors"
-                                                >
-                                                    Register More Events
-                                                </button>
+                                                <div className="ticket-actions w-full">
+                                                    <button
+                                                        onClick={handleDownloadTicket}
+                                                        className="w-full py-3 mb-3 bg-[#e33e33] text-white font-bold uppercase tracking-widest text-xs hover:bg-[#c62828] transition-colors flex items-center justify-center gap-2"
+                                                    >
+                                                        <FaDownload /> Save Ticket
+                                                    </button>
+
+                                                    <button
+                                                        onClick={() => {
+                                                            setShowTicket(false);
+                                                            // Do not clear events; let useEffect sync persist
+                                                        }}
+                                                        className="w-full py-3 bg-[#111] text-white font-bold uppercase tracking-widest text-xs hover:bg-[#333] transition-colors border border-[#333]"
+                                                    >
+                                                        Register More Events
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </motion.div>
@@ -636,7 +676,7 @@ const Register = () => {
                 </AnimatePresence>
             </div>
 
-            <style jsx>{`
+            <style>{`
                 @keyframes float-up {
                     0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
                     10% { opacity: 0.8; }
