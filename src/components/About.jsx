@@ -199,7 +199,7 @@ const About = () => {
                             Initialize Registration
                         </Link>
                         <Link to="/" className="px-8 py-4 border border-white/20 text-white font-bold rounded hover:bg-white/10 transition-colors text-lg">
-                            View Prospectus
+                            Go To Home
                         </Link>
                     </div>
                 </div>

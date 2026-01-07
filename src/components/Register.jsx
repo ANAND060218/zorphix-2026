@@ -311,7 +311,7 @@ const Register = () => {
 
             {/* Floating Currency Symbols */}
 
-            <div className="relative z-10 container mx-auto px-4 pt-32 pb-12 flex flex-col items-center justify-center min-h-screen">
+            <div className="relative z-10 container mx-auto px-2 pt-32 pb-12 flex flex-col items-center justify-center min-h-screen">
 
                 <AnimatePresence mode='wait'>
                     {!user ? (
@@ -384,178 +384,363 @@ const Register = () => {
                                         exit={{ scale: 0.95, opacity: 0 }}
                                         className="w-full max-w-5xl"
                                     >
-                                        <div className="bg-[#111] border border-[#e33e33]/30 rounded-lg shadow-2xl relative overflow-hidden">
-                                            {/* Header */}
-                                            <div className="bg-[#0f0f0f] p-8 border-b border-[#333] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                                <div className="flex items-center gap-4">
-                                                    <img src={user.photoURL} alt="Profile" crossOrigin="anonymous" className="w-16 h-16 rounded-full border-2 border-[#e33e33]" />
-                                                    <div>
-                                                        <h2 className="text-xl font-serif text-white flex items-center gap-2">
-                                                            {user.displayName} <FaCheckCircle className="text-[#e33e33] text-sm" />
-                                                        </h2>
-                                                        <p className="text-gray-500 font-mono text-xs tracking-wider">USER ID: {user.uid.slice(0, 8).toUpperCase()}</p>
-                                                    </div>
-                                                </div>
-                                                <div className="flex gap-4">
+                                        <div className="relative rounded-2xl overflow-hidden">
+                                            {/* Animated gradient background */}
+                                            <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a1a] via-[#111] to-[#0a0a0a] animate-gradient"></div>
+                                            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDMpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-40"></div>
 
-                                                    <div className="text-right">
-                                                        <p className="text-[10px] text-gray-500 uppercase tracking-wider">Status</p>
-                                                        <p className="text-xl text-[#97b85d] font-mono font-bold">VERIFIED</p>
-                                                    </div>
-                                                    <button onClick={handleSignOut} className="px-4 py-2 border border-[#e33e33] text-[#e33e33] text-xs uppercase tracking-widest hover:bg-[#e33e33] hover:text-black transition-colors">
-                                                        Sign Out
-                                                    </button>
-                                                </div>
-                                            </div>
+                                            {/* Glassmorphism border */}
+                                            <div className="absolute inset-0 rounded-2xl border border-white/10 backdrop-blur-xl"></div>
 
-                                            {/* Form Content */}
-                                            <div className="p-8 md:p-12 bg-[#080808]">
-                                                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-12 gap-12">
+                                            <div className="relative">
+                                                {/* Header with 3D effect */}
+                                                <motion.div
+                                                    initial={{ opacity: 0, y: -20 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    className="relative p-8 border-b border-white/5 bg-gradient-to-r from-[#0f0f0f]/80 via-[#111]/60 to-[#0f0f0f]/80 backdrop-blur-md"
+                                                >
+                                                    {/* Glow effect */}
+                                                    <div className="absolute inset-0 bg-gradient-to-r from-[#e33e33]/5 via-transparent to-[#97b85d]/5 blur-2xl"></div>
 
-                                                    {/* Left Column - Personal Details */}
-                                                    <div className="md:col-span-7 space-y-8">
-                                                        <div className="flex items-center gap-2 mb-6">
-                                                            <FaUserTie className="text-[#e33e33]" />
-                                                            <h3 className="text-sm text-gray-400 uppercase tracking-[0.2em] font-serif">Participant Details</h3>
-                                                        </div>
-
-                                                        <div className="space-y-6">
-                                                            <div className="relative group">
-                                                                <label className="text-[10px] text-[#e33e33] uppercase tracking-widest mb-1 block">College Name</label>
-                                                                <FaUniversity className="absolute left-0 bottom-3 text-gray-600 group-focus-within:text-white transition-colors" />
-                                                                <input
-                                                                    type="text"
-                                                                    name="college"
-                                                                    value={formData.college}
-                                                                    onChange={handleChange}
-                                                                    required
-                                                                    className="w-full bg-transparent border-b border-gray-700 py-2 pl-6 pr-4 text-white placeholder-gray-700 focus:outline-none focus:border-[#e33e33] transition-all font-serif"
-                                                                    placeholder="Enter College Name"
+                                                    <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                                                        <div className="flex items-center gap-5">
+                                                            {/* 3D Profile card */}
+                                                            <motion.div
+                                                                whileHover={{ scale: 1.05, rotateY: 5, rotateX: 5 }}
+                                                                style={{ transformStyle: 'preserve-3d' }}
+                                                                className="relative group"
+                                                            >
+                                                                <div className="absolute inset-0 bg-gradient-to-br from-[#e33e33]/20 to-[#97b85d]/20 rounded-full blur-xl group-hover:blur-2xl transition-all"></div>
+                                                                <img
+                                                                    src={user.photoURL}
+                                                                    alt="Profile"
+                                                                    crossOrigin="anonymous"
+                                                                    className="relative w-20 h-20 rounded-full border-2 border-[#e33e33]/50 shadow-[0_0_30px_rgba(227,62,51,0.3)] ring-4 ring-white/5"
                                                                 />
-                                                            </div>
-
-                                                            <div className="grid grid-cols-2 gap-6">
-                                                                <div className="relative group">
-                                                                    <label className="text-[10px] text-[#e33e33] uppercase tracking-widest mb-1 block">Department</label>
-                                                                    <FaBriefcase className="absolute left-0 bottom-3 text-gray-600 group-focus-within:text-white transition-colors" />
-                                                                    <input
-                                                                        type="text"
-                                                                        name="department"
-                                                                        value={formData.department}
-                                                                        onChange={handleChange}
-                                                                        required
-                                                                        className="w-full bg-transparent border-b border-gray-700 py-2 pl-6 pr-4 text-white placeholder-gray-700 focus:outline-none focus:border-[#e33e33] transition-all font-serif"
-                                                                        placeholder="Enter Department"
-                                                                    />
+                                                                {/* Verified badge */}
+                                                                <div className="absolute -bottom-1 -right-1 bg-[#e33e33] rounded-full p-1.5 border-2 border-[#111] shadow-lg">
+                                                                    <FaCheckCircle className="text-white text-xs" />
                                                                 </div>
-                                                                <div className="relative group">
-                                                                    <label className="text-[10px] text-[#e33e33] uppercase tracking-widest mb-1 block">Year of Study</label>
-                                                                    <select
-                                                                        name="year"
-                                                                        value={formData.year}
-                                                                        onChange={handleChange}
-                                                                        className="w-full bg-transparent border-b border-gray-700 py-2 px-2 text-white placeholder-gray-700 focus:outline-none focus:border-[#e33e33] transition-all font-serif appearance-none cursor-pointer"
-                                                                    >
-                                                                        <option value="1" className="bg-black">1st Year</option>
-                                                                        <option value="2" className="bg-black">2nd Year</option>
-                                                                        <option value="3" className="bg-black">3rd Year</option>
-                                                                        <option value="4" className="bg-black">4th Year</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
+                                                            </motion.div>
 
-                                                            <div className="relative group">
-                                                                <label className="text-[10px] text-[#e33e33] uppercase tracking-widest mb-1 block">Phone Number</label>
-                                                                <FaPhone className="absolute left-0 bottom-3 text-gray-600 group-focus-within:text-white transition-colors" />
-                                                                <input
-                                                                    type="tel"
-                                                                    name="phone"
-                                                                    value={formData.phone}
-                                                                    onChange={handleChange}
-                                                                    required
-                                                                    className="w-full bg-transparent border-b border-gray-700 py-2 pl-6 pr-4 text-white placeholder-gray-700 focus:outline-none focus:border-[#e33e33] transition-all font-serif"
-                                                                    placeholder="Contact Number"
-                                                                />
+                                                            <div className="space-y-1">
+                                                                <h2 className="text-2xl font-bold bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent flex items-center gap-2">
+                                                                    {user.displayName}
+                                                                </h2>
+                                                                <p className="text-gray-500 font-mono text-xs tracking-[0.2em] flex items-center gap-2">
+                                                                    <span className="inline-block w-2 h-2 bg-[#97b85d] rounded-full animate-pulse"></span>
+                                                                    ID: {user.uid.slice(0, 8).toUpperCase()}
+                                                                </p>
                                                             </div>
+                                                        </div>
+
+                                                        <div className="flex items-center gap-4">
+                                                            {/* Status badge */}
+                                                            <motion.div
+                                                                initial={{ scale: 0 }}
+                                                                animate={{ scale: 1 }}
+                                                                transition={{ delay: 0.2, type: "spring" }}
+                                                                className="px-4 py-2 rounded-full bg-gradient-to-r from-[#97b85d]/10 to-[#97b85d]/5 border border-[#97b85d]/30 backdrop-blur-sm"
+                                                            >
+                                                                <div className="flex items-center gap-2">
+                                                                    <span className="relative flex h-2 w-2">
+                                                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#97b85d] opacity-75"></span>
+                                                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-[#97b85d]"></span>
+                                                                    </span>
+                                                                    <span className="text-[#97b85d] font-mono text-xs font-bold tracking-wider">VERIFIED</span>
+                                                                </div>
+                                                            </motion.div>
+
+                                                            {/* Sign out button */}
+                                                            <motion.button
+                                                                whileHover={{ scale: 1.05 }}
+                                                                whileTap={{ scale: 0.95 }}
+                                                                onClick={handleSignOut}
+                                                                className="group relative px-5 py-2.5 bg-gradient-to-r from-[#e33e33]/10 to-[#e33e33]/5 border border-[#e33e33]/30 text-[#e33e33] text-xs uppercase tracking-widest rounded-lg overflow-hidden transition-all hover:shadow-[0_0_20px_rgba(227,62,51,0.3)]"
+                                                            >
+                                                                <span className="relative z-10 font-bold">Sign Out</span>
+                                                                <div className="absolute inset-0 bg-gradient-to-r from-[#e33e33]/0 via-[#e33e33]/10 to-[#e33e33]/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500"></div>
+                                                            </motion.button>
                                                         </div>
                                                     </div>
+                                                </motion.div>
 
-                                                    {/* Right Column - Asset Selection */}
-                                                    <div className="md:col-span-5 bg-[#111] p-6 rounded border border-[#333]">
-                                                        <div className="flex items-center gap-2 mb-6">
-                                                            <FaWallet className="text-[#97b85d]" />
-                                                            <h3 className="text-sm text-gray-400 uppercase tracking-[0.2em] font-serif">Select Events</h3>
-                                                        </div>
+                                                {/* Form Content */}
+                                                <div className="px-3 py-6 md:p-12 bg-[#080808]">
+                                                    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-12 gap-12">
 
-                                                        <div className="space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar">
-                                                            {eventOptions.map(event => {
-                                                                const isRegistered = alreadyRegistered.includes(event.name);
-                                                                const isSelected = formData.events.includes(event.name);
-
-                                                                return (
-                                                                    <label key={event.name} className={`flex items-center justify-between p-3 border rounded transition-all ${isRegistered
-                                                                        ? 'border-gray-800 bg-gray-900/50 cursor-not-allowed opacity-50 grayscale'
-                                                                        : isSelected
-                                                                            ? 'border-[#97b85d] bg-[#97b85d]/10 cursor-pointer'
-                                                                            : 'border-[#333] hover:border-gray-500 cursor-pointer'
-                                                                        }`}>
-                                                                        <div className="flex flex-col">
-                                                                            <span className={`text-sm font-mono uppercase ${isRegistered ? 'text-gray-500 line-through' : isSelected ? 'text-white' : 'text-gray-500'
-                                                                                }`}>
-                                                                                {event.name} {isRegistered && '(DONE)'}
-                                                                            </span>
-                                                                            <span className="text-sm text-[#e33e33] mt-1">₹{event.price}</span>
-                                                                        </div>
-
-                                                                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${isRegistered
-                                                                            ? 'border-gray-700 bg-gray-800'
-                                                                            : isSelected
-                                                                                ? 'border-[#97b85d] bg-[#97b85d]'
-                                                                                : 'border-gray-600'
-                                                                            }`}>
-                                                                            {(isSelected || isRegistered) && <FaCheckCircle className={`${isRegistered ? 'text-gray-500' : 'text-black'} text-[10px]`} />}
-                                                                        </div>
-                                                                        <input
-                                                                            type="checkbox"
-                                                                            value={event.name}
-                                                                            checked={isSelected || isRegistered}
-                                                                            onChange={handleEventChange}
-                                                                            disabled={isRegistered}
-                                                                            className="hidden"
-                                                                        />
-                                                                    </label>
-                                                                )
-                                                            })}
-                                                        </div>
-
-                                                        <div className="mt-6 pt-6 border-t border-[#333] flex flex-col gap-3">
-                                                            <div className="flex justify-between items-center text-xs">
-                                                                <span className="text-gray-500 uppercase tracking-wider">Total Events</span>
-                                                                <span className="text-white font-mono">{paymentSummary.count} EVENTS</span>
-                                                            </div>
-                                                            <div className="flex justify-between items-center text-xs">
-                                                                <span className="text-gray-500 uppercase tracking-wider">Total Value</span>
-                                                                <span className="text-gray-300 font-mono">₹{paymentSummary.total}</span>
-                                                            </div>
-                                                            <div className="flex justify-between items-center text-xs">
-                                                                <span className="text-gray-500 uppercase tracking-wider">Already Paid</span>
-                                                                <span className="text-green-500 font-mono">- ₹{paymentSummary.paid}</span>
-                                                            </div>
-                                                            <div className="my-1 border-t border-dashed border-[#333]"></div>
-                                                            <div className="flex justify-between items-center text-sm bg-[#1a1a1a] p-2 rounded border border-[#333]">
-                                                                <span className="text-[#e33e33] uppercase tracking-wider font-bold">Need to Pay</span>
-                                                                <span className="text-[#e33e33] font-mono font-bold text-lg">₹{paymentSummary.toPay}</span>
-                                                            </div>
-                                                        </div>
-
-                                                        <button
-                                                            type="submit"
-                                                            className="w-full mt-6 py-4 bg-gradient-to-r from-[#e33e33] to-[#97b85d] hover:from-[#c2352b] hover:to-[#86a352] text-white font-bold uppercase tracking-[0.2em] rounded shadow-[0_5px_15px_rgba(227,62,51,0.3)] transition-all transform hover:-translate-y-1"
+                                                        {/* Left Column - Personal Details */}
+                                                        <motion.div
+                                                            initial={{ opacity: 0, x: -20 }}
+                                                            animate={{ opacity: 1, x: 0 }}
+                                                            className="md:col-span-7 space-y-8"
                                                         >
-                                                            Pay & Register
-                                                        </button>
-                                                    </div>
-                                                </form>
+                                                            <div className="flex items-center gap-3 mb-6">
+                                                                <div className="p-2 rounded-lg bg-gradient-to-br from-[#e33e33]/20 to-[#e33e33]/5 border border-[#e33e33]/20">
+                                                                    <FaUserTie className="text-[#e33e33] text-lg" />
+                                                                </div>
+                                                                <div>
+                                                                    <h3 className="text-sm text-white font-bold uppercase tracking-wider">Participant Details</h3>
+                                                                    <p className="text-[10px] text-gray-500">Complete your registration profile</p>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="space-y-8">
+                                                                {/* College Name */}
+                                                                <div className="relative group">
+                                                                    <label className="text-[10px] text-[#e33e33] uppercase tracking-widest mb-2 block font-bold">College Name</label>
+                                                                    <div className="relative">
+                                                                        <FaUniversity className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-600 group-focus-within:text-[#e33e33] transition-all z-10" />
+                                                                        <input
+                                                                            type="text"
+                                                                            name="college"
+                                                                            value={formData.college}
+                                                                            onChange={handleChange}
+                                                                            required
+                                                                            className="w-full bg-[#0a0a0a]/50 border border-white/5 rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-gray-700 focus:outline-none focus:border-[#e33e33]/50 focus:shadow-[0_0_10px_rgba(227,62,51,0.05)] transition-all font-mono backdrop-blur-sm"
+                                                                            placeholder="Enter College Name"
+                                                                        />
+                                                                    </div>
+                                                                </div>
+
+                                                                {/* Department & Year Grid */}
+                                                                <div className="grid grid-cols-2 gap-6">
+                                                                    <div className="relative group">
+                                                                        <label className="text-[10px] text-[#e33e33] uppercase tracking-widest mb-2 block font-bold">Department</label>
+                                                                        <div className="relative">
+                                                                            <FaBriefcase className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-600 group-focus-within:text-[#e33e33] transition-all z-10" />
+                                                                            <input
+                                                                                type="text"
+                                                                                name="department"
+                                                                                value={formData.department}
+                                                                                onChange={handleChange}
+                                                                                required
+                                                                                className="w-full bg-[#0a0a0a]/50 border border-white/5 rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-gray-700 focus:outline-none focus:border-[#e33e33]/50 focus:shadow-[0_0_10px_rgba(227,62,51,0.05)] transition-all font-mono backdrop-blur-sm"
+                                                                                placeholder="Department"
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="relative group">
+                                                                        <label className="text-[10px] text-[#e33e33] uppercase tracking-widest mb-2 block font-bold">Year of Study</label>
+                                                                        <div className="relative">
+                                                                            <FaChartLine className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-600 group-focus-within:text-[#e33e33] transition-all z-10" />
+                                                                            <select
+                                                                                name="year"
+                                                                                value={formData.year}
+                                                                                onChange={handleChange}
+                                                                                className="w-full bg-[#0a0a0a]/50 border border-white/5 rounded-xl py-3.5 pl-12 pr-4 text-white focus:outline-none focus:border-[#e33e33]/50 focus:shadow-[0_0_10px_rgba(227,62,51,0.05)] transition-all font-mono backdrop-blur-sm appearance-none cursor-pointer"
+                                                                            >
+                                                                                <option value="1" className="bg-black">1st Year</option>
+                                                                                <option value="2" className="bg-black">2nd Year</option>
+                                                                                <option value="3" className="bg-black">3rd Year</option>
+                                                                                <option value="4" className="bg-black">4th Year</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                {/* Phone Number */}
+                                                                <div className="relative group">
+                                                                    <label className="text-[10px] text-[#e33e33] uppercase tracking-widest mb-2 block font-bold">Phone Number</label>
+                                                                    <div className="relative">
+                                                                        <FaPhone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-600 group-focus-within:text-[#e33e33] transition-all z-10" />
+                                                                        <input
+                                                                            type="tel"
+                                                                            name="phone"
+                                                                            value={formData.phone}
+                                                                            onChange={handleChange}
+                                                                            required
+                                                                            className="w-full bg-[#0a0a0a]/50 border border-white/5 rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-gray-700 focus:outline-none focus:border-[#e33e33]/50 focus:shadow-[0_0_10px_rgba(227,62,51,0.05)] transition-all font-mono backdrop-blur-sm"
+                                                                            placeholder="Contact Number"
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Payment Summary */}
+                                                            <div className="mt-8 p-6 rounded-2xl bg-gradient-to-br from-[#1a1a1a]/80 to-[#111]/80 border border-white/5 backdrop-blur-sm">
+                                                                <div className="flex items-center gap-3 mb-4">
+                                                                    <div className="p-2 rounded-lg bg-gradient-to-br from-[#97b85d]/20 to-[#97b85d]/5 border border-[#97b85d]/20">
+                                                                        <FaWallet className="text-[#97b85d] text-lg" />
+                                                                    </div>
+                                                                    <div>
+                                                                        <h3 className="text-sm text-white font-bold uppercase tracking-wider">Payment Summary</h3>
+                                                                        <p className="text-[10px] text-gray-500">Your registration breakdown</p>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="space-y-3">
+                                                                    <div className="flex justify-between items-center text-xs">
+                                                                        <span className="text-gray-500 uppercase tracking-wider">Total Events</span>
+                                                                        <span className="text-white font-mono font-bold">{paymentSummary.count} EVENTS</span>
+                                                                    </div>
+                                                                    <div className="flex justify-between items-center text-xs">
+                                                                        <span className="text-gray-500 uppercase tracking-wider">Total Value</span>
+                                                                        <span className="text-gray-300 font-mono">₹{paymentSummary.total}</span>
+                                                                    </div>
+                                                                    <div className="flex justify-between items-center text-xs">
+                                                                        <span className="text-gray-500 uppercase tracking-wider">Already Paid</span>
+                                                                        <span className="text-green-500 font-mono">- ₹{paymentSummary.paid}</span>
+                                                                    </div>
+                                                                    <div className="my-2 border-t border-dashed border-white/10"></div>
+                                                                    <div className="flex justify-between items-center p-3 rounded-xl bg-gradient-to-r from-[#e33e33]/10 to-[#e33e33]/5 border border-[#e33e33]/30">
+                                                                        <span className="text-[#e33e33] uppercase tracking-wider font-bold text-sm">Amount to Pay</span>
+                                                                        <span className="text-[#e33e33] font-mono font-bold text-2xl">₹{paymentSummary.toPay}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </motion.div>
+
+                                                        {/* Right Column - Event Selection */}
+                                                        <motion.div
+                                                            initial={{ opacity: 0, x: 20 }}
+                                                            animate={{ opacity: 1, x: 0 }}
+                                                            transition={{ delay: 0.1 }}
+                                                            className="md:col-span-5 relative"
+                                                        >
+                                                            {/* Glassmorphism container */}
+                                                            <div className="relative py-6 px-2 rounded-2xl bg-gradient-to-br from-[#1a1a1a]/80 to-[#111]/80 border border-white/5 backdrop-blur-sm">
+                                                                {/* Header glow */}
+                                                                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-[#97b85d]/50 to-transparent"></div>
+
+                                                                <div className="flex items-center gap-3 mb-6">
+                                                                    <div className="p-2 rounded-lg bg-gradient-to-br from-[#97b85d]/20 to-[#97b85d]/5 border border-[#97b85d]/20">
+                                                                        <FaWallet className="text-[#97b85d] text-lg" />
+                                                                    </div>
+                                                                    <div>
+                                                                        <h3 className="text-sm text-white font-bold uppercase tracking-wider">Select Events</h3>
+                                                                        <p className="text-[10px] text-gray-500">Choose your competition tracks</p>
+                                                                    </div>
+                                                                </div>
+
+                                                                {/* Event grid */}
+                                                                <div className="space-y-3 max-h-[500px] overflow-y-auto custom-scrollbar pr-2">
+                                                                    {eventOptions.map((event, index) => {
+                                                                        const isRegistered = alreadyRegistered.includes(event.name);
+                                                                        const isSelected = formData.events.includes(event.name);
+
+                                                                        return (
+                                                                            <motion.label
+                                                                                key={event.name}
+                                                                                initial={{ opacity: 0, y: 10 }}
+                                                                                animate={{ opacity: 1, y: 0 }}
+                                                                                transition={{ delay: index * 0.05 }}
+                                                                                whileHover={!isRegistered ? { scale: 1.02, y: -2 } : {}}
+                                                                                whileTap={!isRegistered ? { scale: 0.98 } : {}}
+                                                                                className={`group relative block p-4 rounded-xl transition-all duration-300 ${isRegistered
+                                                                                    ? 'bg-gray-900/30 border border-gray-800/50 cursor-not-allowed opacity-40'
+                                                                                    : isSelected
+                                                                                        ? 'bg-gradient-to-br from-[#97b85d]/20 to-[#97b85d]/5 border border-[#97b85d]/40 shadow-[0_0_20px_rgba(151,184,93,0.1)] cursor-pointer'
+                                                                                        : 'bg-[#0a0a0a]/50 border border-white/5 hover:border-[#97b85d]/20 cursor-pointer hover:shadow-lg'
+                                                                                    }`}
+                                                                            >
+                                                                                {/* Selection glow effect */}
+                                                                                {isSelected && !isRegistered && (
+                                                                                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#97b85d]/0 via-[#97b85d]/10 to-[#97b85d]/0 animate-pulse"></div>
+                                                                                )}
+
+                                                                                <div className="relative flex items-center justify-between gap-3">
+                                                                                    <div className="flex-1">
+                                                                                        <div className="flex items-center gap-2 mb-1">
+                                                                                            <h4 className={`text-sm font-mono font-bold uppercase tracking-wide ${isRegistered
+                                                                                                ? 'text-gray-600 line-through'
+                                                                                                : isSelected
+                                                                                                    ? 'text-white'
+                                                                                                    : 'text-gray-400 group-hover:text-white'
+                                                                                                } transition-colors`}>
+                                                                                                {event.name}
+                                                                                            </h4>
+                                                                                            {isRegistered && (
+                                                                                                <span className="px-2 py-0.5 bg-gray-800 border border-gray-700 rounded text-[9px] text-gray-500 uppercase tracking-wider">
+                                                                                                    Registered
+                                                                                                </span>
+                                                                                            )}
+                                                                                        </div>
+
+                                                                                        {/* Price badge */}
+                                                                                        <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg ${isRegistered
+                                                                                            ? 'bg-gray-800/50 border border-gray-700/50'
+                                                                                            : isSelected
+                                                                                                ? 'bg-[#e33e33]/10 border border-[#e33e33]/30'
+                                                                                                : 'bg-[#0a0a0a] border border-white/5'
+                                                                                            }`}>
+                                                                                            <FaWallet className={`text-[10px] ${isRegistered ? 'text-gray-600' : 'text-[#e33e33]'
+                                                                                                }`} />
+                                                                                            <span className={`text-xs font-bold font-mono ${isRegistered ? 'text-gray-600' : 'text-[#e33e33]'
+                                                                                                }`}>
+                                                                                                ₹{event.price}
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                    {/* Checkbox indicator */}
+                                                                                    <motion.div
+                                                                                        animate={{
+                                                                                            scale: isSelected || isRegistered ? [1, 1.2, 1] : 1,
+                                                                                        }}
+                                                                                        transition={{ duration: 0.3 }}
+                                                                                        className={`relative flex items-center justify-center w-6 h-6 rounded-lg border-2 transition-all ${isRegistered
+                                                                                            ? 'border-gray-700 bg-gray-800'
+                                                                                            : isSelected
+                                                                                                ? 'border-[#97b85d] bg-[#97b85d] shadow-[0_0_10px_rgba(151,184,93,0.5)]'
+                                                                                                : 'border-gray-700 group-hover:border-[#97b85d]/50'
+                                                                                            }`}
+                                                                                    >
+                                                                                        {(isSelected || isRegistered) && (
+                                                                                            <motion.div
+                                                                                                initial={{ scale: 0, rotate: -180 }}
+                                                                                                animate={{ scale: 1, rotate: 0 }}
+                                                                                                transition={{ type: "spring", stiffness: 200 }}
+                                                                                            >
+                                                                                                <FaCheckCircle className={`${isRegistered ? 'text-gray-500' : 'text-black'
+                                                                                                    } text-sm`} />
+                                                                                            </motion.div>
+                                                                                        )}
+                                                                                    </motion.div>
+
+                                                                                    <input
+                                                                                        type="checkbox"
+                                                                                        value={event.name}
+                                                                                        checked={isSelected || isRegistered}
+                                                                                        onChange={handleEventChange}
+                                                                                        disabled={isRegistered}
+                                                                                        className="hidden"
+                                                                                    />
+                                                                                </div>
+                                                                            </motion.label>
+                                                                        );
+                                                                    })}
+                                                                </div>
+                                                            </div>
+                                                        </motion.div>
+
+                                                        {/* Premium Submit Button - Full Width Across Grid */}
+                                                        <motion.button
+                                                            type="submit"
+                                                            initial={{ opacity: 0, y: 20 }}
+                                                            animate={{ opacity: 1, y: 0 }}
+                                                            transition={{ delay: 0.3 }}
+                                                            whileHover={{ scale: 1.005, y: -4 }}
+                                                            whileTap={{ scale: 0.995 }}
+                                                            className="group relative w-full md:col-span-12 mt-10 py-5 rounded-2xl overflow-hidden font-bold uppercase tracking-wider text-white shadow-[0_30px_80px_rgba(227,62,51,0.6)] hover:shadow-[0_35px_90px_rgba(227,62,51,0.7)] transition-all"
+                                                        >
+                                                            {/* Animated gradient background */}
+                                                            <div className="absolute inset-0 bg-gradient-to-r from-[#e33e33] via-[#97b85d] to-[#e33e33] bg-[length:200%_100%] animate-gradient"></div>
+
+                                                            {/* Shine effect */}
+                                                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700 ease-in-out"></div>
+
+                                                            {/* Content */}
+                                                            <div className="relative z-10 flex items-center justify-center gap-3">
+                                                                <FaWallet className="text-xl" />
+                                                                <span className="text-lg">Pay & Register</span>
+                                                            </div>
+
+                                                            {/* Glow effect */}
+                                                            <div className="absolute inset-0 opacity-0 group-hover:opacity-50 transition-opacity blur-2xl bg-gradient-to-r from-[#e33e33] to-[#97b85d]"></div>
+                                                        </motion.button>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
                                     </motion.div>
@@ -672,9 +857,10 @@ const Register = () => {
                                 )}
                             </AnimatePresence>
                         </div>
-                    )}
-                </AnimatePresence>
-            </div>
+                    )
+                    }
+                </AnimatePresence >
+            </div >
 
             <style>{`
                 @keyframes float-up {
@@ -682,6 +868,11 @@ const Register = () => {
                     10% { opacity: 0.8; }
                     90% { opacity: 0.6; }
                     100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+                }
+                @keyframes gradient {
+                    0% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
+                    100% { background-position: 0% 50%; }
                 }
                 .currency-symbol {
                     position: absolute;
@@ -695,9 +886,16 @@ const Register = () => {
                 }
                 .custom-scrollbar::-webkit-scrollbar-thumb {
                     background: #333;
+                    border-radius: 10px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: rgba(0,0,0,0.2);
+                }
+                .animate-gradient {
+                    animation: gradient 8s ease infinite;
                 }
             `}</style>
-        </div>
+        </div >
     );
 };
 
