@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { auth, googleProvider, db } from '../firebase';
-import { signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
+import { signInWithPopup, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { FaGoogle, FaUserTie, FaUniversity, FaBuilding, FaPhone, FaCheckCircle, FaBriefcase, FaChartLine, FaSignOutAlt, FaWallet, FaCoins, FaDownload, FaPen } from 'react-icons/fa';
 import * as htmlToImage from 'html-to-image';
@@ -15,6 +15,10 @@ const Profile = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [authLoading, setAuthLoading] = useState(false);
+    const [isLoginMode, setIsLoginMode] = useState(true);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [isProfileComplete, setIsProfileComplete] = useState(false);
     const [registeredEventsList, setRegisteredEventsList] = useState([]);
     const ticketRef = useRef(null);
@@ -40,6 +44,7 @@ const Profile = () => {
                     if (docSnap.exists()) {
                         const data = docSnap.data();
                         setFormData({
+                            name: data.displayName || user.displayName || '',
                             college: data.college || '',
                             department: data.department || '',
                             year: data.year || '1',
@@ -67,16 +72,49 @@ const Profile = () => {
 
     const handleGoogleSignIn = async () => {
         try {
+            setAuthLoading(true);
             await signInWithPopup(auth, googleProvider);
+            toast.success('Signed in successfully!');
         } catch (error) {
             console.error("Error signing in with Google", error);
             toast.error(`Sign-In Failed: ${error.message}`);
+        } finally {
+            setAuthLoading(false);
+        }
+    };
+
+    const handleEmailAuth = async (e) => {
+        e.preventDefault();
+        setAuthLoading(true);
+        try {
+            if (isLoginMode) {
+                await signInWithEmailAndPassword(auth, email, password);
+                toast.success("Welcome back!");
+            } else {
+                await createUserWithEmailAndPassword(auth, email, password);
+                toast.success("Account created! Please complete your profile.");
+            }
+        } catch (error) {
+            console.error("Auth Error:", error);
+            let msg = `Authentication failed: ${error.message}`;
+
+            // Map Firebase error codes to user-friendly messages
+            if (error.code === 'auth/email-already-in-use') msg = "Email already in use. Please sign in.";
+            if (error.code === 'auth/wrong-password') msg = "Invalid password."; // Legacy
+            if (error.code === 'auth/user-not-found') msg = "No account found."; // Legacy
+            if (error.code === 'auth/invalid-credential') msg = "Incorrect email or password."; // New standard
+            if (error.code === 'auth/weak-password') msg = "Password should be at least 6 characters.";
+            if (error.code === 'auth/invalid-email') msg = "Please enter a valid email address.";
+
+            toast.error(msg);
+        } finally {
+            setAuthLoading(false);
         }
     };
 
     const handleSignOut = async () => {
         await signOut(auth);
-        setFormData({ college: '', department: '', year: '1', phone: '' });
+        setFormData({ name: '', college: '', department: '', year: '1', phone: '' });
         setRegisteredEventsList([]);
         setIsProfileComplete(false);
     };
@@ -90,10 +128,15 @@ const Profile = () => {
         if (!user) return;
 
         try {
+            // Update Auth Profile if name is provided (critical for Email/Pass users)
+            if (formData.name && user.displayName !== formData.name) {
+                await updateProfile(user, { displayName: formData.name });
+            }
+
             const userRef = doc(db, 'registrations', user.uid);
             await setDoc(userRef, {
                 uid: user.uid,
-                displayName: user.displayName,
+                displayName: formData.name || user.displayName,
                 email: user.email,
                 photoURL: user.photoURL,
                 ...formData,
@@ -176,38 +219,75 @@ const Profile = () => {
                             transition={{ type: "spring", stiffness: 100, damping: 20 }}
                             className="w-full max-w-2xl perspective-1000"
                         >
-                            <div className="bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] p-12 md:p-20 text-center relative shadow-[0_50px_100px_-20px_rgba(0,0,0,1)] overflow-hidden group">
+                            <div className="bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] p-8 md:p-12 text-center relative shadow-[0_50px_100px_-20px_rgba(0,0,0,1)] overflow-hidden group max-w-lg mx-auto">
                                 {/* Decor - Massive Glow */}
                                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-br from-[#e33e33]/5 via-transparent to-[#97b85d]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 rounded-full blur-3xl pointer-events-none"></div>
-                                <div className="absolute -top-[20%] -right-[20%] w-[50%] h-[50%] bg-[#e33e33] blur-[150px] opacity-[0.15]"></div>
 
-                                {/* Icon */}
-                                <div className="relative mb-12 transform group-hover:scale-105 transition-transform duration-500">
-                                    <div className="w-32 h-32 mx-auto bg-gradient-to-br from-[#e33e33] to-[#800000] rounded-[2rem] shadow-[0_20px_50px_rgba(227,62,51,0.3)] flex items-center justify-center relative z-10 border border-white/20">
-                                        <FaUserTie className="text-5xl text-white drop-shadow-md" />
-                                    </div>
-                                    <div className="absolute top-4 left-1/2 -translate-x-1/2 w-32 h-32 bg-[#e33e33] blur-2xl opacity-40 z-0"></div>
-                                </div>
-
-                                <h1 className="text-5xl md:text-7xl font-black text-white mb-6 tracking-tight uppercase" style={{ textShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
-                                    Access Portal
+                                <h1 className="text-3xl md:text-5xl font-black text-white mb-2 tracking-tight uppercase">
+                                    {isLoginMode ? 'Welcome Back' : 'Join the Grid'}
                                 </h1>
-                                <p className="text-gray-500 font-mono tracking-[0.3em] uppercase mb-16 text-sm">
-                                    /// Secure Authentication Required ///
+                                <p className="text-gray-500 font-mono tracking-widest uppercase mb-8 text-xs">
+                                    /// {isLoginMode ? 'Access Credentials Required' : 'New Identity Formation'} ///
                                 </p>
+
+                                <form onSubmit={handleEmailAuth} className="space-y-4 mb-8 text-left">
+                                    <div>
+                                        <label className="text-[10px] font-mono text-gray-500 uppercase tracking-widest pl-1">Email Address</label>
+                                        <input
+                                            type="email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            required
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white placeholder-white/20 focus:outline-none focus:border-[#e33e33] transition-colors mt-1"
+                                            placeholder="enter@email.com"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-[10px] font-mono text-gray-500 uppercase tracking-widest pl-1">Password</label>
+                                        <input
+                                            type="password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            required
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white placeholder-white/20 focus:outline-none focus:border-[#e33e33] transition-colors mt-1"
+                                            placeholder="••••••••"
+                                        />
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        disabled={authLoading}
+                                        className="w-full py-4 bg-[#e33e33] hover:bg-[#c62828] text-white font-bold uppercase tracking-widest rounded-xl transition-all shadow-[0_10px_30px_rgba(227,62,51,0.2)] hover:shadow-[0_20px_40px_rgba(227,62,51,0.4)] disabled:opacity-50 disabled:cursor-not-allowed mt-4"
+                                    >
+                                        {authLoading ? 'Processing...' : (isLoginMode ? 'Sign In' : 'Create Account')}
+                                    </button>
+                                </form>
+
+                                <div className="flex items-center gap-4 mb-8">
+                                    <div className="h-px bg-white/10 flex-1"></div>
+                                    <span className="text-gray-600 text-xs font-mono uppercase">Or Continue With</span>
+                                    <div className="h-px bg-white/10 flex-1"></div>
+                                </div>
 
                                 <button
                                     onClick={handleGoogleSignIn}
-                                    className="relative w-full py-6 bg-white hover:bg-gray-100 text-black font-black text-xl uppercase tracking-widest rounded-2xl transition-all duration-300 transform hover:-translate-y-2 hover:shadow-[0_20px_40px_-5px_rgba(255,255,255,0.3)] flex items-center justify-center gap-4 group overflow-hidden"
+                                    disabled={authLoading}
+                                    className="relative w-full py-4 bg-white hover:bg-gray-100 text-black font-bold uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-3 group overflow-hidden disabled:opacity-50"
                                 >
-                                    <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-gray-200/50 to-transparent -translate-x-full group-hover:animate-shimmer"></span>
-                                    <FaGoogle className="text-2xl" />
-                                    <span>Sign Initiate</span>
+                                    <FaGoogle className="text-lg" />
+                                    <span>Google Access</span>
                                 </button>
 
-                                <div className="mt-12 flex items-center justify-center gap-3 text-xs text-green-500 font-mono opacity-60">
-                                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                                    ENCRYPTED CONNECTION V.2.0.4
+                                <div className="mt-8 pt-6 border-t border-white/5">
+                                    <p className="text-gray-400 text-xs">
+                                        {isLoginMode ? "Don't have an account?" : "Already have an account?"}{" "}
+                                        <button
+                                            onClick={() => setIsLoginMode(!isLoginMode)}
+                                            className="text-[#e33e33] font-bold hover:underline uppercase tracking-wide ml-1"
+                                        >
+                                            {isLoginMode ? "Sign Up" : "Sign In"}
+                                        </button>
+                                    </p>
                                 </div>
                             </div>
                         </motion.div>
@@ -249,7 +329,7 @@ const Profile = () => {
                                             <div className="absolute inset-0 bg-gradient-to-br from-[#e33e33] to-[#97b85d] rounded-2xl blur-xl opacity-40 group-hover:opacity-60 transition-opacity duration-500"></div>
                                             <motion.img
                                                 whileHover={{ rotateY: 10, rotateX: -10 }}
-                                                src={user.photoURL}
+                                                src={user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName || 'User')}&background=e33e33&color=fff`}
                                                 alt="Profile"
                                                 className="relative w-24 h-24 md:w-28 md:h-28 rounded-2xl border-4 border-[#0d0d0d] shadow-2xl object-cover bg-[#1c1c1c] z-10"
                                             />
@@ -317,6 +397,23 @@ const Profile = () => {
 
                                                 <form onSubmit={handleSubmitProfile} className="space-y-6">
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
+                                                        {/* Name Input */}
+                                                        <div className="space-y-1 group md:col-span-2">
+                                                            <label className="text-[10px] font-mono text-gray-500 uppercase tracking-widest group-focus-within:text-[#e33e33] transition-colors">Full Name</label>
+                                                            <div className="relative">
+                                                                <input
+                                                                    type="text"
+                                                                    name="name"
+                                                                    value={formData.name}
+                                                                    onChange={handleChange}
+                                                                    required
+                                                                    className="w-full bg-white/5 border border-white/10 rounded-lg py-2 pl-3 pr-8 text-sm font-bold text-white placeholder-white/20 focus:outline-none focus:border-[#e33e33] focus:bg-white/10 transition-all"
+                                                                    placeholder="Enter your full name..."
+                                                                />
+                                                                <FaUserTie className="absolute right-3 top-1/2 -translate-y-1/2 text-white/20 text-sm group-focus-within:text-[#e33e33] transition-colors" />
+                                                            </div>
+                                                        </div>
+
                                                         {/* College Input */}
                                                         <div className="space-y-1 group">
                                                             <label className="text-[10px] font-mono text-gray-500 uppercase tracking-widest group-focus-within:text-[#e33e33] transition-colors">Institute Name</label>
