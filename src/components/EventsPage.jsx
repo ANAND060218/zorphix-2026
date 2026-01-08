@@ -21,6 +21,8 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, updateDoc, arrayUnion, setDoc } from 'firebase/firestore';
 
 import EventModal from './EventModal';
+import toast from 'react-hot-toast';
+import { technicalEvents, workshops, paperPresentation } from '../data/events';
 
 const EventsPage = () => {
     const navigate = useNavigate();
@@ -36,6 +38,7 @@ const EventsPage = () => {
         }
     });
     const [registeredEventsList, setRegisteredEventsList] = useState([]);
+
 
     useEffect(() => {
         // Listen for auth state changes to sync with DB if registered
@@ -82,17 +85,21 @@ const EventsPage = () => {
 
     const handleRegisterEvent = async (event) => {
         if (!auth.currentUser) {
-            alert("Please login to register for events!");
-            navigate('/profile');
+            toast.error("Please login to register for events!");
+            setTimeout(() => navigate('/profile'), 2000);
             return;
         }
 
         if (!isProfileComplete) {
-            alert("Please complete your profile first!");
-            navigate('/profile');
+            setAlertConfig({
+                isOpen: true,
+                type: 'warning',
+                message: 'Please complete your profile to access registration functions.'
+            });
+            setTimeout(() => navigate('/profile'), 2000);
             return;
         }
-        return;
+
 
         try {
             const userRef = doc(db, 'registrations', auth.currentUser.uid);
@@ -112,24 +119,24 @@ const EventsPage = () => {
 
             // Update local state immediately
             setRegisteredEventsList(prev => [...prev, event.name]);
-            alert(`Successfully registered for ${event.name}!`);
+            toast.success(`Successfully registered for ${event.name}!`);
 
         } catch (error) {
             console.error("Error registering for event:", error);
-            alert("Failed to register. Please try again.");
+            toast.error(`Failed to register for ${event.name}. Please try again.`);
         }
     };
 
     const handleAddeEvent = (event) => {
         if (!auth.currentUser) {
-            alert("Please login to add events!");
-            navigate('/profile');
+            toast.error("Please login to add events!");
+            setTimeout(() => navigate('/profile'), 2000);
             return;
         }
 
         if (!isProfileComplete) {
-            alert("Please complete your profile to add events!");
-            navigate('/profile');
+            toast.error("Please complete your profile to access registration functions.");
+            setTimeout(() => navigate('/profile'), 2000);
             return;
         }
         // Prevent removing/toggling if already registered
@@ -147,242 +154,66 @@ const EventsPage = () => {
         localStorage.setItem('selectedEvents', JSON.stringify(updatedList));
     };
 
-    const technicalEvents = [
-        {
-            id: 'pixel-reforge',
-            name: 'Pixel Reforge',
-            subtitle: 'UI Revamp',
-            icon: FaCode, // Changed to Code/Palette related
-            color: '#e33e33',
-            desc: 'A two-stage UI engineering challenge that evaluates participants’ frontend fundamentals first, followed by real-world UI enhancement skills using AI as an accelerator.',
-            heads: 'S. Aishwarya, Mohanapriya D',
-            rounds: [
-                'Round 1 – Core UI Fundamentals (No AI)',
-                'Round 2 – Advanced UI Enhancement (AI Allowed)'
-            ],
-            rules: [
-                'Only shortlisted teams from Round 1 may participate',
-                'Time limit: 45 minutes',
-                'AI tools are allowed (ChatGPT, Copilot, design generators, etc.)',
-                'Teams must enhance the same UI from Round 1',
-                'Mandatory benchmark enhancements must be met'
-            ],
-            price: 'FREE'
-        },
-        {
-            id: 'promptcraft',
-            name: 'PromptCraft',
-            subtitle: 'Promptopia',
-            icon: FaTerminal,
-            color: '#97b85d',
-            desc: 'A two-round prompt engineering challenge that tests how effectively teams can translate visual understanding into precise prompts.',
-            heads: 'Ashanthika Raja, Jyotsna S',
-            rounds: [
-                'Round 1 – Open Prompt Recreation (No Prompt Restrictions)',
-                'Round 2 – Constrained Prompt Engineering (With Restrictions)'
-            ],
-            rules: [
-                'Teams must bring their own laptops and internet access.',
-                'AI accounts and tools must be personally owned by participants.',
-                'Sharing prompts or outputs with other teams is prohibited.',
-                'Any form of plagiarism or copying prompts from other teams is prohibited.',
-                'Judges’ decision is final and binding.'
-            ],
-            price: 'FREE'
-        },
-        {
-            id: 'algopulse',
-            name: 'AlgoPulse',
-            subtitle: 'Algo Rhythm',
-            icon: FaLaptopCode,
-            color: '#ffa500',
-            desc: 'A competitive algorithmic coding event designed to test logical thinking, problem-solving ability, and implementation skills under strict proctoring, with zero AI assistance.',
-            heads: 'Kiruthika M, Amirthavarshini H',
-            rounds: [
-                'Round 1 – Algorithmic Screening',
-                'Round 2 – Advanced Algorithm Challenge'
-            ],
-            rules: [
-                'Participants are recommended/preferred to bring their own laptops and chargers.',
-                'Computers will also be provided for participants if required.',
-                'Stable internet connectivity is mandatory.',
-                'One team member must be prepared to explain the solution if asked.',
-                'Judges’ decisions are final and binding.',
-                'Any form of misconduct leads to immediate disqualification.'
-            ],
-            price: 'FREE'
-        },
-        {
-            id: 'codeback',
-            name: 'CodeBack',
-            subtitle: 'Reverse Coding',
-            icon: FaUndo,
-            color: '#e33e33',
-            desc: 'A reverse-engineering coding challenge that tests participants’ ability to deduce hidden logic from outputs, reconstruct algorithms, and implement correct and efficient solutions.',
-            heads: 'Gayathri R, Subha Shree B',
-            rounds: [
-                'Round 1 – Logic Deduction & Reconstruction',
-                'Round 2 – Advanced Reverse Engineering'
-            ],
-            rules: [
-                'Participants are recommended/preferred to bring their own laptops and chargers.',
-                'Computers will also be provided for participants if required.',
-                'Participants must have an HackerRank account.',
-                'Judges’ decisions are final and binding.',
-                'Fair play is expected; teams should work independently.'
-            ],
-            price: 'FREE'
-        },
-        {
-            id: 'sip-to-survive',
-            name: 'Sip to Survive',
-            subtitle: 'Mark Is Testing',
-            icon: FaCoffee,
-            color: '#97b85d',
-            desc: 'A fast-paced technical endurance challenge where teams solve continuous coding, debugging, and logic-based tasks while handling intentional distractions through timed beverage consumption.',
-            heads: 'Maneesh, Anand',
-            rounds: [
-                'Fast-paced technical endurance challenge',
-                'Continuous coding, debugging, and logic-based tasks'
-            ],
-            rules: [
-                'Teams must bring their own laptops and chargers.',
-                'Only tools explicitly allowed by organizers may be used.',
-                'Judges’ and organizers’ decisions are final and binding.',
-                'Any rule violation results in immediate disqualification.'
-            ],
-            price: 'FREE'
-        },
-        {
-            id: 'codecrypt',
-            name: 'CodeCrypt',
-            subtitle: 'Snippet Clues',
-            icon: FaPuzzlePiece,
-            color: '#ffa500',
-            desc: 'A multi-round technical puzzle challenge where teams analyze code snippets to uncover hidden clues. Each round progressively increases in difficulty.',
-            heads: 'Manisha, Diya Akshita, Sangeetha B',
-            rounds: [
-                'Round 1 – Entry Level',
-                'Round 2 – Intermediate',
-                'Round 3 – Advanced'
-            ],
-            rules: [
-                'No AI tools allowed',
-                'No internet allowed',
-                'No collaboration with other teams',
-                'Teams must use only the provided code',
-                'Laptops and chargers required',
-                'Judges’ decisions are final'
-            ],
-            price: 'FREE'
-        },
-        {
-            id: 'linklogic',
-            name: 'LinkLogic',
-            subtitle: 'Connections',
-            icon: FaProjectDiagram,
-            color: '#e33e33',
-            desc: 'A multi-round technical reasoning challenge where participants identify hidden relationships between technical terms, concepts, or code elements.',
-            heads: 'Muthaiah Pandi RP, Shreyas Manivannan, Joel Niruban Isaac',
-            rounds: [
-                'Round 1 – Basic Technical Connections',
-                'Round 2 – Intermediate Concept Mapping'
-            ],
-            rules: [
-                'Only teams clearing Round 1 advance.',
-                'Sets may include algorithms, data structures, APIs, error messages, or outputs.',
-                'Teams must explain how each element is connected, not just state the final answer.',
-                'Partial explanations may earn partial credit.',
-                'Time-based scoring applies.'
-            ],
-            price: 'FREE'
+    const handlePayment = async () => {
+        if (!auth.currentUser) {
+            toast.error("Please login to pay!");
+            return;
         }
-    ];
 
-    const paperPresentation = [
-        {
-            id: 'paper-presentation',
-            name: 'Paper Presentation',
-            subtitle: 'Innovation',
-            icon: FaCode,
-            color: '#ffa500',
-            desc: 'A platform to showcase innovative ideas and technical research. Participants present their papers on trending technologies.',
-            heads: 'To be announced',
-            rounds: [
-                'Round 1 – Abstract Submission',
-                'Round 2 – Final Presentation'
-            ],
-            rules: [
-                'Teams must submit abstract before deadline.',
-                'Presentation time limit: 7 minutes + 3 minutes Q&A.',
-                'Judges’ decision is final.'
-            ],
-            price: '₹149'
+        if (!isProfileComplete) {
+            toast.error("Please complete your profile before payment!");
+            navigate('/profile');
+            return;
         }
-    ];
 
-    const workshops = [
-        {
-            id: 'ai-workshop',
-            name: 'AI Workshop',
-            subtitle: 'AI Genesis',
-            icon: FaCode,
-            color: '#e33e33',
-            desc: 'Explore the foundations of Artificial Intelligence and Machine Learning. Hands-on session on building your first neural network.',
-            heads: 'Expert Speaker',
-            rounds: ['Hands-on Workshop'],
-            rules: ['Laptop required', 'Basic Python knowledge preferred'],
-            price: '₹99'
-        },
-        {
-            id: 'cloud-workshop',
-            name: 'Cloud Workshop',
-            subtitle: 'Cloud Horizon',
-            icon: FaTerminal,
-            color: '#97b85d',
-            desc: 'Master the cloud. Learn to deploy scalable applications using AWS/Azure services in this intensive workshop.',
-            heads: 'Cloud Architect',
-            rounds: ['Hands-on Workshop'],
-            rules: ['Laptop required', 'AWS Free Tier account needed'],
-            price: '₹99'
-        },
-        {
-            id: 'ethical-hacking',
-            name: 'Ethical Hacking',
-            subtitle: 'White Hat',
-            icon: FaLaptopCode,
-            color: '#ffa500',
-            desc: 'Dive into cybersecurity. Learn penetration testing, vulnerability assessment, and how to secure systems.',
-            heads: 'Cybersec Expert',
-            rounds: ['Hands-on Workshop'],
-            rules: ['Laptop required', 'Kali Linux VM preferred'],
-            price: '₹99'
-        },
-        {
-            id: 'app-dev',
-            name: 'App Dev',
-            subtitle: 'Mobile Mastery',
-            icon: FaCode,
-            color: '#e33e33',
-            desc: 'Build cross-platform mobile apps using Flutter/React Native. From zero to app store ready.',
-            heads: 'App Developer',
-            rounds: ['Hands-on Workshop'],
-            rules: ['Laptop required', 'VS Code installed'],
-            price: '₹99'
-        },
-        {
-            id: 'blockchain',
-            name: 'Blockchain',
-            subtitle: 'Decentralized',
-            icon: FaLink,
-            color: '#97b85d',
-            desc: 'Understand the future of web3. Smart contracts, DApps, and blockchain fundamentals.',
-            heads: 'Blockchain Dev',
-            rounds: ['Hands-on Workshop'],
-            rules: ['Laptop required', 'Metamask wallet'],
-            price: '₹99'
+        const amountToPay = calculateTotals().amountToPay;
+        if (amountToPay === 0) {
+            toast.error("No pending payment found!");
+            return;
         }
-    ];
+
+        const allEvents = [...technicalEvents, ...workshops, ...paperPresentation];
+        const eventsToRegister = allEvents
+            .filter(e => selectedEventsList.includes(e.name) && !registeredEventsList.includes(e.name))
+            .map(e => e.name);
+
+        if (eventsToRegister.length === 0) {
+            toast.error("No new events to register.");
+            return;
+        }
+
+        const toastId = toast.loading("Processing Payment...");
+
+        try {
+            const userRef = doc(db, 'registrations', auth.currentUser.uid);
+            const docSnap = await getDoc(userRef);
+
+            if (!docSnap.exists()) {
+                await setDoc(userRef, {
+                    events: eventsToRegister,
+                    email: auth.currentUser.email,
+                    userId: auth.currentUser.uid,
+                    // Initialize other fields possibly
+                });
+            } else {
+                await updateDoc(userRef, {
+                    events: arrayUnion(...eventsToRegister)
+                });
+            }
+
+            // Update local state
+            setRegisteredEventsList(prev => [...prev, ...eventsToRegister]);
+            setSelectedEventsList([]); // Clear cart
+            localStorage.setItem('selectedEvents', JSON.stringify([]));
+
+            toast.success("Payment Successful! Events Registered.", { id: toastId });
+        } catch (error) {
+            console.error("Payment Error:", error);
+            toast.error("Payment failed. Please try again.", { id: toastId });
+        }
+    };
+
+
 
     const getCartEvents = () => {
         const allEvents = [...technicalEvents, ...workshops, ...paperPresentation];
@@ -778,18 +609,7 @@ const EventsPage = () => {
                                             </div>
 
                                             <button
-                                                onClick={() => {
-                                                    if (!isProfileComplete) {
-                                                        alert("Please complete your profile before payment!");
-                                                        navigate('/profile');
-                                                        return;
-                                                    }
-                                                    if (calculateTotals().amountToPay === 0) {
-                                                        alert("No payment required!");
-                                                    } else {
-                                                        alert("Payment Gateway integration coming soon!");
-                                                    }
-                                                }}
+                                                onClick={handlePayment}
                                                 className="w-full py-4 bg-[#8dac57] text-white font-black tracking-widest uppercase rounded-xl hover:shadow-[0_0_30px_rgba(227,62,51,0.4)] transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-[0_10px_20px_-5px_rgba(227,62,51,0.3)]"
                                             >
                                                 PAY NOW
@@ -836,19 +656,8 @@ const EventsPage = () => {
                 isOpen={!!selectedEvent}
                 onClose={() => setSelectedEvent(null)}
                 event={selectedEvent}
-                isTechnical={selectedEvent && technicalEvents.some(e => e.id === selectedEvent.id)}
+                onRegister={handleRegisterEvent}
                 isRegistered={selectedEvent && registeredEventsList.includes(selectedEvent.name)}
-                isSelected={selectedEvent && selectedEventsList.includes(selectedEvent.name)}
-                onAction={() => {
-                    if (selectedEvent) {
-                        const isTechnical = technicalEvents.some(e => e.id === selectedEvent.id);
-                        if (isTechnical) {
-                            handleRegisterEvent(selectedEvent);
-                        } else {
-                            handleAddeEvent(selectedEvent);
-                        }
-                    }
-                }}
             />
         </div>
     );

@@ -4,16 +4,23 @@ import { useNavigate } from 'react-router-dom';
 import { auth, googleProvider, db } from '../firebase';
 import { signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
-import { FaGoogle, FaUserTie, FaUniversity, FaBuilding, FaPhone, FaCheckCircle, FaBriefcase, FaChartLine, FaSignOutAlt, FaWallet, FaCoins } from 'react-icons/fa';
-
+import { FaGoogle, FaUserTie, FaUniversity, FaBuilding, FaPhone, FaCheckCircle, FaBriefcase, FaChartLine, FaSignOutAlt, FaWallet, FaCoins, FaDownload } from 'react-icons/fa';
+import * as htmlToImage from 'html-to-image';
 import CoinBackground from './CoinBackground';
 import CurrencyBackground from './CurrencyBackground';
+import toast from 'react-hot-toast';
+import { technicalEvents, workshops, paperPresentation } from '../data/events';
 
 const Profile = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isProfileComplete, setIsProfileComplete] = useState(false);
+    const [registeredEventsList, setRegisteredEventsList] = useState([]);
+    const ticketRef = useRef(null);
+
+    // Combine all events for lookup
+    const allEvents = [...technicalEvents, ...workshops, ...paperPresentation];
 
     const [formData, setFormData] = useState({
         college: '',
@@ -21,6 +28,7 @@ const Profile = () => {
         year: '1',
         phone: ''
     });
+
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -37,6 +45,10 @@ const Profile = () => {
                             year: data.year || '1',
                             phone: data.phone || ''
                         });
+                        if (data.events && Array.isArray(data.events)) {
+                            setRegisteredEventsList(data.events);
+                        }
+
                         // Check if critical fields are present to consider profile "complete"
                         // Or check for a specific flag if we decide to use one.
                         // Using field presence for robustness.
@@ -58,13 +70,14 @@ const Profile = () => {
             await signInWithPopup(auth, googleProvider);
         } catch (error) {
             console.error("Error signing in with Google", error);
-            alert(`Sign-In Failed: ${error.message}`);
+            toast.error(`Sign-In Failed: ${error.message}`);
         }
     };
 
     const handleSignOut = async () => {
         await signOut(auth);
         setFormData({ college: '', department: '', year: '1', phone: '' });
+        setRegisteredEventsList([]);
         setIsProfileComplete(false);
     };
 
@@ -89,11 +102,45 @@ const Profile = () => {
             }, { merge: true }); // Merge to avoid overwriting existing events if any
 
             setIsProfileComplete(true);
-            alert("Profile Completed Successfully!");
+            toast.success('Profile Completed Successfully!');
         } catch (error) {
             console.error("Error saving profile:", error);
-            alert("Failed to save profile. Please try again.");
+            toast.error('Failed to save profile. Please try again.');
         }
+    };
+
+    const handleDownloadTicket = async () => {
+        if (!ticketRef.current) return;
+        try {
+            // Hide action buttons temporarily
+            const actionsEl = ticketRef.current.querySelector('.ticket-actions');
+            if (actionsEl) actionsEl.style.display = 'none';
+
+            const dataUrl = await htmlToImage.toPng(ticketRef.current, {
+                quality: 1,
+                pixelRatio: 2,
+                backgroundColor: '#111111'
+            });
+
+            // Restore actions
+            if (actionsEl) actionsEl.style.display = '';
+
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = `Zorphix26_Ticket_${user?.uid || 'user'}.png`;
+            link.click();
+            toast.success("Ticket downloaded successfully!");
+        } catch (err) {
+            console.error("Failed to save ticket:", err);
+            toast.error("Could not save ticket image.");
+        }
+    };
+
+    const calculateTotalPaid = () => {
+        return registeredEventsList.reduce((sum, eventName) => {
+            const event = allEvents.find(e => e.name === eventName);
+            return sum + (event?.price === 'FREE' ? 0 : parseInt(event?.price?.replace('₹', '') || 0));
+        }, 0);
     };
 
     if (loading) {
@@ -337,7 +384,7 @@ const Profile = () => {
                                                             type="submit"
                                                             className="w-full md:w-auto px-10 py-3 bg-white text-black font-black text-sm uppercase tracking-widest rounded-xl hover:bg-[#e33e33] hover:text-white transition-all duration-300 shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_-5px_rgba(227,62,51,0.6)] flex items-center justify-center gap-2"
                                                         >
-                                                            Initialize Profile <FaCheckCircle />
+                                                            Complete Profile <FaCheckCircle />
                                                         </button>
                                                     </div>
                                                 </form>
@@ -350,43 +397,150 @@ const Profile = () => {
                                             animate={{ opacity: 1 }}
                                             className="w-full max-w-4xl mx-auto"
                                         >
-                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                                                <div className="group p-4 rounded-2xl border border-white/5 bg-[#111] hover:bg-[#161616] transition-all relative overflow-hidden">
-                                                    <span className="block text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Institute</span>
-                                                    <span className="text-sm font-bold text-white block truncate" title={formData.college}>{formData.college}</span>
+                                            <>
+                                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                                                    <div className="group p-4 rounded-2xl border border-white/5 bg-[#111] hover:bg-[#161616] transition-all relative overflow-hidden">
+                                                        <span className="block text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Institute</span>
+                                                        <span className="text-sm font-bold text-white block truncate" title={formData.college}>{formData.college}</span>
+                                                    </div>
+
+                                                    <div className="group p-4 rounded-2xl border border-white/5 bg-[#111] hover:bg-[#161616] transition-all relative overflow-hidden">
+                                                        <span className="block text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Department</span>
+                                                        <span className="text-sm font-bold text-white block truncate" title={formData.department}>{formData.department}</span>
+                                                    </div>
+
+                                                    <div className="group p-4 rounded-2xl border border-white/5 bg-[#111] hover:bg-[#161616] transition-all relative overflow-hidden">
+                                                        <span className="block text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Year Level</span>
+                                                        <span className="text-sm font-bold text-white block">Year {formData.year}</span>
+                                                    </div>
+
+                                                    <div className="group p-4 rounded-2xl border border-white/5 bg-[#111] hover:bg-[#161616] transition-all relative overflow-hidden">
+                                                        <span className="block text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Contact</span>
+                                                        <span className="text-sm font-bold text-white block">{formData.phone}</span>
+                                                    </div>
                                                 </div>
 
-                                                <div className="group p-4 rounded-2xl border border-white/5 bg-[#111] hover:bg-[#161616] transition-all relative overflow-hidden">
-                                                    <span className="block text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Department</span>
-                                                    <span className="text-sm font-bold text-white block truncate" title={formData.department}>{formData.department}</span>
-                                                </div>
+                                                <div className="flex flex-col md:flex-row gap-4">
+                                                    <button
+                                                        onClick={() => navigate('/events')}
+                                                        className="flex-1 py-4 bg-white text-black font-black text-lg uppercase tracking-widest rounded-xl hover:bg-gray-100 transition-all shadow-[0_10px_30px_rgba(255,255,255,0.2)] hover:shadow-[0_20px_40px_rgba(255,255,255,0.3)] transform hover:-translate-y-1 relative overflow-hidden group"
+                                                    >
+                                                        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+                                                        Access Events Module
+                                                    </button>
 
-                                                <div className="group p-4 rounded-2xl border border-white/5 bg-[#111] hover:bg-[#161616] transition-all relative overflow-hidden">
-                                                    <span className="block text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Year Level</span>
-                                                    <span className="text-sm font-bold text-white block">Year {formData.year}</span>
-                                                </div>
 
-                                                <div className="group p-4 rounded-2xl border border-white/5 bg-[#111] hover:bg-[#161616] transition-all relative overflow-hidden">
-                                                    <span className="block text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Contact</span>
-                                                    <span className="text-sm font-bold text-white block">{formData.phone}</span>
-                                                </div>
-                                            </div>
 
-                                            <div className="flex flex-col md:flex-row gap-4">
-                                                <button
-                                                    onClick={() => navigate('/events')}
-                                                    className="flex-1 py-4 bg-white text-black font-black text-lg uppercase tracking-widest rounded-xl hover:bg-gray-100 transition-all shadow-[0_10px_30px_rgba(255,255,255,0.2)] hover:shadow-[0_20px_40px_rgba(255,255,255,0.3)] transform hover:-translate-y-1 relative overflow-hidden group"
+                                                    <button
+                                                        onClick={() => setIsProfileComplete(false)}
+                                                        className="px-6 py-4 border-2 border-white/10 hover:border-white/30 hover:bg-white/5 text-gray-400 hover:text-white rounded-xl font-mono font-bold uppercase text-xs tracking-widest transition-all"
+                                                    >
+                                                        Modify
+                                                    </button>
+                                                </div>
+                                            </>
+                                            {registeredEventsList.length > 0 && (
+                                                /* ================== TICKET VIEW ================== */
+                                                <motion.div
+                                                    initial={{ scale: 0.95, opacity: 0 }}
+                                                    animate={{ scale: 1, opacity: 1 }}
+                                                    className="w-full"
                                                 >
-                                                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
-                                                    Access Events Module
-                                                </button>
-                                                <button
-                                                    onClick={() => setIsProfileComplete(false)}
-                                                    className="px-6 py-4 border-2 border-white/10 hover:border-white/30 hover:bg-white/5 text-gray-400 hover:text-white rounded-xl font-mono font-bold uppercase text-xs tracking-widest transition-all"
-                                                >
-                                                    Modify
-                                                </button>
-                                            </div>
+                                                    <div className="mb-6 flex justify-between items-center">
+
+                                                        <h3 className="text-white font-bold uppercase tracking-widest text-sm">Official Entry Pass</h3>
+                                                    </div>
+
+                                                    <div ref={ticketRef} className="flex flex-col md:flex-row bg-[#111] rounded-3xl overflow-hidden shadow-[0_0_80px_rgba(227,62,51,0.15)] border border-[#333]">
+                                                        {/* Ticket Left Side */}
+                                                        <div className="flex-1 p-8 md:p-12 relative overflow-hidden">
+                                                            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay"></div>
+                                                            <div className="absolute top-0 right-0 w-64 h-64 rounded-bl-full pointer-events-none" style={{ background: 'linear-gradient(to bottom right, rgba(227,62,51,0.1), transparent)' }}></div>
+
+                                                            <div className="relative z-10 flex flex-col h-full justify-between gap-8">
+                                                                <div>
+                                                                    <div className="flex justify-between items-start mb-8">
+                                                                        <div>
+                                                                            <p className="text-[#e33e33] text-xs font-mono uppercase tracking-[0.3em] mb-2">Symposium Pass</p>
+                                                                            <h1 className="text-3xl md:text-5xl font-serif text-white tracking-wide">ZORPHIX '26</h1>
+                                                                        </div>
+                                                                        <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center bg-white/5">
+                                                                            <FaUserTie className="text-white/50" />
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div className="grid grid-cols-2 gap-8 mb-8">
+                                                                        <div>
+                                                                            <p className="text-gray-500 text-[10px] uppercase tracking-widest mb-1">Attendee</p>
+                                                                            <p className="text-white font-mono text-lg font-bold">{user.displayName}</p>
+                                                                        </div>
+                                                                        <div>
+                                                                            <p className="text-gray-500 text-[10px] uppercase tracking-widest mb-1">Pass ID</p>
+                                                                            <p className="text-[#97b85d] font-mono text-lg font-bold">#{user.uid.slice(0, 6).toUpperCase()}</p>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div>
+                                                                        <p className="text-gray-500 text-[10px] uppercase tracking-widest mb-3">Registered Events</p>
+                                                                        <div className="flex flex-wrap gap-2">
+                                                                            {registeredEventsList.map(event => (
+                                                                                <span key={event} className="px-3 py-1 bg-[#1a1a1a] border border-[#333] rounded text-[10px] md:text-xs text-gray-300 font-mono uppercase tracking-wider">
+                                                                                    {event}
+                                                                                </span>
+                                                                            ))}
+                                                                            {registeredEventsList.length === 0 && <span className="text-gray-600 text-xs italic">No events registered yet.</span>}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="flex justify-between items-end border-t border-[#333] pt-6">
+                                                                    <div>
+                                                                        <p className="text-gray-600 text-[9px] uppercase tracking-widest mb-1">Date</p>
+                                                                        <p className="text-gray-400 font-mono text-xs">March 15-16, 2026</p>
+                                                                    </div>
+                                                                    <div className="text-right">
+                                                                        <p className="text-gray-600 text-[9px] uppercase tracking-widest mb-1">Total Value</p>
+                                                                        <p className="text-white font-mono text-xl">₹{calculateTotalPaid()}</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Ticket Right Side (QR) */}
+                                                        <div className="md:w-80 bg-white relative flex flex-col items-center justify-center p-8 border-l-4 border-dashed border-[#111]">
+                                                            <div className="absolute top-[-10px] left-[-12px] w-6 h-6 bg-[#000] rounded-full"></div>
+                                                            <div className="absolute bottom-[-10px] left-[-12px] w-6 h-6 bg-[#000] rounded-full"></div>
+
+                                                            <div className="text-center mb-6">
+                                                                <p className="text-black font-bold uppercase tracking-[0.2em] text-xs mb-1">Scan for Entry</p>
+                                                                <p className="text-gray-400 text-[9px] uppercase tracking-widest">Admit One</p>
+                                                            </div>
+
+                                                            <div className="p-4 bg-white border-2 border-black rounded-lg mb-6 shadow-xl">
+                                                                <img
+                                                                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${user.uid}`}
+                                                                    alt="Entry QR Code"
+                                                                    crossOrigin="anonymous"
+                                                                    className="w-32 h-32 md:w-36 md:h-36"
+                                                                />
+                                                            </div>
+
+                                                            <p className="text-[10px] text-gray-400 font-mono text-center mb-8 break-all px-4">
+                                                                {user.uid}
+                                                            </p>
+
+                                                            <div className="ticket-actions w-full">
+                                                                <button
+                                                                    onClick={handleDownloadTicket}
+                                                                    className="w-full py-3 bg-[#e33e33] text-white font-bold uppercase tracking-widest text-xs hover:bg-[#c62828] transition-colors flex items-center justify-center gap-2 rounded-lg"
+                                                                >
+                                                                    <FaDownload /> Download Ticket
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </motion.div>
+                                            )}
                                         </motion.div>
                                     )}
                                 </div>
