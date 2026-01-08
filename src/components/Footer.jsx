@@ -54,9 +54,9 @@ const Footer = () => {
 
                     {/* 3. Socials Grid */}
                     <div className="col-span-1 md:col-span-2 lg:col-span-4 grid grid-cols-2 gap-4">
-                        <SocialCard icon={FaInstagram} label="Instagram" href="#" color="#E1306C" />
+                        <SocialCard icon={FaInstagram} label="Instagram" href="https://www.instagram.com/zorphix.cit/" color="#E1306C" />
                         <SocialCard icon={FaLinkedin} label="LinkedIn" href="#" color="#0077B5" />
-                        <SocialCard icon={FaGithub} label="GitHub" href="#" color="#ffffff" />
+                        <SocialCard icon={FaEnvelope} label="Email" href="mailto:zorphix@citchennai.net" color="#97b85d" />
                         <SocialCard icon={FaTwitter} label="Twitter" href="#" color="#1DA1F2" />
                     </div>
 

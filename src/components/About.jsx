@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import CurrencyBackground from './CurrencyBackground';
 import CoinBackground from './CoinBackground';
 import UniqueCarousel from './UniqueCarousel';
-import { FaArrowRight, FaCode, FaChartLine, FaGlobe, FaTwitter, FaGithub, FaLinkedin, FaBuilding, FaBrain, FaBalanceScale } from 'react-icons/fa';
+import { FaArrowRight, FaCode, FaChartLine, FaGlobe, FaTwitter, FaGithub, FaLinkedin, FaBuilding, FaBrain, FaBalanceScale, FaEnvelope, FaPhone } from 'react-icons/fa';
 import zorphixLogo from '../assets/zorphix-logo.png';
 import zorphixName from '../assets/zorphix.png';
 
@@ -15,10 +15,25 @@ const About = () => {
         offset: ["start start", "end end"]
     });
 
-    const timeline = [
-        { year: "2024", title: "Genesis", desc: "Inception of Zorphix." },
-        { year: "2025", title: "Fork", desc: "State-level expansion." },
-        { year: "2026", title: "Mainnet", desc: "Global interconnectivity." }
+    const coreMembers = [
+        {
+            name: "Member 1",
+            role: "Event Coordinator",
+            email: "xxx@example.com",
+            phone: "+91 XXXXX XXXXX"
+        },
+        {
+            name: "Member 2",
+            role: "Technical Lead",
+            email: "yyy@example.com",
+            phone: "+91 YYYYY YYYYY"
+        },
+        {
+            name: "Member 3",
+            role: "Marketing Head",
+            email: "zzz@example.com",
+            phone: "+91 ZZZZZ ZZZZZ"
+        }
     ];
 
     const team = [
@@ -154,20 +169,29 @@ const About = () => {
                 {/* TIMELINE & TEAM (Compact Strip) */}
                 <section className="px-6 md:px-12 lg:px-20 pb-20">
                     <div className="grid lg:grid-cols-2 gap-12">
-                        {/* Timeline */}
+                        {/* Core Members */}
                         <div className="bg-[#0a0a0a] border border-white/10 rounded-2xl p-8">
-                            <h3 className="text-sm font-mono text-gray-500 uppercase tracking-widest mb-6 border-b border-white/10 pb-4">Evolutionary Path</h3>
-                            <div className="space-y-6">
-                                {timeline.map((item, i) => (
-                                    <div key={i} className="flex gap-4 group">
-                                        <div className="flex flex-col items-center">
-                                            <div className="w-2 h-2 rounded-full bg-white/20 group-hover:bg-[#97b85d] transition-colors"></div>
-                                            {i !== timeline.length - 1 && <div className="w-px h-full bg-white/10 my-1"></div>}
-                                        </div>
-                                        <div>
-                                            <span className="text-xs font-mono text-[#97b85d]">{item.year}</span>
-                                            <h4 className="text-lg font-bold text-white group-hover:translate-x-1 transition-transform">{item.title}</h4>
-                                            <p className="text-sm text-gray-500">{item.desc}</p>
+                            <h3 className="text-sm font-mono text-gray-500 uppercase tracking-widest mb-6 border-b border-white/10 pb-4">Core Team Members</h3>
+                            <div className="space-y-4">
+                                {coreMembers.map((member, i) => (
+                                    <div key={i} className="group p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-all border border-white/5 hover:border-[#97b85d]/30">
+                                        <h4 className="text-lg font-bold text-white mb-1 group-hover:text-[#97b85d] transition-colors">{member.name}</h4>
+                                        <p className="text-xs font-mono text-gray-500 uppercase tracking-wider mb-3">{member.role}</p>
+                                        <div className="space-y-2">
+                                            <a
+                                                href={`mailto:${member.email}`}
+                                                className="flex items-center gap-2 text-sm text-gray-400 hover:text-[#97b85d] transition-colors group/link"
+                                            >
+                                                <FaEnvelope className="text-xs group-hover/link:scale-110 transition-transform" />
+                                                <span className="font-mono">{member.email}</span>
+                                            </a>
+                                            <a
+                                                href={`tel:${member.phone}`}
+                                                className="flex items-center gap-2 text-sm text-gray-400 hover:text-[#e33e33] transition-colors group/link"
+                                            >
+                                                <FaPhone className="text-xs group-hover/link:scale-110 transition-transform" />
+                                                <span className="font-mono">{member.phone}</span>
+                                            </a>
                                         </div>
                                     </div>
                                 ))}
@@ -177,7 +201,20 @@ const About = () => {
                         {/* CTA & Socials */}
                         <div className="flex flex-col gap-6">
                             <div className="bg-[#e33e33] rounded-2xl p-8 flex-1 flex flex-col justify-center items-center text-center relative overflow-hidden group">
-                                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+                                {/* Grain texture */}
+                                <div className="absolute inset-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay"></div>
+
+                                {/* Geometric pattern */}
+                                <div className="absolute inset-0 opacity-10">
+                                    <div className="absolute top-0 left-0 w-full h-full" style={{
+                                        backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.1) 10px, rgba(0,0,0,0.1) 20px),
+                                                         repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(0,0,0,0.1) 10px, rgba(0,0,0,0.1) 20px)`
+                                    }}></div>
+                                </div>
+
+                                {/* Animated gradient overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-transparent to-black/20 group-hover:from-black/10 group-hover:to-black/10 transition-all duration-500"></div>
+
                                 <h3 className="text-2xl font-black uppercase mb-4 relative z-10">Join The Future</h3>
                                 <Link to="/events" className="px-8 py-3 bg-white text-black font-bold uppercase tracking-widest rounded hover:scale-105 transition-transform relative z-10">
                                     Register Now
