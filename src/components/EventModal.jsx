@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaTimes, FaTrophy, FaCalendarAlt, FaMapMarkerAlt, FaUsers } from 'react-icons/fa';
 
-const EventModal = ({ isOpen, onClose, event }) => {
+const EventModal = ({ isOpen, onClose, event, isTechnical, isRegistered, isSelected, onAction }) => {
     if (!event) return null;
 
     return (
@@ -118,8 +118,18 @@ const EventModal = ({ isOpen, onClose, event }) => {
                             >
                                 Close
                             </button>
-                            <button className="px-6 py-2 rounded-lg text-sm font-mono uppercase tracking-widest bg-[#e33e33] text-white hover:bg-[#c22e24] shadow-[0_0_15px_rgba(227,62,51,0.3)] hover:shadow-[0_0_25px_rgba(227,62,51,0.5)] transition-all">
-                                Register Now
+                            <button
+                                onClick={onAction}
+                                disabled={isRegistered}
+                                className={`px-6 py-2 rounded-lg text-sm font-mono uppercase tracking-widest transition-all ${isRegistered
+                                        ? 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700'
+                                        : 'bg-[#e33e33] text-white hover:bg-[#c22e24] shadow-[0_0_15px_rgba(227,62,51,0.3)] hover:shadow-[0_0_25px_rgba(227,62,51,0.5)]'
+                                    }`}>
+                                {isRegistered
+                                    ? 'REGISTERED'
+                                    : isTechnical
+                                        ? 'REGISTER NOW'
+                                        : isSelected ? 'ADDED' : 'ADD TO CART'}
                             </button>
                         </div>
                     </motion.div>

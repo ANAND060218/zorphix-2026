@@ -16,7 +16,7 @@ import {
 } from 'react-icons/fa';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, arrayUnion, setDoc } from 'firebase/firestore';
 
 import EventModal from './EventModal';
 
@@ -67,6 +67,38 @@ const EventsPage = () => {
 
         return () => unsubscribe();
     }, []);
+
+    const handleRegisterEvent = async (event) => {
+        if (!auth.currentUser) {
+            alert("Please login to register for events!");
+            return;
+        }
+
+        try {
+            const userRef = doc(db, 'registrations', auth.currentUser.uid);
+            const docSnap = await getDoc(userRef);
+
+            if (!docSnap.exists()) {
+                await setDoc(userRef, {
+                    events: [event.name],
+                    email: auth.currentUser.email,
+                    userId: auth.currentUser.uid
+                });
+            } else {
+                await updateDoc(userRef, {
+                    events: arrayUnion(event.name)
+                });
+            }
+
+            // Update local state immediately
+            setRegisteredEventsList(prev => [...prev, event.name]);
+            alert(`Successfully registered for ${event.name}!`);
+
+        } catch (error) {
+            console.error("Error registering for event:", error);
+            alert("Failed to register. Please try again.");
+        }
+    };
 
     const handleAddeEvent = (event) => {
         // Prevent removing/toggling if already registered
@@ -559,17 +591,29 @@ const EventsPage = () => {
                                         Know More
                                     </button>
                                     <button
-                                        onClick={() => handleAddeEvent(event)}
+                                        onClick={() => {
+                                            // Check if it's a technical event
+                                            const isTechnical = technicalEvents.some(e => e.id === event.id);
+                                            if (isTechnical) {
+                                                handleRegisterEvent(event);
+                                            } else {
+                                                handleAddeEvent(event);
+                                            }
+                                        }}
                                         disabled={registeredEventsList.includes(event.name)}
                                         className={`flex-1 py-3 rounded-lg border font-mono text-xs font-bold uppercase tracking-widest transition-all duration-300 ${registeredEventsList.includes(event.name)
                                             ? 'bg-gradient-to-r from-gray-800 to-gray-900 border-gray-600 text-gray-400 shadow-none cursor-not-allowed opacity-80'
                                             : selectedEventsList.includes(event.name)
                                                 ? 'bg-[#97b85d] text-black border-[#97b85d] shadow-[0_0_10px_rgba(151,184,93,0.2)]'
-                                                : 'bg-[#1a1a1a] border-[#97b85d] text-[#97b85d] hover:bg-[#97b85d] hover:text-black shadow-[0_0_10px_rgba(151,184,93,0.2)] hover:shadow-[0_0_20px_rgba(151,184,93,0.6)]'
+                                                : technicalEvents.some(e => e.id === event.id) // Different styling for Register button
+                                                    ? 'bg-[#e33e33] border-[#e33e33] text-white hover:bg-[#c22e24] shadow-[0_0_10px_rgba(227,62,51,0.2)] hover:shadow-[0_0_20px_rgba(227,62,51,0.6)]'
+                                                    : 'bg-[#1a1a1a] border-[#97b85d] text-[#97b85d] hover:bg-[#97b85d] hover:text-black shadow-[0_0_10px_rgba(151,184,93,0.2)] hover:shadow-[0_0_20px_rgba(151,184,93,0.6)]'
                                             }`}>
                                         {registeredEventsList.includes(event.name)
                                             ? 'REGISTERED'
-                                            : selectedEventsList.includes(event.name) ? 'ADDED' : 'ADD'}
+                                            : technicalEvents.some(e => e.id === event.id)
+                                                ? 'REGISTER'
+                                                : selectedEventsList.includes(event.name) ? 'ADDED' : 'ADD'}
                                     </button>
                                 </div>
                             </motion.div>
@@ -611,6 +655,19 @@ const EventsPage = () => {
                 isOpen={!!selectedEvent}
                 onClose={() => setSelectedEvent(null)}
                 event={selectedEvent}
+                isTechnical={selectedEvent && technicalEvents.some(e => e.id === selectedEvent.id)}
+                isRegistered={selectedEvent && registeredEventsList.includes(selectedEvent.name)}
+                isSelected={selectedEvent && selectedEventsList.includes(selectedEvent.name)}
+                onAction={() => {
+                    if (selectedEvent) {
+                        const isTechnical = technicalEvents.some(e => e.id === selectedEvent.id);
+                        if (isTechnical) {
+                            handleRegisterEvent(selectedEvent);
+                        } else {
+                            handleAddeEvent(selectedEvent);
+                        }
+                    }
+                }}
             />
         </div>
     );
