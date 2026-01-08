@@ -28,6 +28,7 @@ import { technicalEvents, workshops, paperPresentation } from '../data/events';
 const EventsPage = () => {
     const navigate = useNavigate();
     const [selectedEvent, setSelectedEvent] = useState(null);
+    const [processingId, setProcessingId] = useState(null);
     const [activeTab, setActiveTab] = useState('events');
     const [isProfileComplete, setIsProfileComplete] = useState(false);
     const [selectedEventsList, setSelectedEventsList] = useState(() => {
@@ -87,16 +88,13 @@ const EventsPage = () => {
         }
 
         if (!isProfileComplete) {
-            setAlertConfig({
-                isOpen: true,
-                type: 'warning',
-                message: 'Please complete your profile to access registration functions.'
-            });
+            toast.error('Please complete your profile to access registration functions.');
             setTimeout(() => navigate('/profile'), 2000);
             return;
         }
 
 
+        setProcessingId(event.id);
         try {
             const userRef = doc(db, 'registrations', auth.currentUser.uid);
             const docSnap = await getDoc(userRef);
@@ -120,6 +118,8 @@ const EventsPage = () => {
         } catch (error) {
             console.error("Error registering for event:", error);
             toast.error(`Failed to register for ${event.name}. Please try again.`);
+        } finally {
+            setProcessingId(null);
         }
     };
 
@@ -179,6 +179,7 @@ const EventsPage = () => {
         }
 
         const toastId = toast.loading("Processing Payment...");
+        setProcessingId('PAYMENT'); // Start loading
 
         try {
             const userRef = doc(db, 'registrations', auth.currentUser.uid);
@@ -206,6 +207,8 @@ const EventsPage = () => {
         } catch (error) {
             console.error("Payment Error:", error);
             toast.error("Payment failed. Please try again.", { id: toastId });
+        } finally {
+            setProcessingId(null); // Stop loading
         }
     };
 
@@ -404,7 +407,7 @@ const EventsPage = () => {
                             handleAddeEvent(event);
                         }
                     }}
-                    disabled={registeredEventsList.includes(event.name)}
+                    disabled={registeredEventsList.includes(event.name) || processingId === event.id}
                     className={`flex-1 py-3 rounded-lg border font-mono text-xs font-bold uppercase tracking-widest transition-all duration-300 ${registeredEventsList.includes(event.name)
                         ? 'bg-gradient-to-r from-gray-800 to-gray-900 border-gray-600 text-gray-400 shadow-none cursor-not-allowed opacity-80'
                         : selectedEventsList.includes(event.name)
@@ -413,11 +416,18 @@ const EventsPage = () => {
                                 ? 'bg-[#95b55c] border-[#95b55c] text-black hover:bg-[#84a34d] shadow-[0_0_10px_rgba(149,181,92,0.2)] hover:shadow-[0_0_20px_rgba(149,181,92,0.6)]'
                                 : 'bg-[#1a1a1a] border-[#97b85d] text-[#97b85d] hover:bg-[#97b85d] hover:text-black shadow-[0_0_10px_rgba(151,184,93,0.2)] hover:shadow-[0_0_20px_rgba(151,184,93,0.6)]'
                         }`}>
-                    {registeredEventsList.includes(event.name)
-                        ? 'REGISTERED'
-                        : technicalEvents.some(e => e.id === event.id)
-                            ? 'REGISTER'
-                            : selectedEventsList.includes(event.name) ? 'ADDED' : 'ADD'}
+                    {processingId === event.id ? (
+                        <div className="flex items-center justify-center gap-2">
+                            <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                            <span>PROCESSING...</span>
+                        </div>
+                    ) : (
+                        registeredEventsList.includes(event.name)
+                            ? 'REGISTERED'
+                            : technicalEvents.some(e => e.id === event.id)
+                                ? 'REGISTER'
+                                : selectedEventsList.includes(event.name) ? 'ADDED' : 'ADD'
+                    )}
                 </button>
             </div>
         </motion.div>
@@ -629,9 +639,15 @@ const EventsPage = () => {
 
                                             <button
                                                 onClick={handlePayment}
-                                                className="w-full py-4 bg-[#8dac57] text-white font-black tracking-widest uppercase rounded-xl hover:shadow-[0_0_30px_rgba(227,62,51,0.4)] transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-[0_10px_20px_-5px_rgba(227,62,51,0.3)]"
+                                                disabled={processingId === 'PAYMENT'}
+                                                className="w-full py-4 bg-[#8dac57] text-white font-black tracking-widest uppercase rounded-xl hover:shadow-[0_0_30px_rgba(227,62,51,0.4)] transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-[0_10px_20px_-5px_rgba(227,62,51,0.3)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                             >
-                                                PAY NOW
+                                                {processingId === 'PAYMENT' ? (
+                                                    <>
+                                                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                        <span>PROCESSING...</span>
+                                                    </>
+                                                ) : 'PAY NOW'}
                                             </button>
                                         </div>
                                     </div>
