@@ -410,7 +410,7 @@ const EventsPage = () => {
                         : selectedEventsList.includes(event.name)
                             ? 'bg-[#97b85d] text-black border-[#97b85d] shadow-[0_0_10px_rgba(151,184,93,0.2)]'
                             : technicalEvents.some(e => e.id === event.id) // Different styling for Register button
-                                ? 'bg-[#e33e33] border-[#e33e33] text-white hover:bg-[#c22e24] shadow-[0_0_10px_rgba(227,62,51,0.2)] hover:shadow-[0_0_20px_rgba(227,62,51,0.6)]'
+                                ? 'bg-[#95b55c] border-[#95b55c] text-black hover:bg-[#84a34d] shadow-[0_0_10px_rgba(149,181,92,0.2)] hover:shadow-[0_0_20px_rgba(149,181,92,0.6)]'
                                 : 'bg-[#1a1a1a] border-[#97b85d] text-[#97b85d] hover:bg-[#97b85d] hover:text-black shadow-[0_0_10px_rgba(151,184,93,0.2)] hover:shadow-[0_0_20px_rgba(151,184,93,0.6)]'
                         }`}>
                     {registeredEventsList.includes(event.name)
