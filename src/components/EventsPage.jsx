@@ -142,9 +142,11 @@ const EventsPage = () => {
         if (selectedEventsList.includes(event.name)) {
             // Remove
             updatedList = selectedEventsList.filter(title => title !== event.name);
+            toast.success(`Successfully removed ${event.name} from cart!`);
         } else {
             // Add
             updatedList = [...selectedEventsList, event.name];
+            toast.success(`Successfully added ${event.name} to cart!`);
         }
         setSelectedEventsList(updatedList);
         localStorage.setItem('selectedEvents', JSON.stringify(updatedList));

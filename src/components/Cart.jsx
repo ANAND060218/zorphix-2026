@@ -332,61 +332,71 @@ const Cart = () => {
                         )}
                     </section>
 
-                    {/* Payment Summary */}
-                    <section>
-                        <div className="flex items-center gap-4 mb-8">
-                            <div className="p-3 rounded-xl bg-gradient-to-br from-green-500 to-emerald-700 shadow-lg">
-                                <FaWallet className="text-2xl text-white" />
-                            </div>
-                            <h2 className="text-3xl md:text-4xl font-bold text-white tracking-widest">PAYMENT SUMMARY</h2>
-                        </div>
-                        <div className="max-w-xl mx-auto md:mx-0 bg-[#0a0a0a] rounded-2xl p-6 border border-white/10 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] font-mono">
-                            <div className="flex items-start gap-4 mb-8">
-                                <div className="p-3 rounded-xl bg-gradient-to-br from-[#97b85d] to-[#4a5c2d] shadow-lg">
-                                    <FaWallet className="text-2xl text-white" />
-                                </div>
-                                <div>
-                                    <h3 className="text-xl font-bold text-white tracking-wider flex items-center gap-2">
-                                        PAYMENT SUMMARY
-                                    </h3>
-                                    <p className="text-gray-500 text-xs mt-1 tracking-wide">Your registration breakdown</p>
+                    <section className="flex justify-center pb-20">
+                        <div className="w-full max-w-md bg-[#e6e6e6] text-[#1a1a1a] rounded-sm shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden font-mono p-6 md:p-8">
+                            {/* Zigzag Top */}
+                            <div className="absolute top-0 left-0 w-full h-4 bg-[#0d0d0d]" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 0)', display: 'none' }}></div> {/* Simple fallback or no zigzag for cleaner look, sticking to 'torn' top via css later if needed. For now, flat nicely rounded receipt is safer. */}
+
+                            {/* Receipt Header */}
+                            <div className="text-center border-b-2 border-dashed border-[#1a1a1a]/20 pb-6 mb-6">
+                                <h2 className="text-2xl font-black tracking-widest uppercase mb-2">ZORPHIX BANK</h2>
+                                <p className="text-xs tracking-widest uppercase opacity-60">Transaction Receipt</p>
+                                <div className="flex justify-center items-center gap-4 mt-4 text-[10px] uppercase tracking-wider opacity-60">
+                                    <span>{new Date().toLocaleDateString()}</span>
+                                    <span>{new Date().toLocaleTimeString()}</span>
                                 </div>
                             </div>
 
-                            <div className="space-y-4 mb-6">
-                                <div className="flex justify-between items-center text-sm md:text-base">
-                                    <span className="text-gray-400 font-bold tracking-widest uppercase">Total Events</span>
-                                    <span className="text-white font-bold tracking-wider">{calculateTotals().totalEvents} EVENTS</span>
+                            {/* Receipt Items */}
+                            <div className="space-y-4 mb-6 text-sm">
+                                <div className="flex justify-between items-center group">
+                                    <span className="uppercase tracking-widest opacity-70 text-lg">Total Events</span>
+                                    <span className="font-bold text-lg">{calculateTotals().totalEvents}</span>
                                 </div>
-                                <div className="flex justify-between items-center text-sm md:text-base">
-                                    <span className="text-gray-400 font-bold tracking-widest uppercase">Total Value</span>
-                                    <span className="text-white font-bold tracking-wider">₹{calculateTotals().totalValue}</span>
+                                <div className="flex justify-between items-center">
+                                    <span className="uppercase tracking-widest opacity-70 text-lg">Subtotal</span>
+                                    <span className="font-bold text-lg">₹{calculateTotals().totalValue}</span>
                                 </div>
-                                <div className="flex justify-between items-center text-sm md:text-base">
-                                    <span className="text-gray-400 font-bold tracking-widest uppercase">Already Paid</span>
-                                    <span className="text-[#97b85d] font-bold tracking-wider">- ₹{calculateTotals().alreadyPaid}</span>
+                                <div className="flex justify-between items-center text-[#e33e33]">
+                                    <span className="uppercase tracking-widest font-bold text-lg">Paid</span>
+                                    <span className="font-bold text-lg">- ₹{calculateTotals().alreadyPaid}</span>
                                 </div>
                             </div>
 
-                            <div className="border-t border-dashed border-white/20 pt-6">
-                                <div className="bg-[#1a1a1a] rounded-xl p-4 flex justify-between items-center border border-[#e33e33]/30 shadow-[0_0_20px_rgba(227,62,51,0.1)] mb-6">
-                                    <span className="text-[#e33e33] font-bold tracking-widest uppercase text-sm md:text-base">AMOUNT TO PAY</span>
-                                    <span className="text-[#e33e33] font-black text-2xl md:text-3xl tracking-tighter">₹{calculateTotals().amountToPay}</span>
-                                </div>
-
-                                <button
-                                    onClick={handlePayment}
-                                    disabled={processingId === 'PAYMENT'}
-                                    className="w-full py-4 bg-[#8dac57] text-white font-black tracking-widest uppercase rounded-xl hover:shadow-[0_0_30px_rgba(227,62,51,0.4)] transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-[0_10px_20px_-5px_rgba(227,62,51,0.3)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                                >
-                                    {processingId === 'PAYMENT' ? (
-                                        <>
-                                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                            <span>PROCESSING...</span>
-                                        </>
-                                    ) : 'PAY NOW'}
-                                </button>
+                            {/* Divider line using '=' characters for ASCII receipt feel */}
+                            <div className="text-center opacity-20 tracking-[1em] overflow-hidden whitespace-nowrap mb-6">
+                                ================================
                             </div>
+
+                            {/* Total Amount */}
+                            <div className="flex justify-between items-end mb-8">
+                                <span className="uppercase tracking-widest font-bold text-lg">Total</span>
+                                <span className="text-4xl font-black tracking-tighter">₹{calculateTotals().amountToPay}</span>
+                            </div>
+
+                            {/* Payment Button */}
+                            <button
+                                onClick={handlePayment}
+                                disabled={processingId === 'PAYMENT'}
+                                className="w-full py-4 bg-[#1a1a1a] text-white font-black tracking-[0.2em] uppercase rounded hover:bg-[#e33e33] transition-all duration-300 shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mb-6"
+                            >
+                                {processingId === 'PAYMENT' ? (
+                                    <>
+                                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                        <span>PROCESSING</span>
+                                    </>
+                                ) : 'CONFIRM PAYMENT'}
+                            </button>
+
+                            {/* Barcode */}
+                            <div className="text-center opacity-60">
+                                <div className="h-12 bg-[repeating-linear-gradient(to_right,#000,#000_1px,transparent_1px,transparent_3px)] w-[80%] mx-auto mb-2 opacity-80"></div>
+                                <p className="text-[10px] tracking-[0.5em] uppercase">THANK YOU</p>
+                            </div>
+
+                            {/* Decorative Torn Edge Effect (Bottom) */}
+                            <div className="absolute bottom-[-10px] left-0 w-full h-4 bg-[#050505]" style={{ clipPath: 'polygon(0% 0%, 5% 100%, 10% 0%, 15% 100%, 20% 0%, 25% 100%, 30% 0%, 35% 100%, 40% 0%, 45% 100%, 50% 0%, 55% 100%, 60% 0%, 65% 100%, 70% 0%, 75% 100%, 80% 0%, 85% 100%, 90% 0%, 95% 100%, 100% 0%)' }}></div>
+                            <div className="absolute top-[-10px] left-0 w-full h-4 bg-[#050505] rotate-180" style={{ clipPath: 'polygon(0% 0%, 5% 100%, 10% 0%, 15% 100%, 20% 0%, 25% 100%, 30% 0%, 35% 100%, 40% 0%, 45% 100%, 50% 0%, 55% 100%, 60% 0%, 65% 100%, 70% 0%, 75% 100%, 80% 0%, 85% 100%, 90% 0%, 95% 100%, 100% 0%)' }}></div>
                         </div>
                     </section>
                 </div>
