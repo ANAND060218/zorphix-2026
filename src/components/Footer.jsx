@@ -1,99 +1,125 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaInstagram, FaLinkedin, FaGithub, FaTwitter, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaInstagram, FaLinkedin, FaGithub, FaTwitter, FaMapMarkerAlt, FaEnvelope, FaArrowRight, FaDiscord, FaTelegramPlane } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
 const Footer = () => {
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer className="bg-[#050505] relative overflow-hidden">
-            {/* Stock Ticker - Re-located from Sponsors */}
-            <div className="w-full bg-[#111] border-y border-[#333] py-2 relative overflow-hidden mb-16">
-                <motion.div
-                    className="whitespace-nowrap flex gap-12 font-mono text-sm"
-                    animate={{ x: [0, -1000] }}
-                    transition={{ duration: 20, ease: "linear", repeat: Infinity }}
-                >
-                    {[...Array(10)].map((_, i) => (
-                        <React.Fragment key={i}>
-                            <span className="text-gray-400">NASDAQ <span className="text-[#97b85d]">▲ 1.2%</span></span>
-                            <span className="text-gray-400">BTC <span className="text-[#e33e33]">▼ 0.5%</span></span>
-                            <span className="text-gray-400">ETH <span className="text-[#97b85d]">▲ 2.4%</span></span>
-                            <span className="text-[#e33e33] font-bold">ZPX <span className="text-[#e33e33]">▲ 1000%</span></span>
-                            <span className="text-gray-400">S&P 500 <span className="text-[#97b85d]">▲ 0.8%</span></span>
-                        </React.Fragment>
-                    ))}
-                </motion.div>
-            </div>
+        <footer className="bg-[#050505] pt-12 pb-6 px-4 md:px-6 font-mono relative overflow-hidden">
+            {/* Background Noise */}
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 pointer-events-none"></div>
 
-            <div className="pt-8 pb-8">
-                {/* Background Texture */}
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 mix-blend-overlay"></div>
+            <div className="max-w-7xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-12 gap-4 mb-4">
 
-                {/* Top Border Gradient */}
-                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#e33e33] to-transparent opacity-50"></div>
+                    {/* 1. Brand Card - Large */}
+                    <div className="col-span-1 md:col-span-4 lg:col-span-5 relative group overflow-hidden rounded-3xl bg-[#111] border border-white/5 p-8 flex flex-col justify-between min-h-[300px]">
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                        <div className="absolute -right-20 -top-20 w-64 h-64 bg-[#e33e33] rounded-full blur-[100px] opacity-10 group-hover:opacity-20 transition-opacity duration-500" />
 
-                <div className="container mx-auto px-6 relative z-10">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-                        {/* Brand Section */}
-                        <div className="col-span-1 md:col-span-2 space-y-4">
-                            <Link to="/" className="flex items-center gap-2 group">
-                                <span className="text-3xl font-bold font-serif tracking-tighter text-white">
-                                    ZORPHIX <span className="text-[#e33e33]">'26</span>
-                                </span>
+                        <div>
+                            <Link to="/" className="inline-block">
+                                <h2 className="text-6xl font-black text-white tracking-tighter mb-2">
+                                    ZORPHIX<span className="text-[#e33e33]">.</span>
+                                </h2>
                             </Link>
-                            <p className="text-gray-400 text-sm leading-relaxed max-w-sm font-mono">
-                                The ultimate convergence of Technology and Finance. Join the elite league of innovators and market movers.
+                            <p className="text-gray-400 text-lg max-w-md mt-2">
+                                Converging Finance & Deep Tech.
                             </p>
-                            <div className="flex gap-4 pt-4">
-                                <SocialIcon icon={FaInstagram} href="#" color="#E1306C" />
-                                <SocialIcon icon={FaLinkedin} href="#" color="#0077B5" />
-                                <SocialIcon icon={FaGithub} href="#" color="#ffffff" />
-                                <SocialIcon icon={FaTwitter} href="#" color="#1DA1F2" />
+                        </div>
+
+                        <div className="relative z-10">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-[#97b85d] text-sm">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#97b85d] opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#97b85d]"></span>
+                                </span>
+                                Systems Operational
                             </div>
                         </div>
+                    </div>
 
-                        {/* Quick Links */}
-                        <div className="space-y-6">
-                            <h4 className="text-white font-bold tracking-widest uppercase text-sm border-b border-[#97b85d] inline-block pb-1">Navigation</h4>
-                            <ul className="space-y-3 font-mono text-sm">
-                                <FooterLink to="/" text="HOME" />
-                                <FooterLink to="/events" text="EVENTS" />
-                                <FooterLink to="/register" text="REGISTER" />
-                                <FooterLink to="/about" text="ABOUT US" />
-                            </ul>
-                        </div>
+                    {/* 2. Navigation Card */}
+                    <div className="col-span-1 md:col-span-2 lg:col-span-3 rounded-3xl bg-[#111] border border-white/5 p-6 flex flex-col hover:border-[#97b85d]/30 transition-colors duration-300">
+                        <h3 className="text-[#97b85d] text-xs font-bold uppercase tracking-[0.2em] mb-6">Navigation</h3>
+                        <nav className="flex flex-col gap-3 flex-grow">
+                            <FooterLink to="/" text="Home" num="01" />
+                            <FooterLink to="/events" text="Events" num="02" />
+                            <FooterLink to="/register" text="Register" num="03" />
+                            <FooterLink to="/about" text="About" num="04" />
+                        </nav>
+                    </div>
 
-                        {/* Contact Info */}
-                        <div className="space-y-6">
-                            <h4 className="text-white font-bold tracking-widest uppercase text-sm border-b border-[#e33e33] inline-block pb-1">Contact</h4>
-                            <ul className="space-y-4 font-mono text-sm text-gray-400">
-                                <li className="flex items-start gap-3 group cursor-pointer hover:text-white transition-colors">
-                                    <FaMapMarkerAlt className="mt-1 text-[#e33e33] group-hover:scale-110 transition-transform" />
-                                    <span>
-                                        Chennai Institute of Technology,<br />
-                                        Sarathy Nagar, Kundrathur,<br />
-                                        Chennai - 600069
-                                    </span>
-                                </li>
-                                <li className="flex items-center gap-3 group cursor-pointer hover:text-white transition-colors">
-                                    <FaEnvelope className="text-[#97b85d] group-hover:scale-110 transition-transform" />
-                                    <a href="mailto:contact@zorphix.com">contact@zorphix.com</a>
-                                </li>
-                            </ul>
+                    {/* 3. Socials Grid */}
+                    <div className="col-span-1 md:col-span-2 lg:col-span-4 grid grid-cols-2 gap-4">
+                        <SocialCard icon={FaInstagram} label="Instagram" href="#" color="#E1306C" />
+                        <SocialCard icon={FaLinkedin} label="LinkedIn" href="#" color="#0077B5" />
+                        <SocialCard icon={FaGithub} label="GitHub" href="#" color="#ffffff" />
+                        <SocialCard icon={FaTwitter} label="Twitter" href="#" color="#1DA1F2" />
+                    </div>
+
+                    {/* 4. Newsletter / Updates */}
+                    <div className="col-span-1 md:col-span-2 lg:col-span-4 rounded-3xl bg-[#e33e33] p-8 text-white relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
+                        <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-black/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
+
+                        <div className="relative z-10 h-full flex flex-col justify-between">
+                            <div>
+                                <h3 className="text-2xl font-bold mb-2">Stay in the Loop</h3>
+                                <p className="text-white/80 text-sm mb-6">Get the latest updates on events and hackathons.</p>
+                            </div>
+
+                            <div className="relative">
+                                <input
+                                    type="email"
+                                    placeholder="email@address.com"
+                                    className="w-full bg-black/20 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3 text-sm placeholder-white/50 focus:outline-none focus:bg-black/30 transition-colors"
+                                />
+                                <button className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white text-[#e33e33] rounded-lg flex items-center justify-center hover:scale-105 transition-transform">
+                                    <FaArrowRight size={12} />
+                                </button>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Bottom Bar */}
-                    <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-mono tracking-widest text-gray-500 uppercase">
-                        <p>© {currentYear} ZORPHIX SYMPOSIUM. ALL RIGHTS RESERVED.</p>
-                        <div className="flex gap-8">
-                            <a href="#" className="hover:text-[#e33e33] transition-colors">Privacy Policy</a>
-                            <a href="#" className="hover:text-[#97b85d] transition-colors">Terms of Service</a>
+                    {/* 5. Location Card */}
+                    <div className="col-span-1 md:col-span-2 lg:col-span-5 rounded-3xl bg-[#111] border border-white/5 p-6 relative overflow-hidden group hover:border-white/20 transition-colors">
+                        <div className="flex items-start justify-between">
+                            <div>
+                                <h3 className="text-gray-500 text-xs font-bold uppercase tracking-[0.2em] mb-4">HQ Coordinates</h3>
+                                <div className="space-y-1 text-gray-300 text-sm">
+                                    <p className="font-bold text-white">Chennai Institute of Technology</p>
+                                    <p>Sarathy Nagar, Kundrathur</p>
+                                    <p>Chennai - 600069</p>
+                                </div>
+                            </div>
+                            <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-[#e33e33]">
+                                <FaMapMarkerAlt size={20} />
+                            </div>
+                        </div>
+                        <div className="mt-6 pt-6 border-t border-white/5 flex gap-6 text-xs text-gray-500">
+                            <a href="mailto:contact@zorphix.com" className="hover:text-white transition-colors flex items-center gap-2">
+                                <FaEnvelope /> contact@zorphix.com
+                            </a>
                         </div>
                     </div>
+
+                    {/* 6. Legal / Copyright */}
+                    <div className="col-span-1 md:col-span-4 lg:col-span-3 rounded-3xl bg-[#111] border border-white/5 p-6 flex flex-col justify-between">
+                        <div className="flex flex-col gap-2">
+                            <Link to="/privacy" className="text-gray-500 text-xs hover:text-white transition-colors">Privacy Policy</Link>
+                            <Link to="/terms" className="text-gray-500 text-xs hover:text-white transition-colors">Terms of Service</Link>
+                        </div>
+                        <div className="mt-8 text-[10px] text-gray-600 uppercase tracking-wider">
+                            &copy; {currentYear} Zorphix Symposium
+                        </div>
+                    </div>
+
                 </div>
+
+
             </div>
         </footer>
     );
@@ -101,27 +127,22 @@ const Footer = () => {
 
 // Helper Components
 
-const SocialIcon = ({ icon: Icon, href, color }) => (
-    <motion.a
+const SocialCard = ({ icon: Icon, label, href, color }) => (
+    <a
         href={href}
-        whileHover={{ y: -3 }}
-        className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 transition-all hover:bg-white/10 hover:border-white/20"
-        style={{ '--hover-color': color }}
+        className="group relative h-24 rounded-2xl bg-[#111] border border-white/5 flex flex-col items-center justify-center gap-2 overflow-hidden hover:-translate-y-1 transition-all duration-300"
     >
-        <Icon className="text-lg transition-colors duration-300 hover:text-[var(--hover-color)]" style={{ color: 'inherit' }} />
-    </motion.a>
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300" style={{ backgroundColor: color }} />
+        <Icon size={24} className="text-gray-400 group-hover:scale-110 transition-transform duration-300" style={{ color: 'inherit' }} />
+        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider group-hover:text-white transition-colors">{label}</span>
+    </a>
 );
 
-const FooterLink = ({ to, text }) => (
-    <li>
-        <Link
-            to={to}
-            className="text-gray-400 hover:text-white transition-all duration-300 flex items-center gap-2 group"
-        >
-            <span className="w-1 h-1 bg-[#97b85d] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-            <span className="group-hover:translate-x-1 transition-transform">{text}</span>
-        </Link>
-    </li>
+const FooterLink = ({ to, text, num }) => (
+    <Link to={to} className="group flex items-center justify-between p-2 rounded-lg hover:bg-white/5 transition-colors">
+        <span className="text-gray-400 font-medium group-hover:text-white transition-colors">{text}</span>
+        <span className="text-[10px] text-gray-700 font-mono group-hover:text-[#97b85d] transition-colors">{num}</span>
+    </Link>
 );
 
 export default Footer;
