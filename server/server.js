@@ -206,7 +206,7 @@ app.post('/api/verify-payment', async (req, res) => {
                     paymentId: razorpay_payment_id,
                     eventNames: eventNames,
                     amount: calculateTotalPrice(eventNames),
-                    timestamp: admin.firestore.FieldValue.serverTimestamp(),
+                    timestamp: new Date(), // Fixed: serverTimestamp() cannot be used inside arrays
                     verified: true
                 };
 
