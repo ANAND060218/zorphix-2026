@@ -278,14 +278,21 @@ const emailUser = process.env.EMAIL_USER;
 const emailPass = process.env.EMAIL_PASS;
 
 if (!emailUser || !emailPass) {
-    console.warn("⚠️ WARNING: Email credentials missing in .env file. Email features will fail.");
+    console.warn('⚠️ Email credentials not found in environment variables. Email sending disabled.');
 }
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
+    host: 'smtp.gmail.com',         // Explicit host
+    port: 465,                      // Explicit port for secure
+    secure: true,                   // true for 465, false for other ports
     auth: {
         user: emailUser,
         pass: emailPass
+    },
+    // Fix for ETIMEDOUT on some cloud providers
+    tls: {
+        rejectUnauthorized: false
     }
 });
 
