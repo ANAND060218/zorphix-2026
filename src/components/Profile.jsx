@@ -748,7 +748,7 @@ const Profile = () => {
 
     const sendWelcomeEmail = async (profileData, type = 'welcome') => {
         try {
-            const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+            const backendUrl = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000').replace(/\/$/, '');
             await fetch(`${backendUrl}/api/send-welcome-email`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

@@ -136,7 +136,7 @@ const Cart = () => {
 
             // Create Order on Backend - send only userId and event names
             // Backend will calculate price from its own data (prevents tampering)
-            const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+            const backendUrl = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000').replace(/\/$/, '');
             const response = await axios.post(`${backendUrl}/api/create-order`, {
                 userId: auth.currentUser.uid,
                 eventNames: eventsToRegister,
