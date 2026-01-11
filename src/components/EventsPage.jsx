@@ -326,7 +326,7 @@ const EventsPage = () => {
                             {/* Contactless Icon */}
                             <svg className="w-8 h-8 text-white/50" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" opacity=".3" />
-                                <path d="M4.93 4.93c-1.2 1.2-1.93 2.76-1.93 4.57s.73 3.37 1.93 4.57l1.41-1.41c-.82-.82-1.34-1.95-1.34-3.16s.52-2.34 1.34-3.16L4.93 4.93zM8.46 8.46c-.43.43-.69.99-.69 1.62s.26 1.19.69 1.62l1.41-1.41c-.06-.06-.1-.13-.1-.21s.04-.15.1-.21L8.46 8.46zM12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 1.79 4 4-1.79 4-4 4z" />
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-14v6l5 3-1 1.7-6-3.7V6h2z" />
                             </svg>
                         </div>
                     </div>
@@ -404,18 +404,20 @@ const EventsPage = () => {
                         // Check if it's a technical event
                         const isTechnical = technicalEvents.some(e => e.id === event.id);
                         if (isTechnical) {
+                            // Technical events: direct register
                             handleRegisterEvent(event);
                         } else {
+                            // Workshops/Paper: add to cart toggle
                             handleAddeEvent(event);
                         }
                     }}
                     disabled={registeredEventsList.includes(event.name) || processingId === event.id}
                     className={`flex-1 py-3 rounded-lg border font-mono text-xs font-bold uppercase tracking-widest transition-all duration-300 ${registeredEventsList.includes(event.name)
                         ? 'bg-gradient-to-r from-gray-800 to-gray-900 border-gray-600 text-gray-400 shadow-none cursor-not-allowed opacity-80'
-                        : selectedEventsList.includes(event.name)
-                            ? 'bg-[#97b85d] text-black border-[#97b85d] shadow-[0_0_10px_rgba(151,184,93,0.2)]'
-                            : technicalEvents.some(e => e.id === event.id) // Different styling for Register button
-                                ? 'bg-[#95b55c] border-[#95b55c] text-black hover:bg-[#84a34d] shadow-[0_0_10px_rgba(149,181,92,0.2)] hover:shadow-[0_0_20px_rgba(149,181,92,0.6)]'
+                        : technicalEvents.some(e => e.id === event.id)
+                            ? 'bg-[#95b55c] border-[#95b55c] text-black hover:bg-[#84a34d] shadow-[0_0_10px_rgba(149,181,92,0.2)] hover:shadow-[0_0_20px_rgba(149,181,92,0.6)]'
+                            : selectedEventsList.includes(event.name)
+                                ? 'bg-[#1a1a1a] border-[#e33e33] text-[#e33e33] hover:bg-[#e33e33] hover:text-white shadow-[0_0_10px_rgba(227,62,51,0.2)] hover:shadow-[0_0_20px_rgba(227,62,51,0.6)]'
                                 : 'bg-[#1a1a1a] border-[#97b85d] text-[#97b85d] hover:bg-[#97b85d] hover:text-black shadow-[0_0_10px_rgba(151,184,93,0.2)] hover:shadow-[0_0_20px_rgba(151,184,93,0.6)]'
                         }`}>
                     {processingId === event.id ? (
@@ -428,7 +430,7 @@ const EventsPage = () => {
                             ? 'REGISTERED'
                             : technicalEvents.some(e => e.id === event.id)
                                 ? 'REGISTER'
-                                : selectedEventsList.includes(event.name) ? 'ADDED' : 'ADD'
+                                : selectedEventsList.includes(event.name) ? 'REMOVE' : 'ADD'
                     )}
                 </button>
             </div>
@@ -617,8 +619,20 @@ const EventsPage = () => {
                 isOpen={!!selectedEvent}
                 onClose={() => setSelectedEvent(null)}
                 event={selectedEvent}
-                onRegister={handleRegisterEvent}
+                isTechnical={selectedEvent && technicalEvents.some(e => e.id === selectedEvent.id)}
                 isRegistered={selectedEvent && registeredEventsList.includes(selectedEvent.name)}
+                isSelected={selectedEvent && selectedEventsList.includes(selectedEvent.name)}
+                onAction={() => {
+                    if (selectedEvent) {
+                        const isTechnical = technicalEvents.some(e => e.id === selectedEvent.id);
+                        if (isTechnical) {
+                            handleRegisterEvent(selectedEvent);
+                        } else {
+                            handleAddeEvent(selectedEvent);
+                        }
+                        setSelectedEvent(null);
+                    }
+                }}
             />
         </div>
     );

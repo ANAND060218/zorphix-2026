@@ -2,16 +2,16 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// TODO: Replace with your actual Firebase configuration
-// You can find these in your Firebase Console -> Project Settings -> General -> Your apps
+// Firebase configuration from environment variables
+// Create a .env file in the root with these values (see .env.example)
 const firebaseConfig = {
-    apiKey: "AIzaSyBefhLPabmf4yo3RI-eCO7nAGhAq0dzZ1E",
-    authDomain: "zorphix-26.firebaseapp.com",
-    projectId: "zorphix-26",
-    storageBucket: "zorphix-26.firebasestorage.app",
-    messagingSenderId: "481146604346",
-    appId: "1:481146604346:web:d40a55b61892b26742de03",
-    measurementId: "G-QYQM2MM3W0"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 const app = initializeApp(firebaseConfig);

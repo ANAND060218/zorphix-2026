@@ -20,6 +20,7 @@ const Cart = () => {
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [processingId, setProcessingId] = useState(null);
     const [isProfileComplete, setIsProfileComplete] = useState(false);
+    const [userPhone, setUserPhone] = useState('');
     const [selectedEventsList, setSelectedEventsList] = useState(() => {
         try {
             const stored = localStorage.getItem('selectedEvents');
@@ -41,6 +42,10 @@ const Cart = () => {
                         const data = docSnap.data();
                         if (data.profileCompleted || (data.college && data.phone)) {
                             setIsProfileComplete(true);
+                        }
+                        if (data.phone) {
+                            setUserPhone(data.phone);
+                            console.log('📱 Phone loaded from profile:', data.phone);
                         }
                         if (data.events && Array.isArray(data.events)) {
                             setRegisteredEventsList(data.events);
@@ -106,9 +111,14 @@ const Cart = () => {
             return;
         }
 
-        const amountToPay = calculateTotals().amountToPay;
-        if (amountToPay === 0) {
-            toast.error("No pending payment found!");
+        // Get events to register (in cart but not already registered)
+        const allEvents = [...technicalEvents, ...workshops, ...paperPresentation];
+        const eventsToRegister = allEvents
+            .filter(e => selectedEventsList.includes(e.name) && !registeredEventsList.includes(e.name))
+            .map(e => e.name);
+
+        if (eventsToRegister.length === 0) {
+            toast.error("No pending events to register!");
             return;
         }
 
@@ -116,68 +126,71 @@ const Cart = () => {
         const toastId = toast.loading("Initializing Payment...");
 
         try {
+            // Load Razorpay script
             const res = await loadRazorpayScript();
-
             if (!res) {
                 toast.error('Razorpay SDK failed to load. Are you online?', { id: toastId });
                 setProcessingId(null);
                 return;
             }
 
-            // Create Order on Backend
-            // Amount is in INR, Razorpay expects paise (multiply by 100)
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/create-order`, {
-                amount: amountToPay * 100
+            // Create Order on Backend - send only userId and event names
+            // Backend will calculate price from its own data (prevents tampering)
+            const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+            const response = await axios.post(`${backendUrl}/api/create-order`, {
+                userId: auth.currentUser.uid,
+                eventNames: eventsToRegister,
+                userEmail: auth.currentUser.email
             });
+
             const orderData = response.data;
 
             if (!orderData.id) {
-                toast.error("Server error. Are you online?", { id: toastId });
+                toast.error("Server error creating order.", { id: toastId });
                 setProcessingId(null);
                 return;
             }
 
+            toast.loading(`Order created: ₹${orderData.totalAmount}`, { id: toastId });
+
+            // Razorpay checkout options
             const options = {
                 key: import.meta.env.VITE_RAZORPAY_KEY_ID,
                 amount: orderData.amount,
                 currency: orderData.currency,
                 name: "Zorphix 2026",
-                description: "Event Registration",
-                image: zorphixLogo, // specific logo if available
+                description: `Registration: ${eventsToRegister.join(', ')}`,
+                image: "https://ui-avatars.com/api/?name=Z&background=e33e33&color=fff&size=128",
                 order_id: orderData.id,
-                handler: async function (response) {
-                    // Payment Success Handler
+                handler: async function (razorpayResponse) {
+                    // Payment Success - Verify on backend
                     toast.loading("Verifying Payment...", { id: toastId });
 
                     try {
-                        const allEvents = [...technicalEvents, ...workshops, ...paperPresentation];
-                        const eventsToRegister = allEvents
-                            .filter(e => selectedEventsList.includes(e.name) && !registeredEventsList.includes(e.name))
-                            .map(e => e.name);
+                        // Send verification request to backend
+                        // Backend will verify signature and update Firebase
+                        const verifyResponse = await axios.post(`${backendUrl}/api/verify-payment`, {
+                            razorpay_order_id: razorpayResponse.razorpay_order_id,
+                            razorpay_payment_id: razorpayResponse.razorpay_payment_id,
+                            razorpay_signature: razorpayResponse.razorpay_signature,
+                            userId: auth.currentUser.uid,
+                            eventNames: eventsToRegister,
+                            userEmail: auth.currentUser.email
+                        });
 
-                        const userRef = doc(db, 'registrations', auth.currentUser.uid);
-                        const docSnap = await getDoc(userRef);
+                        if (verifyResponse.data.success) {
+                            // Update local state
+                            setRegisteredEventsList(prev => [...prev, ...eventsToRegister]);
+                            setSelectedEventsList([]);
+                            localStorage.setItem('selectedEvents', JSON.stringify([]));
 
-                        if (!docSnap.exists()) {
-                            await setDoc(userRef, {
-                                events: eventsToRegister,
-                                email: auth.currentUser.email,
-                                userId: auth.currentUser.uid,
-                            });
+                            toast.success(`Payment Successful! ID: ${razorpayResponse.razorpay_payment_id}`, { id: toastId });
                         } else {
-                            await updateDoc(userRef, {
-                                events: arrayUnion(...eventsToRegister)
-                            });
+                            toast.error("Payment verification failed. Contact support.", { id: toastId });
                         }
-
-                        setRegisteredEventsList(prev => [...prev, ...eventsToRegister]);
-                        setSelectedEventsList([]);
-                        localStorage.setItem('selectedEvents', JSON.stringify([]));
-
-                        toast.success(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`, { id: toastId });
-                    } catch (error) {
-                        console.error("Registration Error:", error);
-                        toast.error("Payment successful but registration failed. Contact support.", { id: toastId });
+                    } catch (verifyError) {
+                        console.error("Verification Error:", verifyError);
+                        toast.error("Payment received but verification failed. Contact support with your payment ID.", { id: toastId });
                     } finally {
                         setProcessingId(null);
                     }
@@ -191,10 +204,12 @@ const Cart = () => {
                 prefill: {
                     name: auth.currentUser.displayName || "Student",
                     email: auth.currentUser.email,
-                    contact: "" // Can fetch from profile if available
+                    // Format phone: remove leading 0, keep only digits, take last 10 digits
+                    contact: userPhone ? userPhone.replace(/\D/g, '').slice(-10) : ""
                 },
                 notes: {
-                    address: "Zorphix Event Office"
+                    userId: auth.currentUser.uid,
+                    events: eventsToRegister.join(', ')
                 },
                 theme: {
                     color: "#e33e33"
@@ -202,14 +217,9 @@ const Cart = () => {
             };
 
             const paymentObject = new window.Razorpay(options);
-            paymentObject.on('payment.failed', function (response) {
-                toast.error(response.error.description, { id: toastId });
-                setProcessingId(null);
-            });
 
-            // Handle modal dismissal (user closes without paying)
             paymentObject.on('payment.failed', function (response) {
-                toast.error(response.error.description, { id: toastId });
+                toast.error(response.error.description || "Payment failed", { id: toastId });
                 setProcessingId(null);
             });
 
@@ -218,9 +228,10 @@ const Cart = () => {
         } catch (error) {
             console.error("Payment Initialization Error:", error);
             if (error.response) {
-                toast.error(`Server Error: ${error.response.status}`, { id: toastId });
+                const errorMsg = error.response.data?.error || `Server Error: ${error.response.status}`;
+                toast.error(errorMsg, { id: toastId });
             } else if (error.request) {
-                toast.error("Cannot connect to backend. Is it running on port 5000?", { id: toastId });
+                toast.error("Cannot connect to backend. Please start the server (cd server && npm start)", { id: toastId });
             } else {
                 toast.error(`Error: ${error.message}`, { id: toastId });
             }
@@ -294,7 +305,7 @@ const Cart = () => {
                             {/* Contactless Icon */}
                             <svg className="w-8 h-8 text-white/50" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" opacity=".3" />
-                                <path d="M4.93 4.93c-1.2 1.2-1.93 2.76-1.93 4.57s.73 3.37 1.93 4.57l1.41-1.41c-.82-.82-1.34-1.95-1.34-3.16s.52-2.34 1.34-3.16L4.93 4.93zM8.46 8.46c-.43.43-.69.99-.69 1.62s.26 1.19.69 1.62l1.41-1.41c-.06-.06-.1-.13-.1-.21s.04-.15.1-.21L8.46 8.46zM12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 1.79 4 4-1.79 4-4 4z" />
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-14v6l5 3-1 1.7-6-3.7V6h2z" />
                             </svg>
                         </div>
                     </div>
@@ -372,12 +383,10 @@ const Cart = () => {
                     disabled={registeredEventsList.includes(event.name) || processingId === event.id}
                     className={`flex-1 py-3 rounded-lg border font-mono text-xs font-bold uppercase tracking-widest transition-all duration-300 ${registeredEventsList.includes(event.name)
                         ? 'bg-gradient-to-r from-gray-800 to-gray-900 border-gray-600 text-gray-400 shadow-none cursor-not-allowed opacity-80'
-                        : selectedEventsList.includes(event.name) || true // Always styling as ADDED for cart items
-                            ? 'bg-[#97b85d] text-black border-[#97b85d] shadow-[0_0_10px_rgba(151,184,93,0.2)]'
-                            : ''
+                        : 'bg-[#1a1a1a] border-[#e33e33] text-[#e33e33] hover:bg-[#e33e33] hover:text-white shadow-[0_0_10px_rgba(227,62,51,0.2)] hover:shadow-[0_0_20px_rgba(227,62,51,0.6)]'
                         }`}
                 >
-                    {registeredEventsList.includes(event.name) ? 'REGISTERED' : 'ADDED'}
+                    {registeredEventsList.includes(event.name) ? 'REGISTERED' : 'REMOVE'}
                 </button>
             </div>
         </motion.div>
@@ -496,8 +505,15 @@ const Cart = () => {
                     isOpen={!!selectedEvent}
                     onClose={() => setSelectedEvent(null)}
                     event={selectedEvent}
-                    onRegister={() => { }}
+                    isTechnical={false}
                     isRegistered={selectedEvent && registeredEventsList.includes(selectedEvent.name)}
+                    isSelected={selectedEvent && selectedEventsList.includes(selectedEvent.name)}
+                    onAction={() => {
+                        if (selectedEvent) {
+                            handleAddeEvent(selectedEvent);
+                            setSelectedEvent(null);
+                        }
+                    }}
                 />
             </div>
         </div>
