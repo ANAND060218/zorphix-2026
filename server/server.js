@@ -1,6 +1,10 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const cron = require('node-cron');
+const axios = require('axios');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const admin = require('firebase-admin');
@@ -11,12 +15,36 @@ const QRCode = require('qrcode');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Security Middleware
+app.use(helmet());
+
+// Rate Limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+});
+app.use(limiter);
+
 // Middleware
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:3000', process.env.FRONTEND_URL].filter(Boolean),
-    credentials: true
+    origin: ['http://localhost:5173', 'http://localhost:3000', process.env.FRONTEND_URL, /\.vercel\.app$/].filter(Boolean),
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
+
+// Keep-Alive Mechanism for Render Free Tier
+// Pings the server every 14 minutes to prevent sleeping (Render sleeps after 15 mins of inactivity)
+cron.schedule('*/14 * * * *', async () => {
+    try {
+        const healthUrl = `http://localhost:${PORT}/api/health`;
+        await axios.get(healthUrl);
+        console.log('🔄 Self-ping successful (Keep-Alive)');
+    } catch (error) {
+        console.error('⚠️ Self-ping failed:', error.message);
+    }
+});
 
 // Initialize Razorpay
 const razorpay = new Razorpay({
