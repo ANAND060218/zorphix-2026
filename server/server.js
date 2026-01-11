@@ -298,6 +298,7 @@ const transporter = nodemailer.createTransport({
 
 // Send QR Email (Welcome or Update)
 app.post('/api/send-welcome-email', async (req, res) => {
+    console.log('📧 Welcome email endpoint called');
     try {
         const { userDetails, type = 'welcome' } = req.body;
 
@@ -377,6 +378,7 @@ app.post('/api/send-welcome-email', async (req, res) => {
 
 // Send Payment Receipt Email
 app.post('/api/send-payment-receipt', async (req, res) => {
+    console.log('📧 Payment receipt endpoint called');
     try {
         const { userEmail, userName, paymentId, orderId, eventNames, amount } = req.body;
 
