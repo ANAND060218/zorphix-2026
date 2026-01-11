@@ -802,6 +802,11 @@ const Profile = () => {
             const finalPhone = formData.phone.replace(/\D/g, '').slice(-10);
 
             const userRef = doc(db, 'registrations', user.uid);
+
+            // Check if profile was already completed BEFORE saving (this is the reliable check)
+            const existingDocSnap = await getDoc(userRef);
+            const wasAlreadyComplete = existingDocSnap.exists() && existingDocSnap.data().profileCompleted === true;
+
             const profileData = {
                 uid: user.uid,
                 displayName: cleanName || user.displayName,
@@ -819,14 +824,12 @@ const Profile = () => {
 
             await setDoc(userRef, profileData, { merge: true });
 
-            // If profile was already complete, it's an update
-            if (isProfileComplete) {
+            // Use the pre-save check to determine email type
+            if (wasAlreadyComplete) {
                 toast.success('QR Code Updated with new data!');
-                // Send update email
                 sendWelcomeEmail(profileData, 'update');
             } else {
                 toast.success('Profile Completed Successfully!');
-                // Send welcome email only on first completion
                 sendWelcomeEmail(profileData, 'welcome');
             }
 
