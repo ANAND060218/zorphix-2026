@@ -374,6 +374,63 @@ app.post('/api/send-welcome-email', async (req, res) => {
         res.status(500).json({ error: 'Failed to send email', details: error.message });
     }
 });
+
+// Send Payment Receipt Email
+app.post('/api/send-payment-receipt', async (req, res) => {
+    try {
+        const { userEmail, userName, paymentId, orderId, eventNames, amount } = req.body;
+
+        if (!userEmail || !paymentId || !eventNames) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        const eventList = eventNames.map(e => `<li style="padding: 5px 0;">${e}</li>`).join('');
+        const formattedAmount = `₹${(amount / 100).toFixed(2)}`;
+
+        const mailOptions = {
+            from: `"Zorphix 2026 Support" <${process.env.EMAIL_USER}>`,
+            to: userEmail,
+            subject: `Zorphix 2026 - Payment Receipt #${paymentId.slice(-8)}`,
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #000; color: #fff; padding: 20px; border-radius: 10px;">
+                    <h1 style="color: #97b85d; text-align: center;">PAYMENT SUCCESSFUL</h1>
+                    <p>Dear ${userName || 'Student'},</p>
+                    <p>Thank you for your payment! Here is your official receipt.</p>
+
+                    <div style="background-color: #111; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #97b85d;">
+                        <h3 style="color: #97b85d; margin-top: 0;">TRANSACTION DETAILS</h3>
+                        <p><strong>Payment ID:</strong> ${paymentId}</p>
+                        <p><strong>Order ID:</strong> ${orderId}</p>
+                        <p><strong>Amount Paid:</strong> <span style="color: #97b85d; font-size: 18px;">${formattedAmount}</span></p>
+                        <p><strong>Date:</strong> ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</p>
+                    </div>
+
+                    <div style="background-color: #111; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #e33e33;">
+                        <h3 style="color: #e33e33; margin-top: 0;">REGISTERED EVENTS</h3>
+                        <ul style="list-style-type: none; padding: 0; margin: 0;">
+                            ${eventList}
+                        </ul>
+                    </div>
+
+                    <p style="color: #888; font-size: 12px; text-align: center; margin-top: 20px;">
+                        This is an automated receipt. Please save this email for your records.<br/>
+                        For any queries, contact us at ${process.env.EMAIL_USER}
+                    </p>
+                </div>
+            `
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log(`✅ Payment receipt sent to: ${userEmail}`);
+
+        res.json({ success: true, message: 'Receipt sent successfully' });
+
+    } catch (error) {
+        console.error('❌ Receipt email failed:', error);
+        res.status(500).json({ error: 'Failed to send receipt', details: error.message });
+    }
+});
+
 // Start server
 app.listen(PORT, () => {
     console.log(`
