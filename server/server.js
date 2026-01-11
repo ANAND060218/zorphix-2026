@@ -282,18 +282,20 @@ if (!emailUser || !emailPass) {
 }
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    host: 'smtp.gmail.com',         // Explicit host
-    port: 465,                      // Explicit port for secure
-    secure: true,                   // true for 465, false for other ports
+    host: 'smtp.gmail.com',
+    port: 587,                      // Port 587 with STARTTLS (alternative to 465)
+    secure: false,                  // false for port 587
     auth: {
         user: emailUser,
         pass: emailPass
     },
-    // Fix for ETIMEDOUT on some cloud providers
     tls: {
-        rejectUnauthorized: false
-    }
+        rejectUnauthorized: false,
+        ciphers: 'SSLv3'
+    },
+    connectionTimeout: 30000,       // 30 second timeout
+    greetingTimeout: 15000,
+    socketTimeout: 30000
 });
 
 // Send QR Email (Welcome or Update)
