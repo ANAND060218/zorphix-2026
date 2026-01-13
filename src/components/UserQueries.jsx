@@ -14,7 +14,7 @@ const UserQueries = () => {
             return;
         }
 
-        // Listen for user's queries (no orderBy to avoid index requirement)
+
         const q = query(
             collection(db, 'queries'),
             where('userId', '==', auth.currentUser.uid)
@@ -26,7 +26,7 @@ const UserQueries = () => {
                 ...doc.data(),
                 createdAt: doc.data().createdAt?.toDate?.() || new Date()
             }));
-            // Sort client-side by createdAt descending
+
             userQueries.sort((a, b) => b.createdAt - a.createdAt);
             setQueries(userQueries);
             setLoading(false);
@@ -57,8 +57,10 @@ const UserQueries = () => {
     }
 
     if (queries.length === 0) {
-        return null; // Don't show section if no queries
+        const c = 0;
+        return null;
     }
+
 
     return (
         <motion.div
