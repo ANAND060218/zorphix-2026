@@ -184,7 +184,7 @@ const AdminDashboard = ({ children }) => {
                         </div>
 
                         {/* Stats Cards */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-8">
                             <StatCard
                                 icon={FaUsers}
                                 label="Total Users"
@@ -353,20 +353,20 @@ const NavItem = ({ to, icon: Icon, label, active, badge, onClick }) => (
 const StatCard = ({ icon: Icon, label, value, color, change }) => (
     <motion.div
         whileHover={{ y: -5 }}
-        className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6 relative overflow-hidden group"
+        className="bg-[#0a0a0a] border border-white/5 rounded-xl md:rounded-2xl p-4 md:p-6 relative overflow-hidden group"
     >
-        <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-10 group-hover:opacity-20 transition-opacity" style={{ background: color }}></div>
+        <div className="absolute top-0 right-0 w-24 md:w-32 h-24 md:h-32 rounded-full blur-3xl opacity-10 group-hover:opacity-20 transition-opacity" style={{ background: color }}></div>
         <div className="relative z-10">
-            <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: `${color}20` }}>
-                    <Icon className="text-xl" style={{ color }} />
+            <div className="flex items-center justify-between mb-2 md:mb-4">
+                <div className="w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center" style={{ background: `${color}20` }}>
+                    <Icon className="text-sm md:text-xl" style={{ color }} />
                 </div>
                 {change && (
-                    <span className="text-xs text-gray-500">{change}</span>
+                    <span className="text-[10px] md:text-xs text-gray-500 hidden md:block">{change}</span>
                 )}
             </div>
-            <p className="text-3xl font-black">{value}</p>
-            <p className="text-gray-500 text-sm mt-1">{label}</p>
+            <p className="text-xl md:text-3xl font-black">{value}</p>
+            <p className="text-gray-500 text-[10px] md:text-sm mt-1 truncate">{label}</p>
         </div>
     </motion.div>
 );
