@@ -9,8 +9,8 @@ const Hero = () => {
     const containerRef = useRef(null);
 
     const [targetDate] = useState(() => {
-        // February 5, 2026 at 00:00:00
-        return new Date('2026-02-05T00:00:00').getTime();
+        // February 4, 2026 at 23:59:00
+        return new Date('2026-02-04T23:59:00').getTime();
     });
 
     useEffect(() => {

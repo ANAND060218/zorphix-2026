@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {
     FaBolt,
+    FaLaptop,
     FaPalette,
+    FaPaperclip,
     FaTools
 } from 'react-icons/fa';
 
@@ -10,7 +12,7 @@ const EventsShowcase = () => {
         {
             id: 'tech',
             name: 'Tech Events',
-            count: '6+',
+            count: '7+',
             icon: FaBolt,
             color: '#e33e33',
             gradient: 'from-[#e33e33] to-[#ff6b6b]',
@@ -18,18 +20,31 @@ const EventsShowcase = () => {
         },
         {
             id: 'nonTech',
+<<<<<<< HEAD
             name: 'Paper Presentation',
             count: '1',
             icon: FaPalette,
+=======
+            name: 'Workshops',
+            count: '2',
+            icon: FaLaptop,
+>>>>>>> 47f8de21cca94f5d3a2669a3e9851c15a253e03c
             color: '#97b85d',
             gradient: 'from-[#97b85d] to-[#b8d96f]',
             description: 'Business competitions, creative challenges, and strategic thinking'
         },
         {
+<<<<<<< HEAD
             id: 'workshops',
             name: 'Workshops',
             count: '2',
             icon: FaTools,
+=======
+            id: 'paperpresentation',
+            name: 'Paper Presentations',
+            count: '1',
+            icon: FaPaperclip,
+>>>>>>> 47f8de21cca94f5d3a2669a3e9851c15a253e03c
             color: '#ffa500',
             gradient: 'from-[#ffa500] to-[#ffcc00]',
             description: 'Hands-on learning sessions with industry experts'
