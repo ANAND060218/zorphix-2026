@@ -177,26 +177,29 @@ const Footer = () => {
                     </div>
 
                     {/* 5. Location Card */}
-                    <div className="col-span-1 md:col-span-2 lg:col-span-5 rounded-3xl bg-[#111] border border-white/5 p-6 relative overflow-hidden group hover:border-white/20 transition-colors">
+                    <a
+                        href="https://maps.google.com/?q=Chennai+Institute+of+Technology,+Malayambakkam,+Tamil+Nadu+600133"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="col-span-1 md:col-span-2 lg:col-span-5 rounded-3xl bg-[#111] border border-white/5 p-6 relative overflow-hidden group hover:border-[#e33e33]/50 transition-colors cursor-pointer block"
+                    >
                         <div className="flex items-start justify-between">
                             <div>
-                                <h3 className="text-gray-500 text-xs font-bold uppercase tracking-[0.2em] mb-4">HQ Coordinates</h3>
+                                <h3 className="text-gray-500 text-xs font-bold uppercase tracking-[0.2em] mb-4">Event Location</h3>
                                 <div className="space-y-1 text-gray-300 text-sm">
-                                    <p className="font-bold text-white">Chennai Institute of Technology</p>
-                                    <p>Sarathy Nagar, Kundrathur</p>
-                                    <p>Chennai - 600069</p>
+                                    <p className="font-bold text-white group-hover:text-[#e33e33] transition-colors">Chennai Institute of Technology</p>
+                                    <p>Malayambakkam</p>
+                                    <p>Tamil Nadu - 600133</p>
                                 </div>
                             </div>
-                            <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-[#e33e33]">
+                            <div className="w-12 h-12 bg-[#e33e33]/10 rounded-full flex items-center justify-center text-[#e33e33] group-hover:bg-[#e33e33] group-hover:text-white transition-colors">
                                 <FaMapMarkerAlt size={20} />
                             </div>
                         </div>
-                        <div className="mt-6 pt-6 border-t border-white/5 flex gap-6 text-xs text-gray-500">
-                            <a href="mailto:zorphix@citchennai.net" className="hover:text-white transition-colors flex items-center gap-2">
-                                <FaEnvelope /> zorphix@citchennai.net
-                            </a>
+                        <div className="mt-6 pt-6 border-t border-white/5 flex justify-between items-center text-xs">
+                            <span className="text-gray-500 group-hover:text-white transition-colors">Click to view on Google Maps →</span>
                         </div>
-                    </div>
+                    </a>
 
                     {/* 6. Legal / Copyright */}
                     <div className="col-span-1 md:col-span-4 lg:col-span-3 rounded-3xl bg-[#111] border border-white/5 p-6 flex flex-col justify-between">
