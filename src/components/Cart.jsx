@@ -184,21 +184,6 @@ const Cart = () => {
                             setSelectedEventsList([]);
                             localStorage.setItem('selectedEvents', JSON.stringify([]));
 
-                            // Send payment receipt email
-                            try {
-                                await axios.post(`${backendUrl}/api/send-payment-receipt`, {
-                                    userEmail: auth.currentUser.email,
-                                    userName: auth.currentUser.displayName,
-                                    paymentId: razorpayResponse.razorpay_payment_id,
-                                    orderId: razorpayResponse.razorpay_order_id,
-                                    eventNames: eventsToRegister,
-                                    amount: orderData.amount
-                                });
-                            } catch (emailError) {
-                                console.error('Receipt email failed:', emailError);
-                                // Don't fail payment just because email failed
-                            }
-
                             toast.success(`Payment Successful! ID: ${razorpayResponse.razorpay_payment_id}`, { id: toastId });
                         } else {
                             toast.error("Payment verification failed. Contact support.", { id: toastId });

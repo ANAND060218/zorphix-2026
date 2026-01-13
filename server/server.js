@@ -9,8 +9,11 @@ const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const admin = require('firebase-admin');
 const { calculateTotalPrice, getEventByName } = require('./events');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const QRCode = require('qrcode');
+
+// Initialize Resend with API key from environment
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -273,36 +276,11 @@ app.get('/api/payment-status/:orderId', async (req, res) => {
     }
 });
 
-// Email Transporter Configuration
-const emailUser = process.env.EMAIL_USER;
-const emailPass = process.env.EMAIL_PASS;
-
-if (!emailUser || !emailPass) {
-    console.warn('⚠️ Email credentials not found in environment variables. Email sending disabled.');
-}
-
-const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,                      // Port 587 with STARTTLS (alternative to 465)
-    secure: false,                  // false for port 587
-    auth: {
-        user: emailUser,
-        pass: emailPass
-    },
-    tls: {
-        rejectUnauthorized: false,
-        ciphers: 'SSLv3'
-    },
-    connectionTimeout: 30000,       // 30 second timeout
-    greetingTimeout: 15000,
-    socketTimeout: 30000
-});
-
-// Send QR Email (Welcome or Update)
+// Send Welcome Email (Only for initial account creation)
 app.post('/api/send-welcome-email', async (req, res) => {
     console.log('📧 Welcome email endpoint called');
     try {
-        const { userDetails, type = 'welcome' } = req.body;
+        const { userDetails } = req.body;
 
         if (!userDetails || !userDetails.email) {
             return res.status(400).json({ error: 'User details with email are required' });
@@ -320,8 +298,8 @@ app.post('/api/send-welcome-email', async (req, res) => {
             events: userDetails.events || []
         });
 
-        // Generate QR Code Buffer
-        const qrBuffer = await QRCode.toBuffer(qrData, {
+        // Generate QR Code as base64 data URL
+        const qrDataUrl = await QRCode.toDataURL(qrData, {
             errorCorrectionLevel: 'H',
             margin: 1,
             color: {
@@ -330,108 +308,45 @@ app.post('/api/send-welcome-email', async (req, res) => {
             }
         });
 
-        // Dynamic Email Content
-        const isUpdate = type === 'update';
-        const subject = isUpdate ? 'Zorphix 2026 - Profile Updated' : 'Welcome to Zorphix 2026 - Registration Successful!';
-        const headerText = isUpdate ? 'PROFILE UPDATED' : 'WELCOME TO THE GRID';
-        const introText = isUpdate
-            ? `Greetings ${userDetails.name},<br>Your profile details have been successfully updated. Here is your updated generic entry pass.`
-            : `Greetings ${userDetails.name},<br>Your profile has been successfully registered for Zorphix 2026. Attached is your generic entry pass (QR Code). Keep this safe!`;
-
-        const mailOptions = {
-            from: `"Zorphix 2026 Support" <${process.env.EMAIL_USER}>`,
+        // Send email using Resend
+        const { data, error } = await resend.emails.send({
+            from: 'Zorphix 2026 <onboarding@resend.dev>',
             to: userDetails.email,
-            subject: subject,
+            subject: 'Welcome to Zorphix 2026 - Registration Successful!',
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #000; color: #fff; padding: 20px; border-radius: 10px;">
-                    <h1 style="color: #e33e33; text-align: center;">${headerText}</h1>
-                    <p>${introText}</p>
+                    <h1 style="color: #e33e33; text-align: center;">WELCOME TO THE GRID</h1>
+                    <p>Greetings ${userDetails.name},<br>Your profile has been successfully registered for Zorphix 2026. Below is your generic entry pass (QR Code). Keep this safe!</p>
 
                     <div style="background-color: #111; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                        <h3 style="color: #97b85d; margin-top: 0;">CURRENT PROFILE DETAILS</h3>
+                        <h3 style="color: #97b85d; margin-top: 0;">YOUR PROFILE DETAILS</h3>
                         <p><strong>ID:</strong> ${userDetails.uid}</p>
+                        <p><strong>Name:</strong> ${userDetails.name}</p>
                         <p><strong>College:</strong> ${userDetails.college}</p>
                         <p><strong>Department:</strong> ${userDetails.department}</p>
                     </div>
 
-                    <p style="color: #888; font-size: 12px; text-align: center;">This QR code contains your updated identity data. Present it at the venue for scanning.</p>
+                    <div style="text-align: center; margin: 20px 0;">
+                        <img src="${qrDataUrl}" alt="QR Code" style="max-width: 200px;"/>
+                        <p style="color: #888; font-size: 12px;">Your Entry Pass QR Code</p>
+                    </div>
+
+                    <p style="color: #888; font-size: 12px; text-align: center;">This QR code contains your identity data. Present it at the venue for scanning.</p>
                 </div>
-            `,
-            attachments: [
-                {
-                    filename: `zorphix-pass-${userDetails.uid.slice(0, 6)}.png`,
-                    content: qrBuffer,
-                    contentType: 'image/png'
-                }
-            ]
-        };
+            `
+        });
 
-        // Send Email
-        await transporter.sendMail(mailOptions);
-        console.log(`✅ ${isUpdate ? 'Update' : 'Welcome'} email sent to: ${userDetails.email}`);
+        if (error) {
+            console.error('❌ Resend error:', error);
+            return res.status(500).json({ error: 'Failed to send email', details: error.message });
+        }
 
-        res.json({ success: true, message: 'Email sent successfully' });
+        console.log(`✅ Welcome email sent to: ${userDetails.email}`);
+        res.json({ success: true, message: 'Email sent successfully', id: data.id });
 
     } catch (error) {
         console.error('❌ Email sending failed:', error);
         res.status(500).json({ error: 'Failed to send email', details: error.message });
-    }
-});
-
-// Send Payment Receipt Email
-app.post('/api/send-payment-receipt', async (req, res) => {
-    console.log('📧 Payment receipt endpoint called');
-    try {
-        const { userEmail, userName, paymentId, orderId, eventNames, amount } = req.body;
-
-        if (!userEmail || !paymentId || !eventNames) {
-            return res.status(400).json({ error: 'Missing required fields' });
-        }
-
-        const eventList = eventNames.map(e => `<li style="padding: 5px 0;">${e}</li>`).join('');
-        const formattedAmount = `₹${(amount / 100).toFixed(2)}`;
-
-        const mailOptions = {
-            from: `"Zorphix 2026 Support" <${process.env.EMAIL_USER}>`,
-            to: userEmail,
-            subject: `Zorphix 2026 - Payment Receipt #${paymentId.slice(-8)}`,
-            html: `
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #000; color: #fff; padding: 20px; border-radius: 10px;">
-                    <h1 style="color: #97b85d; text-align: center;">PAYMENT SUCCESSFUL</h1>
-                    <p>Dear ${userName || 'Student'},</p>
-                    <p>Thank you for your payment! Here is your official receipt.</p>
-
-                    <div style="background-color: #111; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #97b85d;">
-                        <h3 style="color: #97b85d; margin-top: 0;">TRANSACTION DETAILS</h3>
-                        <p><strong>Payment ID:</strong> ${paymentId}</p>
-                        <p><strong>Order ID:</strong> ${orderId}</p>
-                        <p><strong>Amount Paid:</strong> <span style="color: #97b85d; font-size: 18px;">${formattedAmount}</span></p>
-                        <p><strong>Date:</strong> ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</p>
-                    </div>
-
-                    <div style="background-color: #111; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #e33e33;">
-                        <h3 style="color: #e33e33; margin-top: 0;">REGISTERED EVENTS</h3>
-                        <ul style="list-style-type: none; padding: 0; margin: 0;">
-                            ${eventList}
-                        </ul>
-                    </div>
-
-                    <p style="color: #888; font-size: 12px; text-align: center; margin-top: 20px;">
-                        This is an automated receipt. Please save this email for your records.<br/>
-                        For any queries, contact us at ${process.env.EMAIL_USER}
-                    </p>
-                </div>
-            `
-        };
-
-        await transporter.sendMail(mailOptions);
-        console.log(`✅ Payment receipt sent to: ${userEmail}`);
-
-        res.json({ success: true, message: 'Receipt sent successfully' });
-
-    } catch (error) {
-        console.error('❌ Receipt email failed:', error);
-        res.status(500).json({ error: 'Failed to send receipt', details: error.message });
     }
 });
 
@@ -446,6 +361,7 @@ app.listen(PORT, () => {
 ║                                                    ║
 ║     Razorpay: ${process.env.RAZORPAY_KEY_ID ? '✅ Configured' : '❌ Missing Key'}              ║
 ║     Firebase: ${db ? '✅ Connected' : '⚠️ Not Connected'}                ║
+║     Email: ✅ Resend Configured                    ║
 ╚════════════════════════════════════════════════════╝
     `);
 });

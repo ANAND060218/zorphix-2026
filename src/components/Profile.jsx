@@ -11,6 +11,7 @@ import CurrencyBackground from './CurrencyBackground';
 import toast from 'react-hot-toast';
 import { technicalEvents, workshops, paperPresentation } from '../data/events';
 import { QRCodeSVG } from 'qrcode.react';
+import UserQueries from './UserQueries';
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -746,14 +747,13 @@ const Profile = () => {
         }
     };
 
-    const sendWelcomeEmail = async (profileData, type = 'welcome') => {
+    const sendWelcomeEmail = async (profileData) => {
         try {
             const backendUrl = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000').replace(/\/$/, '');
             await fetch(`${backendUrl}/api/send-welcome-email`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    type: type,
                     userDetails: {
                         uid: user.uid,
                         name: profileData.name,
@@ -824,13 +824,12 @@ const Profile = () => {
 
             await setDoc(userRef, profileData, { merge: true });
 
-            // Use the pre-save check to determine email type
-            if (wasAlreadyComplete) {
-                toast.success('QR Code Updated with new data!');
-                sendWelcomeEmail(profileData, 'update');
-            } else {
+            // Only send welcome email on initial profile completion (not on updates)
+            if (!wasAlreadyComplete) {
                 toast.success('Profile Completed Successfully!');
-                sendWelcomeEmail(profileData, 'welcome');
+                sendWelcomeEmail(profileData);
+            } else {
+                toast.success('Profile Updated Successfully!');
             }
 
             setIsProfileComplete(true);
@@ -1448,6 +1447,9 @@ const Profile = () => {
                                                         </div>
                                                     </motion.div>
                                                 )}
+
+                                            {/* User Queries Section */}
+                                            <UserQueries />
                                         </motion.div>
                                     )}
                                 </div>

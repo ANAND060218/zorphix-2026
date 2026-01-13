@@ -1,10 +1,74 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaInstagram, FaLinkedin, FaGithub, FaTwitter, FaMapMarkerAlt, FaEnvelope, FaArrowRight, FaDiscord, FaTelegramPlane } from 'react-icons/fa';
-import { motion } from 'framer-motion';
+import { FaInstagram, FaLinkedin, FaTwitter, FaMapMarkerAlt, FaEnvelope, FaPaperPlane } from 'react-icons/fa';
+import { db, auth } from '../firebase';
+import { collection, addDoc, serverTimestamp, doc, getDoc } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
+import toast from 'react-hot-toast';
 
 const Footer = () => {
     const currentYear = new Date().getFullYear();
+    const [queryEmail, setQueryEmail] = useState('');
+    const [queryMessage, setQueryMessage] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [user, setUser] = useState(null);
+    const [userName, setUserName] = useState('');
+
+    // Check if user is logged in
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+            setUser(currentUser);
+            if (currentUser) {
+                setQueryEmail(currentUser.email || '');
+                // Try to get user's name from registration
+                try {
+                    const docRef = doc(db, 'registrations', currentUser.uid);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        setUserName(docSnap.data().displayName || currentUser.displayName || '');
+                    }
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                }
+            } else {
+                setQueryEmail('');
+                setUserName('');
+            }
+        });
+        return () => unsubscribe();
+    }, []);
+
+    const handleQuerySubmit = async (e) => {
+        e.preventDefault();
+
+        const emailToUse = user ? user.email : queryEmail.trim();
+
+        if (!emailToUse || !queryMessage.trim()) {
+            toast.error('Please fill in all required fields');
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            await addDoc(collection(db, 'queries'), {
+                email: emailToUse,
+                name: userName || 'Guest',
+                userId: user?.uid || null,
+                message: queryMessage.trim(),
+                status: 'pending',
+                createdAt: serverTimestamp()
+            });
+
+            toast.success("Query submitted! We'll get back to you soon.");
+            setQueryMessage('');
+            if (!user) setQueryEmail('');
+        } catch (error) {
+            console.error('Error submitting query:', error);
+            toast.error('Failed to submit query. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <footer className="bg-[#050505] pt-12 pb-6 px-4 md:px-6 font-mono relative overflow-hidden">
@@ -60,27 +124,55 @@ const Footer = () => {
                         <SocialCard icon={FaTwitter} label="Twitter" href="#" color="#1DA1F2" />
                     </div>
 
-                    {/* 4. Newsletter / Updates */}
-                    <div className="col-span-1 md:col-span-2 lg:col-span-4 rounded-3xl bg-[#e33e33] p-8 text-white relative overflow-hidden group">
+                    {/* 4. Ask a Question / Query Form */}
+                    <div className="col-span-1 md:col-span-2 lg:col-span-4 rounded-3xl bg-[#e33e33] p-6 text-white relative overflow-hidden group">
                         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
                         <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-black/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
 
-                        <div className="relative z-10 h-full flex flex-col justify-between">
-                            <div>
-                                <h3 className="text-2xl font-bold mb-2">Stay in the Loop</h3>
-                                <p className="text-white/80 text-sm mb-6">Get the latest updates on events and hackathons.</p>
-                            </div>
+                        <div className="relative z-10 h-full flex flex-col">
+                            <h3 className="text-xl font-bold mb-1">Have a Question?</h3>
+                            <p className="text-white/70 text-xs mb-4">
+                                {user ? `Logged in as ${user.email}` : 'Send us your query!'}
+                            </p>
 
-                            <div className="relative">
-                                <input
-                                    type="email"
-                                    placeholder="email@address.com"
-                                    className="w-full bg-black/20 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3 text-sm placeholder-white/50 focus:outline-none focus:bg-black/30 transition-colors"
+                            <form onSubmit={handleQuerySubmit} className="flex flex-col gap-2 flex-grow">
+                                {/* Only show email input if user is NOT logged in */}
+                                {!user && (
+                                    <input
+                                        type="email"
+                                        placeholder="Your email"
+                                        value={queryEmail}
+                                        onChange={(e) => setQueryEmail(e.target.value)}
+                                        className="w-full bg-black/20 backdrop-blur-sm border border-white/20 rounded-lg px-3 py-2 text-sm placeholder-white/50 focus:outline-none focus:bg-black/30 transition-colors"
+                                        required
+                                    />
+                                )}
+                                <textarea
+                                    placeholder="Type your question here..."
+                                    value={queryMessage}
+                                    onChange={(e) => setQueryMessage(e.target.value)}
+                                    rows={user ? 3 : 2}
+                                    className="w-full bg-black/20 backdrop-blur-sm border border-white/20 rounded-lg px-3 py-2 text-sm placeholder-white/50 focus:outline-none focus:bg-black/30 transition-colors resize-none flex-grow"
+                                    required
                                 />
-                                <button className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white text-[#e33e33] rounded-lg flex items-center justify-center hover:scale-105 transition-transform">
-                                    <FaArrowRight size={12} />
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="w-full bg-white text-[#e33e33] font-bold rounded-lg px-4 py-2 text-sm hover:bg-white/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {isSubmitting ? (
+                                        <>
+                                            <div className="w-4 h-4 border-2 border-[#e33e33] border-t-transparent rounded-full animate-spin"></div>
+                                            Sending...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <FaPaperPlane size={12} />
+                                            Send Query
+                                        </>
+                                    )}
                                 </button>
-                            </div>
+                            </form>
                         </div>
                     </div>
 
@@ -100,8 +192,8 @@ const Footer = () => {
                             </div>
                         </div>
                         <div className="mt-6 pt-6 border-t border-white/5 flex gap-6 text-xs text-gray-500">
-                            <a href="mailto:contact@zorphix.com" className="hover:text-white transition-colors flex items-center gap-2">
-                                <FaEnvelope /> contact@zorphix.com
+                            <a href="mailto:zorphix@citchennai.net" className="hover:text-white transition-colors flex items-center gap-2">
+                                <FaEnvelope /> zorphix@citchennai.net
                             </a>
                         </div>
                     </div>
@@ -118,15 +210,12 @@ const Footer = () => {
                     </div>
 
                 </div>
-
-
             </div>
         </footer>
     );
 };
 
 // Helper Components
-
 const SocialCard = ({ icon: Icon, label, href, color }) => (
     <a
         href={href}
