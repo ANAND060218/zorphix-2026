@@ -187,63 +187,53 @@ export const paperPresentation = [
 
 export const workshops = [
     {
-        id: 'ai-workshop',
-        name: 'AI Workshop',
-        subtitle: 'AI Genesis',
+        id: 'fintech-workshop',
+        name: 'FinTech Workshop',
+        subtitle: 'Finance Meets Technology',
         icon: FaCode,
         color: '#e33e33',
-        desc: 'Explore the foundations of Artificial Intelligence and Machine Learning. Hands-on session on building your first neural network.',
+        desc: 'Explore the systems that power digital payments, AI-driven finance, and secure transactions. An engaging, beginner-friendly workshop designed to give you real-world FinTech exposure.',
         heads: 'Expert Speaker',
-        rounds: ['Hands-on Workshop'],
-        rules: ['Laptop required', 'Basic Python knowledge preferred'],
-        price: '₹1'
+        rounds: ['Interactive Workshop (2 Hours)'],
+        rules: [
+            'Duration: 2 Hours',
+            'Mode: Interactive & activity-driven',
+            'Team-based activities included',
+            'Laptop recommended'
+        ],
+        highlights: [
+            'FinTech Fundamentals',
+            'Digital Payments & UPI Architecture',
+            'Cybersecurity & Fraud Detection',
+            'AI in Finance',
+            'Blockchain & Crypto Basics',
+            'Career Opportunities in FinTech'
+        ],
+        price: '₹50'
     },
     {
-        id: 'cloud-workshop',
-        name: 'Cloud Workshop',
-        subtitle: 'Cloud Horizon',
+        id: 'wealthx-workshop',
+        name: 'WealthX Workshop',
+        subtitle: 'Personal Finance & Career',
         icon: FaTerminal,
         color: '#97b85d',
-        desc: 'Master the cloud. Learn to deploy scalable applications using AWS/Azure services in this intensive workshop.',
-        heads: 'Cloud Architect',
-        rounds: ['Hands-on Workshop'],
-        rules: ['Laptop required', 'AWS Free Tier account needed'],
-        price: '₹1'
-    },
-    {
-        id: 'ethical-hacking',
-        name: 'Ethical Hacking',
-        subtitle: 'White Hat',
-        icon: FaLaptopCode,
-        color: '#ffa500',
-        desc: 'Dive into cybersecurity. Learn penetration testing, vulnerability assessment, and how to secure systems.',
-        heads: 'Cybersec Expert',
-        rounds: ['Hands-on Workshop'],
-        rules: ['Laptop required', 'Kali Linux VM preferred'],
-        price: '₹1'
-    },
-    {
-        id: 'app-dev',
-        name: 'App Dev',
-        subtitle: 'Mobile Mastery',
-        icon: FaCode,
-        color: '#e33e33',
-        desc: 'Build cross-platform mobile apps using Flutter/React Native. From zero to app store ready.',
-        heads: 'App Developer',
-        rounds: ['Hands-on Workshop'],
-        rules: ['Laptop required', 'VS Code installed'],
-        price: '₹1'
-    },
-    {
-        id: 'blockchain',
-        name: 'Blockchain',
-        subtitle: 'Decentralized',
-        icon: FaLink,
-        color: '#97b85d',
-        desc: 'Understand the future of web3. Smart contracts, DApps, and blockchain fundamentals.',
-        heads: 'Blockchain Dev',
-        rounds: ['Hands-on Workshop'],
-        rules: ['Laptop required', 'Metamask wallet'],
-        price: '₹1'
+        desc: 'A practical, beginner-friendly learning experience designed to help individuals build strong personal finance foundations, gain career clarity, and understand how businesses and startups work.',
+        heads: 'Expert Speaker',
+        rounds: ['Interactive Workshop (3 Hours)'],
+        rules: [
+            'Duration: 3 Hours',
+            'Mode: Interactive & Activity-Driven',
+            'Team-based participation',
+            'Notebook recommended'
+        ],
+        highlights: [
+            'Personal Finance Fundamentals',
+            'Investing Basics & Wealth-Building',
+            'Career Planning & Skill Development',
+            'Business & Startup Fundamentals',
+            'Idea Validation & Business Models',
+            'Branding & Digital Presence'
+        ],
+        price: '₹50'
     }
 ];
