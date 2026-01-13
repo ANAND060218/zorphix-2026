@@ -27,8 +27,8 @@ const Register = () => {
         { name: 'Gaming Arena', type: 'non-tech', price: 0 },
         { name: 'Treasure Hunt', type: 'non-tech', price: 0 },
         { name: 'Quiz Bowl', type: 'non-tech', price: 0 },
-        { name: 'FinTech Workshop', type: 'workshop', price: 50 },
-        { name: 'WealthX Workshop', type: 'workshop', price: 50 }
+        { name: 'FinTech Workshop', type: 'workshop', price: 1 },
+        { name: 'WealthX Workshop', type: 'workshop', price: 1 }
     ];
 
     const location = useLocation();

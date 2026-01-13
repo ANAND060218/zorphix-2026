@@ -209,7 +209,7 @@ export const workshops = [
             'Blockchain & Crypto Basics',
             'Career Opportunities in FinTech'
         ],
-        price: '₹50'
+        price: '₹1'
     },
     {
         id: 'wealthx-workshop',
@@ -234,6 +234,6 @@ export const workshops = [
             'Idea Validation & Business Models',
             'Branding & Digital Presence'
         ],
-        price: '₹50'
+        price: '₹1'
     }
 ];
