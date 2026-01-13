@@ -19,7 +19,7 @@ const EventsShowcase = () => {
             description: 'Competitive coding, hackathons, and cutting-edge tech challenges'
         },
         {
-            id: 'nonTech',
+            id: 'Paper Presentation',
             name: 'Paper Presentation',
             count: '1',
             icon: FaPalette,
