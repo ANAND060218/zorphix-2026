@@ -308,27 +308,35 @@ app.post('/api/send-welcome-email', async (req, res) => {
             }
         });
 
-        // Send email using Resend
+        // Convert base64 data URL to buffer for attachment
+        const base64Data = qrDataUrl.replace(/^data:image\/png;base64,/, '');
+
+        // Send email using Resend with QR as attachment
         const { data, error } = await resend.emails.send({
-            from: 'Zorphix 2026 <onboarding@resend.dev>',
+            from: 'Zorphix 2026 <noreply@zorphix.com>',
             to: userDetails.email,
             subject: 'Welcome to Zorphix 2026 - Registration Successful!',
+            attachments: [
+                {
+                    filename: 'zorphix-qr-code.png',
+                    content: base64Data,
+                }
+            ],
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #000; color: #fff; padding: 20px; border-radius: 10px;">
                     <h1 style="color: #e33e33; text-align: center;">WELCOME TO THE GRID</h1>
-                    <p>Greetings ${userDetails.name},<br>Your profile has been successfully registered for Zorphix 2026. Below is your generic entry pass (QR Code). Keep this safe!</p>
+                    <p>Greetings ${userDetails.name},<br>Your profile has been successfully registered for Zorphix 2026. Your entry pass QR Code is attached to this email. Keep this safe!</p>
 
                     <div style="background-color: #111; padding: 15px; border-radius: 5px; margin: 20px 0;">
                         <h3 style="color: #97b85d; margin-top: 0;">YOUR PROFILE DETAILS</h3>
-                        <p><strong>ID:</strong> ${userDetails.uid}</p>
                         <p><strong>Name:</strong> ${userDetails.name}</p>
                         <p><strong>College:</strong> ${userDetails.college}</p>
                         <p><strong>Department:</strong> ${userDetails.department}</p>
                     </div>
 
-                    <div style="text-align: center; margin: 20px 0;">
-                        <img src="${qrDataUrl}" alt="QR Code" style="max-width: 200px;"/>
-                        <p style="color: #888; font-size: 12px;">Your Entry Pass QR Code</p>
+                    <div style="text-align: center; margin: 20px 0; padding: 20px; background-color: #1a1a1a; border-radius: 10px; border: 2px solid #e33e33;">
+                        <p style="color: #e33e33; font-size: 18px; font-weight: bold; margin: 0;">📎 QR CODE ATTACHED</p>
+                        <p style="color: #888; font-size: 14px; margin-top: 10px;">Please download the attached QR code image (zorphix-qr-code.png)</p>
                     </div>
 
                     <p style="color: #888; font-size: 12px; text-align: center;">This QR code contains your identity data. Present it at the venue for scanning.</p>
