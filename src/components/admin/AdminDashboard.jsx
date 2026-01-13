@@ -216,96 +216,101 @@ const AdminDashboard = ({ children }) => {
                         {/* Charts */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                             {/* Registration Trend */}
-                            <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6">
+                            <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-4 md:p-6">
                                 <h3 className="text-lg font-bold mb-4">Daily Registrations</h3>
-                                <div className="h-64">
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <BarChart data={registrationData}>
-                                            <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
-                                            <XAxis
-                                                dataKey="date"
-                                                stroke="#666"
-                                                fontSize={10}
-                                                tickLine={false}
-                                                axisLine={{ stroke: '#333' }}
-                                            />
-                                            <YAxis
-                                                stroke="#666"
-                                                fontSize={10}
-                                                tickLine={false}
-                                                axisLine={false}
-                                                allowDecimals={false}
-                                                width={30}
-                                            />
-                                            <Tooltip
-                                                contentStyle={{
-                                                    background: '#111',
-                                                    border: '1px solid #333',
-                                                    borderRadius: '8px',
-                                                    boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
-                                                }}
-                                                labelStyle={{ color: '#fff', fontWeight: 'bold' }}
-                                                cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                                            />
-                                            <Bar
-                                                dataKey="users"
-                                                fill="#97b85d"
-                                                radius={[4, 4, 0, 0]}
-                                                name="Registrations"
-                                            />
-                                        </BarChart>
-                                    </ResponsiveContainer>
+                                <div className="overflow-x-auto">
+                                    <div className="h-64 min-w-[400px]">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <BarChart data={registrationData}>
+                                                <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
+                                                <XAxis
+                                                    dataKey="date"
+                                                    stroke="#666"
+                                                    fontSize={10}
+                                                    tickLine={false}
+                                                    axisLine={{ stroke: '#333' }}
+                                                />
+                                                <YAxis
+                                                    stroke="#666"
+                                                    fontSize={10}
+                                                    tickLine={false}
+                                                    axisLine={false}
+                                                    allowDecimals={false}
+                                                    width={30}
+                                                />
+                                                <Tooltip
+                                                    contentStyle={{
+                                                        background: '#111',
+                                                        border: '1px solid #333',
+                                                        borderRadius: '8px',
+                                                        boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
+                                                    }}
+                                                    labelStyle={{ color: '#fff', fontWeight: 'bold' }}
+                                                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                                                />
+                                                <Bar
+                                                    dataKey="users"
+                                                    fill="#97b85d"
+                                                    radius={[4, 4, 0, 0]}
+                                                    name="Registrations"
+                                                />
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Events Distribution */}
                             <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6">
                                 <h3 className="text-lg font-bold mb-4">Event Registrations</h3>
-                                <div className="h-64">
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <PieChart>
-                                            <Pie
-                                                data={eventData}
-                                                cx="50%"
-                                                cy="50%"
-                                                innerRadius={60}
-                                                outerRadius={80}
-                                                fill="#8884d8"
-                                                paddingAngle={5}
-                                                dataKey="value"
-                                                label={({ name, value }) => `${name}: ${value}`}
-                                            >
-                                                {eventData.map((entry, index) => (
-                                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                                ))}
-                                            </Pie>
-                                            <Tooltip />
-                                        </PieChart>
-                                    </ResponsiveContainer>
+                                <div className="overflow-x-auto">
+                                    <div className="h-64 min-w-[300px]">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <PieChart>
+                                                <Pie
+                                                    data={eventData}
+                                                    cx="50%"
+                                                    cy="50%"
+                                                    innerRadius={50}
+                                                    outerRadius={70}
+                                                    fill="#8884d8"
+                                                    paddingAngle={5}
+                                                    dataKey="value"
+                                                    label={({ name, value }) => `${value}`}
+                                                >
+                                                    {eventData.map((entry, index) => (
+                                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                                    ))}
+                                                </Pie>
+                                                <Tooltip />
+                                                <Legend wrapperStyle={{ fontSize: '10px' }} />
+                                            </PieChart>
+                                        </ResponsiveContainer>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* Recent Queries */}
-                        <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6">
+                        <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-4 md:p-6">
                             <div className="flex justify-between items-center mb-4">
                                 <h3 className="text-lg font-bold">Recent Queries</h3>
                                 <Link to="/admin/queries" className="text-[#e33e33] text-sm hover:underline">View All</Link>
                             </div>
-                            <div className="space-y-3">
+                            <div className="space-y-3 overflow-x-auto">
                                 {recentQueries.length === 0 ? (
                                     <p className="text-gray-500 text-center py-8">No queries yet</p>
                                 ) : (
                                     recentQueries.map((q) => (
-                                        <div key={q.id} className="flex items-center justify-between p-4 bg-white/5 rounded-xl">
-                                            <div className="flex items-center gap-4">
-                                                <div className={`w-2 h-2 rounded-full ${q.status === 'pending' ? 'bg-[#e33e33]' : 'bg-[#97b85d]'}`}></div>
-                                                <div>
-                                                    <p className="text-sm font-medium">{q.email}</p>
-                                                    <p className="text-xs text-gray-500 truncate max-w-md">{q.message}</p>
+                                        <div key={q.id} className="flex items-center justify-between p-3 md:p-4 bg-white/5 rounded-xl min-w-[280px]">
+                                            <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
+                                                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${q.status === 'pending' ? 'bg-[#e33e33]' : 'bg-[#97b85d]'}`}></div>
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="text-sm font-medium truncate">{q.email}</p>
+                                                    <p className="text-xs text-gray-500 truncate">{q.message}</p>
                                                 </div>
                                             </div>
-                                            <span className={`text-xs px-3 py-1 rounded-full ${q.status === 'pending' ? 'bg-[#e33e33]/20 text-[#e33e33]' : 'bg-[#97b85d]/20 text-[#97b85d]'}`}>
+                                            <span className={`text-xs px-2 md:px-3 py-1 rounded-full flex-shrink-0 ml-2 ${q.status === 'pending' ? 'bg-[#e33e33]/20 text-[#e33e33]' : 'bg-[#97b85d]/20 text-[#97b85d]'}`}>
                                                 {q.status}
                                             </span>
                                         </div>
