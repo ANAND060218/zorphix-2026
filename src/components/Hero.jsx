@@ -83,7 +83,7 @@ const Hero = () => {
             <div className="relative z-40 flex flex-col items-center justify-center min-h-screen pointer-events-none pt-20 pb-32 md:py-0">
 
                 {/* Floating Header */}
-                <div className="mb-8 md:mb-12 mt-16 md:mt-0 relative group pointer-events-auto flex flex-col items-center px-4">
+                <div className="mb-8 md:mb-12 mt-10 md:mt-16 relative group pointer-events-auto flex flex-col items-center px-4">
                     <div className="absolute -inset-10 bg-gradient-to-r from-[#e33e33] to-[#97b85d] rounded-full opacity-20 blur-3xl group-hover:opacity-40 transition duration-500"></div>
 
                     {/* Logo and Name Container */}
