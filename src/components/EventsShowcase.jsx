@@ -18,8 +18,8 @@ const EventsShowcase = () => {
         },
         {
             id: 'nonTech',
-            name: 'Non-Tech Events',
-            count: '5',
+            name: 'Paper Presentation',
+            count: '1',
             icon: FaPalette,
             color: '#97b85d',
             gradient: 'from-[#97b85d] to-[#b8d96f]',
@@ -28,7 +28,7 @@ const EventsShowcase = () => {
         {
             id: 'workshops',
             name: 'Workshops',
-            count: '3',
+            count: '2',
             icon: FaTools,
             color: '#ffa500',
             gradient: 'from-[#ffa500] to-[#ffcc00]',
