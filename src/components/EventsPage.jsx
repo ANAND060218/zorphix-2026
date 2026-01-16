@@ -359,12 +359,12 @@ const EventsPage = () => {
                         <div className="flex justify-between items-end">
                             <div className="flex items-center gap-6">
                                 <div>
-                                    <span className="block text-[8px] text-gray-400 uppercase tracking-widest mb-0.5">MEMBER SINCE</span>
-                                    <span className="text-xs md:text-sm text-white font-mono tracking-wider">2024</span>
+                                    <span className="block text-[8px] text-gray-400 uppercase tracking-widest mb-0.5">Member since</span>
+                                    <span className="text-xs md:text-sm text-white font-mono tracking-wider">2022</span>
                                 </div>
                                 <div>
-                                    <span className="block text-[8px] text-gray-400 uppercase tracking-widest mb-0.5">VALID THRU</span>
-                                    <span className="text-xs md:text-sm text-white font-mono tracking-wider">03/26</span>
+                                    <span className="block text-[8px] text-gray-400 uppercase tracking-widest mb-0.5">Valid till</span>
+                                    <span className="text-xs md:text-sm text-white font-mono tracking-wider">02/26</span>
                                 </div>
                             </div>
                             <div className="text-right">

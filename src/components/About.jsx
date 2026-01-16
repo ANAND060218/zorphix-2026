@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import CurrencyBackground from './CurrencyBackground';
 import CoinBackground from './CoinBackground';
 import UniqueCarousel from './UniqueCarousel';
-import { FaArrowRight, FaCode, FaChartLine, FaGlobe, FaTwitter, FaGithub, FaLinkedin, FaBuilding, FaBrain, FaBalanceScale, FaEnvelope, FaPhone } from 'react-icons/fa';
+import { FaArrowRight, FaCode, FaChartLine, FaGlobe, FaTwitter, FaGithub, FaLinkedin, FaBuilding, FaBrain, FaBalanceScale, FaPhone } from 'react-icons/fa';
 import zorphixLogo from '../assets/zorphix-logo.png';
 import zorphixName from '../assets/zorphix.png';
 
@@ -17,22 +17,24 @@ const About = () => {
 
     const coreMembers = [
         {
-            name: "Member 1",
-            role: "Event Coordinator",
-            email: "xxx@example.com",
-            phone: "+91 XXXXX XXXXX"
+            name: "Ja Dhaneesh Bala",
+            role: "President",
+            phone: "+91 824 875 0936"
         },
         {
-            name: "Member 2",
-            role: "Technical Lead",
-            email: "yyy@example.com",
-            phone: "+91 YYYYY YYYYY"
+            name: "Subiksha",
+            role: "Secretary",
+            phone: "+91 97861 04200"
         },
         {
-            name: "Member 3",
-            role: "Marketing Head",
-            email: "zzz@example.com",
-            phone: "+91 ZZZZZ ZZZZZ"
+            name: "Magizhan J",
+            role: "Event Organizer",
+            phone: "+91 82700 50727"
+        },
+        {
+            name: "Vithuna S",
+            role: "Event Organizer",
+            phone: "+91 87543 00205"
         }
     ];
 
@@ -178,13 +180,6 @@ const About = () => {
                                         <h4 className="text-lg font-bold text-white mb-1 group-hover:text-[#97b85d] transition-colors">{member.name}</h4>
                                         <p className="text-xs font-mono text-gray-500 uppercase tracking-wider mb-3">{member.role}</p>
                                         <div className="space-y-2">
-                                            <a
-                                                href={`mailto:${member.email}`}
-                                                className="flex items-center gap-2 text-sm text-gray-400 hover:text-[#97b85d] transition-colors group/link"
-                                            >
-                                                <FaEnvelope className="text-xs group-hover/link:scale-110 transition-transform" />
-                                                <span className="font-mono">{member.email}</span>
-                                            </a>
                                             <a
                                                 href={`tel:${member.phone}`}
                                                 className="flex items-center gap-2 text-sm text-gray-400 hover:text-[#e33e33] transition-colors group/link"
