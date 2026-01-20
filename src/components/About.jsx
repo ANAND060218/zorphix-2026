@@ -83,11 +83,11 @@ const About = () => {
                 </section>
 
 
-                {/* CSBS BENTO GRID */}
+                {/* ZORPHIX HIGHLIGHTS BENTO GRID */}
                 <section className="px-6 md:px-12 lg:px-20 mb-20 max-w-7xl mx-auto">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 h-auto md:h-[500px]">
 
-                        {/* Box 1: Focus */}
+                        {/* Box 1: About ZORPHIX */}
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9 }}
                             whileInView={{ opacity: 1, scale: 1 }}
@@ -96,19 +96,19 @@ const About = () => {
                         >
                             <div className="absolute top-0 right-0 p-32 bg-[#97b85d] opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:opacity-10 transition-opacity"></div>
                             <div>
-                                <FaBuilding className="text-4xl text-white mb-6" />
-                                <h3 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">Industry Integrated</h3>
+                                <FaGlobe className="text-4xl text-white mb-6" />
+                                <h3 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">National Level Symposium</h3>
                                 <p className="text-gray-400 leading-relaxed text-sm md:text-base">
-                                    Computer Science & Business Systems is the first stream in engineering designed to meet the future demands of the rapidly changing tech industry in the era of Business 4.0. Designed by Tata Consultancy Services in an MoU with educational institutions, CSBS is the degree program of the future. The curriculum aims to ensure that the students graduating from the program not only skill up in computer science but also develop an equal appreciation of humanities and management sciences.
+                                    ZORPHIX is the flagship national-level technical symposium organized by the Department of Computer Science & Business Systems. Bringing together the brightest minds from across the country, ZORPHIX offers a platform for innovation, competition, and collaboration. From cutting-edge technical events to insightful workshops, our symposium is designed to challenge, inspire, and elevate future tech leaders. Join us in this celebration of technology, creativity, and excellence.
                                 </p>
                             </div>
                             <div className="flex items-center gap-2 text-[#97b85d] text-xs font-mono uppercase tracking-widest mt-6">
                                 <span className="w-2 h-2 bg-[#97b85d] rounded-full animate-pulse"></span>
-                                Future Ready
+                                Where Innovation Meets Excellence
                             </div>
                         </motion.div>
 
-                        {/* Box 2: TCS Partnership */}
+                        {/* Box 2: Participants */}
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9 }}
                             whileInView={{ opacity: 1, scale: 1 }}
@@ -116,12 +116,13 @@ const About = () => {
                             transition={{ delay: 0.1 }}
                             className="md:col-span-2 bg-gradient-to-br from-[#111] to-black border border-white/10 rounded-2xl p-8 flex flex-col justify-center items-start hover:border-[#e33e33]/30 transition-colors relative overflow-hidden group"
                         >
-                            <div className="absolute right-4 top-4 opacity-20 text-6xl font-black text-gray-800 pointer-events-none group-hover:scale-110 transition-transform">TCS</div>
-                            <h4 className="text-xs font-mono text-gray-500 uppercase tracking-widest mb-2">Developed In MoU With</h4>
-                            <h3 className="text-3xl font-black text-white italic">Tata Consultancy Services</h3>
+                            <div className="absolute right-4 top-4 opacity-20 text-6xl font-black text-gray-800 pointer-events-none group-hover:scale-110 transition-transform">1100+</div>
+                            <h4 className="text-xs font-mono text-gray-500 uppercase tracking-widest mb-2">Growing Community</h4>
+                            <h3 className="text-3xl font-black text-white">1100+ Participants</h3>
+                            <p className="text-sm text-gray-400 mt-2">in past events from colleges across the nation</p>
                         </motion.div>
 
-                        {/* Box 3: Curriculum */}
+                        {/* Box 3: Sponsorships */}
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9 }}
                             whileInView={{ opacity: 1, scale: 1 }}
@@ -129,12 +130,12 @@ const About = () => {
                             transition={{ delay: 0.2 }}
                             className="md:col-span-1 bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 flex flex-col justify-center hover:bg-white/5 transition-colors"
                         >
-                            <FaCode className="text-3xl text-[#97b85d] mb-4" />
-                            <h4 className="font-bold text-lg mb-1">Tech Skills</h4>
-                            <p className="text-xs text-gray-500">Core CS competency & skilling up.</p>
+                            <FaChartLine className="text-3xl text-[#97b85d] mb-4" />
+                            <h4 className="font-bold text-lg mb-1">10+ Sponsorships</h4>
+                            <p className="text-xs text-gray-500">Trusted partners over the years.</p>
                         </motion.div>
 
-                        {/* Box 4: Humanities */}
+                        {/* Box 4: Events */}
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9 }}
                             whileInView={{ opacity: 1, scale: 1 }}
@@ -142,9 +143,9 @@ const About = () => {
                             transition={{ delay: 0.3 }}
                             className="md:col-span-1 bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 flex flex-col justify-center hover:bg-white/5 transition-colors"
                         >
-                            <FaBalanceScale className="text-3xl text-[#e33e33] mb-4" />
-                            <h4 className="font-bold text-lg mb-1">Humanities</h4>
-                            <p className="text-xs text-gray-500">Appreciation of management sciences.</p>
+                            <FaBrain className="text-3xl text-[#e33e33] mb-4" />
+                            <h4 className="font-bold text-lg mb-1">8+ Events</h4>
+                            <p className="text-xs text-gray-500">Exciting events & workshops conducted.</p>
                         </motion.div>
 
                     </div>
