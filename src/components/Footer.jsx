@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaInstagram, FaLinkedin, FaTwitter, FaMapMarkerAlt, FaEnvelope, FaPaperPlane } from 'react-icons/fa';
+import { FaInstagram, FaLinkedin, FaMapMarkerAlt, FaEnvelope, FaPaperPlane } from 'react-icons/fa';
+import { FaXTwitter } from 'react-icons/fa6';
 import { db, auth } from '../firebase';
 import { collection, addDoc, serverTimestamp, doc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -119,9 +120,9 @@ const Footer = () => {
                     {/* 3. Socials Grid */}
                     <div className="col-span-1 md:col-span-2 lg:col-span-4 grid grid-cols-2 gap-4">
                         <SocialCard icon={FaInstagram} label="Instagram" href="https://www.instagram.com/zorphix.cit/" color="#E1306C" />
-                        <SocialCard icon={FaLinkedin} label="LinkedIn" href="#" color="#0077B5" />
+                        <SocialCard icon={FaLinkedin} label="LinkedIn" href="https://www.linkedin.com/school/chennai-institute-of-technology/" color="#0077B5" />
                         <SocialCard icon={FaEnvelope} label="Email" href="mailto:zorphix@citchennai.net" color="#97b85d" />
-                        <SocialCard icon={FaTwitter} label="Twitter" href="#" color="#1DA1F2" />
+                        <SocialCard icon={FaXTwitter} label="X" href="https://x.com/citchennai" color="#000000" />
                     </div>
 
                     {/* 4. Ask a Question / Query Form */}
@@ -204,8 +205,8 @@ const Footer = () => {
                     {/* 6. Legal / Copyright */}
                     <div className="col-span-1 md:col-span-4 lg:col-span-3 rounded-3xl bg-[#111] border border-white/5 p-6 flex flex-col justify-between">
                         <div className="flex flex-col gap-2">
-                            <Link to="/privacy" className="text-gray-500 text-xs hover:text-white transition-colors">Privacy Policy</Link>
-                            <Link to="/terms" className="text-gray-500 text-xs hover:text-white transition-colors">Terms of Service</Link>
+                            <span className="text-gray-500 text-xs">Privacy Policy</span>
+                            <span className="text-gray-500 text-xs">Terms of Service</span>
                         </div>
                         <div className="mt-8 text-[10px] text-gray-600 uppercase tracking-wider">
                             &copy; {currentYear} Zorphix Symposium

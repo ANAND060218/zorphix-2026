@@ -139,7 +139,6 @@ async function handleCreateOrder(req, res) {
         };
 
         const order = await razorpay.orders.create(orderOptions);
-        console.log(order);
 
         console.log(`✅ Order created: ${order.id} for ₹${totalAmount} (${eventNames.length} events)`);
 

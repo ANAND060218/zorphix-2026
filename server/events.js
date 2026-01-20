@@ -3,19 +3,19 @@ const technicalEvents = [
     { id: 'pixel-reforge', name: 'Pixel Reforge', price: 'FREE' },
     { id: 'promptcraft', name: 'PromptCraft', price: 'FREE' },
     { id: 'algopulse', name: 'AlgoPulse', price: 'FREE' },
-    { id: 'codeback', name: 'CodeBack', price: 'FREE' },
+    { id: 'reverse-coding', name: 'Reverse Coding', price: 'FREE' },
     { id: 'sip-to-survive', name: 'Sip to Survive', price: 'FREE' },
     { id: 'codecrypt', name: 'CodeCrypt', price: 'FREE' },
-    { id: 'linklogic', name: 'LinkLogic', price: 'FREE' }
+    { id: 'linklogic', name: 'LinkLogic', price: 'FREE' },
+    { id: 'pitchfest', name: 'Pitchfest', price: 'FREE' }
 ];
 
 const paperPresentation = [
-    { id: 'paper-presentation', name: 'Paper Presentation', price: '₹149' }
+    { id: 'paper-presentation', name: 'Paper Presentation', price: '₹120' }
 ];
 
 const workshops = [
-    { id: 'fintech-workshop', name: 'FinTech Workshop', price: '₹1' },
-    { id: 'wealthx-workshop', name: 'WealthX Workshop', price: '₹1' }
+    { id: 'fintech-workshop', name: 'FinTech Workshop', price: '₹50' }
 ];
 
 // Get all events

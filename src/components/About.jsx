@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import CurrencyBackground from './CurrencyBackground';
 import CoinBackground from './CoinBackground';
 import UniqueCarousel from './UniqueCarousel';
-import { FaArrowRight, FaCode, FaChartLine, FaGlobe, FaTwitter, FaGithub, FaLinkedin, FaBuilding, FaBrain, FaBalanceScale, FaPhone } from 'react-icons/fa';
+import { FaArrowRight, FaCode, FaChartLine, FaGlobe, FaGithub, FaLinkedin, FaBuilding, FaBrain, FaBalanceScale, FaPhone } from 'react-icons/fa';
+import { FaXTwitter } from 'react-icons/fa6';
 import zorphixLogo from '../assets/zorphix-logo.png';
 import zorphixName from '../assets/zorphix.png';
 
@@ -214,15 +215,6 @@ const About = () => {
                                 <Link to="/events" className="px-8 py-3 bg-white text-black font-bold uppercase tracking-widest rounded hover:scale-105 transition-transform relative z-10">
                                     Register Now
                                 </Link>
-                            </div>
-
-                            <div className="bg-[#0a0a0a] border border-white/10 rounded-2xl p-8 flex items-center justify-between">
-                                <span className="text-sm font-mono text-gray-500">CONNECT WITH US</span>
-                                <div className="flex gap-4 text-xl">
-                                    <FaGithub className="text-white hover:text-[#97b85d] cursor-pointer transition-colors" />
-                                    <FaTwitter className="text-white hover:text-[#e33e33] cursor-pointer transition-colors" />
-                                    <FaLinkedin className="text-white hover:text-blue-500 cursor-pointer transition-colors" />
-                                </div>
                             </div>
                         </div>
                     </div>

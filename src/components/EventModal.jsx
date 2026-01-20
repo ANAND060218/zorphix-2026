@@ -45,25 +45,35 @@ const EventModal = ({ isOpen, onClose, event, isTechnical, isRegistered, isSelec
                                     <div className="text-gray-400 text-xs uppercase mb-1 flex items-center gap-1">
                                         <FaCalendarAlt /> Date
                                     </div>
-                                    <div className="text-white font-mono text-sm">{event.date}</div>
+                                    <div className="text-white font-mono text-sm">5/2/2026</div>
                                 </div>
                                 <div className="bg-white/5 p-3 rounded-lg border border-white/5">
                                     <div className="text-gray-400 text-xs uppercase mb-1 flex items-center gap-1">
                                         <FaMapMarkerAlt /> Venue
                                     </div>
-                                    <div className="text-white font-mono text-sm">{event.venue}</div>
+                                    <a
+                                        href="https://maps.google.com/?q=Chennai+Institute+of+Technology,+Malayambakkam,+Tamil+Nadu+600133"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-[#97b85d] font-mono text-sm hover:text-white transition-colors"
+                                    >
+                                        CIT ↗
+                                    </a>
                                 </div>
                                 <div className="bg-white/5 p-3 rounded-lg border border-white/5">
                                     <div className="text-gray-400 text-xs uppercase mb-1 flex items-center gap-1">
                                         <FaUsers /> Team
                                     </div>
-                                    <div className="text-white font-mono text-sm">{event.team}</div>
+                                    <div className="text-white font-mono text-sm">{event.teamSize || '1-2'} Members</div>
+                                    {event.teamSize && event.teamSize !== '1' && event.teamSize !== 'Individual' && (
+                                        <div className="text-yellow-400/80 text-[8px] font-mono mt-1">*Teams formed offline</div>
+                                    )}
                                 </div>
                                 <div className="bg-white/5 p-3 rounded-lg border border-white/5">
                                     <div className="text-gray-400 text-xs uppercase mb-1 flex items-center gap-1">
-                                        <FaTrophy /> Prize
+                                        <FaTrophy /> Price
                                     </div>
-                                    <div className="text-white font-mono text-sm text-[#e33e33]">{event.prize}</div>
+                                    <div className="text-white font-mono text-sm text-[#e33e33]">{event.price}</div>
                                 </div>
                             </div>
 
@@ -122,8 +132,8 @@ const EventModal = ({ isOpen, onClose, event, isTechnical, isRegistered, isSelec
                                 onClick={onAction}
                                 disabled={isRegistered}
                                 className={`px-6 py-2 rounded-lg text-sm font-mono uppercase tracking-widest transition-all ${isRegistered
-                                        ? 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700'
-                                        : 'bg-[#e33e33] text-white hover:bg-[#c22e24] shadow-[0_0_15px_rgba(227,62,51,0.3)] hover:shadow-[0_0_25px_rgba(227,62,51,0.5)]'
+                                    ? 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700'
+                                    : 'bg-[#e33e33] text-white hover:bg-[#c22e24] shadow-[0_0_15px_rgba(227,62,51,0.3)] hover:shadow-[0_0_25px_rgba(227,62,51,0.5)]'
                                     }`}>
                                 {isRegistered
                                     ? 'REGISTERED'

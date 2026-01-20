@@ -338,12 +338,19 @@ const Cart = () => {
                         <div className="flex justify-between items-end">
                             <div className="flex items-center gap-6">
                                 <div>
-                                    <span className="block text-[8px] text-gray-400 uppercase tracking-widest mb-0.5">Member since</span>
-                                    <span className="text-xs md:text-sm text-white font-mono tracking-wider">2022</span>
+                                    <span className="block text-[8px] text-gray-400 uppercase tracking-widest mb-0.5">Date</span>
+                                    <span className="text-xs md:text-sm text-white font-mono tracking-wider">5/2/2026</span>
                                 </div>
                                 <div>
-                                    <span className="block text-[8px] text-gray-400 uppercase tracking-widest mb-0.5">Valid till</span>
-                                    <span className="text-xs md:text-sm text-white font-mono tracking-wider">02/26</span>
+                                    <span className="block text-[8px] text-gray-400 uppercase tracking-widest mb-0.5">Venue</span>
+                                    <a
+                                        href="https://maps.google.com/?q=Chennai+Institute+of+Technology,+Malayambakkam,+Tamil+Nadu+600133"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-xs md:text-sm text-[#97b85d] font-mono tracking-wider hover:text-white transition-colors"
+                                    >
+                                        CIT ↗
+                                    </a>
                                 </div>
                             </div>
                             <div className="text-right">
@@ -351,6 +358,12 @@ const Cart = () => {
                                 <span className="text-xl md:text-3xl font-black text-white tracking-tight drop-shadow-md block leading-none">{event.price}</span>
                             </div>
                         </div>
+                        {/* Team formation note */}
+                        {event.teamSize && event.teamSize !== '1' && event.teamSize !== 'Individual' && (
+                            <div className="mt-2 text-[8px] text-yellow-400/80 font-mono">
+                                *Team: {event.teamSize} members. Register individually.
+                            </div>
+                        )}
                     </div>
 
                     {/* Bottom Footer */}

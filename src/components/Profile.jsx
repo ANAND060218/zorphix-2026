@@ -669,8 +669,30 @@ const Profile = () => {
             await signInWithPopup(auth, googleProvider);
             toast.success('Signed in successfully!');
         } catch (error) {
+            // Suppress user-initiated cancellation errors (not actual errors)
+            const ignoredErrors = [
+                'auth/popup-closed-by-user',
+                'auth/cancelled-popup-request',
+                'auth/user-cancelled'
+            ];
+
+            if (ignoredErrors.includes(error.code)) {
+                // User closed popup or cancelled - this is expected behavior, not an error
+                console.log("Sign-in cancelled by user");
+                setAuthLoading(false);
+                return;
+            }
+
             console.error("Error signing in with Google", error);
-            toast.error(`Sign-In Failed: ${error.message}`);
+
+            // Show user-friendly error messages for actual errors
+            if (error.code === 'auth/popup-blocked') {
+                toast.error('Popup was blocked. Please allow popups for this site.');
+            } else if (error.code === 'auth/network-request-failed') {
+                toast.error('Network error. Please check your connection.');
+            } else {
+                toast.error(`Sign-In Failed: ${error.message}`);
+            }
         } finally {
             setAuthLoading(false);
         }

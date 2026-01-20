@@ -6,7 +6,7 @@ import {
     FaCoffee,
     FaPuzzlePiece,
     FaProjectDiagram,
-    FaLink,
+    FaLightbulb,
     FaWrench,
     FaScroll
 } from 'react-icons/fa';
@@ -18,18 +18,20 @@ export const technicalEvents = [
         subtitle: 'UI Revamp',
         icon: FaCode,
         color: '#e33e33',
-        desc: 'A two-stage UI engineering challenge that evaluates participants’ frontend fundamentals first, followed by real-world UI enhancement skills using AI as an accelerator.',
-        heads: 'S. Aishwarya, Mohanapriya D',
+        teamSize: '1-2',
+        desc: 'A two-round UI engineering challenge where teams redesign a given interface to improve usability, responsiveness, and visual appeal. The event tests core frontend skills first, followed by real-world UI enhancement using AI.',
+        heads: 'S. Aishwarya, Mohanapriya D, Shanjay, Vishal S',
         rounds: [
             'Round 1 – Core UI Fundamentals (No AI)',
             'Round 2 – Advanced UI Enhancement (AI Allowed)'
         ],
         rules: [
-            'Only shortlisted teams from Round 1 may participate',
-            'Time limit: 45 minutes',
-            'AI tools are allowed (ChatGPT, Copilot, design generators, etc.)',
-            'Teams must enhance the same UI from Round 1',
-            'Mandatory benchmark enhancements must be met'
+            'Team size: 1-2 members',
+            'Teams must bring their own laptops.',
+            'Only AI tools suggested by organizers are allowed (Round 2 only).',
+            'VSCode platform must be used for coding.',
+            'Only shortlisted teams from Round 1 advance to Round 2.',
+            'Participants must strictly abide by all rules.'
         ],
         price: 'FREE'
     },
@@ -39,18 +41,22 @@ export const technicalEvents = [
         subtitle: 'Promptopia',
         icon: FaTerminal,
         color: '#97b85d',
-        desc: 'A two-round prompt engineering challenge that tests how effectively teams can translate visual understanding into precise prompts.',
-        heads: 'Ashanthika Raja, Jyotsna S',
+        teamSize: '1-2',
+        desc: 'A two-round prompt engineering challenge that tests how well participants convert visual understanding into precise AI prompts. Teams attempt to recreate a given reference image using AI image-generation tools within limited attempts.',
+        heads: 'Ashanthika Raja, Jyotsna S, Stefin Jude, Ramalingam',
         rounds: [
-            'Round 1 – Open Prompt Recreation (No Prompt Restrictions)',
+            'Round 1 – Open Prompt Recreation (No Restrictions)',
             'Round 2 – Constrained Prompt Engineering (With Restrictions)'
         ],
         rules: [
-            'Teams must bring their own laptops and internet access.',
-            'AI accounts and tools must be personally owned by participants.',
-            'Sharing prompts or outputs with other teams is prohibited.',
-            'Any form of plagiarism or copying prompts from other teams is prohibited.',
-            'Judges’ decision is final and binding.'
+            'Team size: 1-2 members',
+            'Only AI image-generation tools allowed; no manual editing.',
+            'Maximum 3 prompt attempts per round.',
+            'Submit final image and exact prompts used.',
+            'Sharing prompts with other teams is prohibited.',
+            'Plagiarism leads to immediate disqualification.',
+            'Bring your own laptops, internet, and AI accounts.',
+            'Judges\' decision is final.'
         ],
         price: 'FREE'
     },
@@ -60,40 +66,45 @@ export const technicalEvents = [
         subtitle: 'Algo Rhythm',
         icon: FaLaptopCode,
         color: '#ffa500',
-        desc: 'A competitive algorithmic coding event designed to test logical thinking, problem-solving ability, and implementation skills under strict proctoring, with zero AI assistance.',
-        heads: 'Kiruthika M, Amirthavarshini H',
+        teamSize: '1-2',
+        desc: 'A high-energy algorithmic coding competition where participants solve programming problems while loud background music plays continuously. Includes Advantage and Hindrance tasks to test focus, adaptability, and performance under pressure.',
+        heads: 'Kiruthika M, Amirthavarshini H, Pavadharani, Pradeep',
         rounds: [
-            'Round 1 – Algorithmic Screening',
+            'Round 1 – Algorithmic Screening (Basic to Intermediate)',
             'Round 2 – Advanced Algorithm Challenge'
         ],
         rules: [
-            'Participants are recommended/preferred to bring their own laptops and chargers.',
-            'Computers will also be provided for participants if required.',
-            'Stable internet connectivity is mandatory.',
-            'One team member must be prepared to explain the solution if asked.',
-            'Judges’ decisions are final and binding.',
-            'Any form of misconduct leads to immediate disqualification.'
+            'Team size: 1-2 members',
+            'Bringing laptops is recommended but not mandatory.',
+            'Participants must have a valid HackerRank account.',
+            'AI tools are strictly prohibited.',
+            'Screen sharing and camera must remain ON.',
+            'Any malpractice leads to immediate disqualification.',
+            'Judges\' decisions are final.'
         ],
         price: 'FREE'
     },
     {
-        id: 'codeback',
-        name: 'CodeBack',
-        subtitle: 'Reverse Coding',
+        id: 'reverse-coding',
+        name: 'Reverse Coding',
+        subtitle: 'CodeBack',
         icon: FaUndo,
         color: '#e33e33',
-        desc: 'A reverse-engineering coding challenge that tests participants’ ability to deduce hidden logic from outputs, reconstruct algorithms, and implement correct and efficient solutions.',
-        heads: 'Gayathri R, Subha Shree B',
+        teamSize: '1-2',
+        desc: 'In Reverse Coding, the problem statement remains hidden. Participants rely only on output patterns, sample inputs, or program behavior to uncover the logic and build the solution. A true test of analytical thinking and pattern recognition.',
+        heads: 'Subha Shree, Kaladevi, Mahathi, Rahul Elango, Deepak',
         rounds: [
-            'Round 1 – Logic Deduction & Reconstruction',
-            'Round 2 – Advanced Reverse Engineering'
+            'Round 1 – Logic Deduction (30 mins)',
+            'Round 2 – Advanced Reverse Coding (30 mins)'
         ],
         rules: [
-            'Participants are recommended/preferred to bring their own laptops and chargers.',
-            'Computers will also be provided for participants if required.',
-            'Participants must have an HackerRank account.',
-            'Judges’ decisions are final and binding.',
-            'Fair play is expected; teams should work independently.'
+            'Team size: 1-2 members',
+            'Complete problem statement will NOT be provided.',
+            'Any programming language may be used.',
+            'Shortlisting for Round 2 based on Round 1 performance.',
+            'Programs must generate the exact expected output.',
+            'Malpractice leads to immediate disqualification.',
+            'Participants can bring laptops; systems provided if needed.'
         ],
         price: 'FREE'
     },
@@ -103,17 +114,21 @@ export const technicalEvents = [
         subtitle: 'Mark Is Testing',
         icon: FaCoffee,
         color: '#97b85d',
-        desc: 'A fast-paced technical endurance challenge where teams solve continuous coding, debugging, and logic-based tasks while handling intentional distractions through timed beverage consumption.',
-        heads: 'Maneesh, Anand',
+        teamSize: '2-3',
+        desc: 'A fast-paced technical endurance challenge where teams solve continuous coding, debugging, and logic-based tasks while handling intentional distractions through interval-based beverage consumption.',
+        heads: 'Maneesh, Anand, Meghaaa, Shreenidhi',
         rounds: [
-            'Fast-paced technical endurance challenge',
-            'Continuous coding, debugging, and logic-based tasks'
+            'Continuous coding, debugging, and logic-based tasks',
+            'Beverage consumption at regular intervals'
         ],
         rules: [
-            'Teams must bring their own laptops and chargers.',
-            'Only tools explicitly allowed by organizers may be used.',
-            'Judges’ and organizers’ decisions are final and binding.',
-            'Any rule violation results in immediate disqualification.'
+            'Team size: 2-3 members',
+            'Teams must bring their own laptops.',
+            'Only AI tools suggested by organizers are allowed.',
+            'Tasks vary in difficulty with corresponding points.',
+            'Special privileges provided to avoid beverages or speed up tasks.',
+            'Team with most points wins.',
+            'Cash prizes and gift baskets for winners.'
         ],
         price: 'FREE'
     },
@@ -123,20 +138,22 @@ export const technicalEvents = [
         subtitle: 'Snippet Clues',
         icon: FaPuzzlePiece,
         color: '#ffa500',
-        desc: 'A multi-round technical puzzle challenge where teams analyze code snippets to uncover hidden clues. Each round progressively increases in difficulty.',
-        heads: 'Manisha, Diya Akshita, Sangeetha B',
+        teamSize: '1-2',
+        desc: 'A technical puzzle-based coding event where participants analyze code snippets to uncover hidden clues. Instead of writing programs, teams must understand, interpret, and decode given code under time pressure.',
+        heads: 'Diya Akshita, Sangeetha B, Pawan Eswaran, Aarya',
         rounds: [
             'Round 1 – Entry Level',
             'Round 2 – Intermediate',
             'Round 3 – Advanced'
         ],
         rules: [
-            'No AI tools allowed',
-            'No internet allowed',
-            'No collaboration with other teams',
-            'Teams must use only the provided code',
-            'Laptops and chargers required',
-            'Judges’ decisions are final'
+            'Team size: 1-2 members',
+            'AI tools strictly prohibited.',
+            'No internet access during the event.',
+            'No collaboration with other teams.',
+            'Teams must use only provided code snippets.',
+            'Bring your own laptops and chargers.',
+            'Rule violations result in disqualification.'
         ],
         price: 'FREE'
     },
@@ -146,18 +163,47 @@ export const technicalEvents = [
         subtitle: 'Connections',
         icon: FaProjectDiagram,
         color: '#e33e33',
-        desc: 'A multi-round technical reasoning challenge where participants identify hidden relationships between technical terms, concepts, or code elements.',
-        heads: 'Muthaiah Pandi RP, Shreyas Manivannan, Joel Niruban Isaac',
+        teamSize: '2',
+        desc: 'A multi-round technical linking challenge designed to test analytical thinking, pattern recognition, and speed. Teams race against the clock to identify hidden relationships between technical terms, concepts, and code elements.',
+        heads: 'Shreyas Manivannan, Muthaiah Pandi RP, Joel Niruban Isaac, Bhavana',
         rounds: [
-            'Round 1 – Basic Technical Connections',
-            'Round 2 – Intermediate Concept Mapping'
+            'Round 1 – Basic Connections (20 mins)',
+            'Round 2 – Intermediate Concept Mapping (20 mins)',
+            'Round 3 – Abstract Cross-Domain Logic (30 mins)'
         ],
         rules: [
-            'Only teams clearing Round 1 advance.',
-            'Sets may include algorithms, data structures, APIs, error messages, or outputs.',
-            'Teams must explain how each element is connected, not just state the final answer.',
-            'Partial explanations may earn partial credit.',
-            'Time-based scoring applies.'
+            'Team size: Exactly 2 members',
+            'No AI tools or internet usage allowed.',
+            'Incorrect answers incur time/scoring penalties.',
+            'Only teams clearing current round advance.',
+            'Hints (Round 3) incur penalties.',
+            'Bring your own laptops and chargers.',
+            'Judges\' decisions are final.'
+        ],
+        price: 'FREE'
+    },
+    {
+        id: 'pitchfest',
+        name: 'Pitchfest',
+        subtitle: 'Business Pitch',
+        icon: FaLightbulb,
+        color: '#97b85d',
+        teamSize: '1-4',
+        desc: 'On-the-spot problem statements will be given to the players, who must create a business model with a proper revenue model and strategy, and pitch the business model to the judge.',
+        heads: 'Puvaneshwari K, Sivadarshan, Pragadeesh, Sam Francis',
+        rounds: [
+            'Round 1 – Easy Level',
+            'Round 2 – Moderate Level',
+            'Round 3 – Hard Level'
+        ],
+        rules: [
+            'Team size: 1-4 members',
+            'Model Development Time: 20 minutes',
+            'Pitch Time: 3 minutes + 2 minutes Q&A',
+            'No PPT allowed; only charts/sketches/templates provided.',
+            'No mobile phones or laptops during competition.',
+            'No AI or external resources allowed.',
+            'No discussion with other teams.'
         ],
         price: 'FREE'
     }
@@ -168,10 +214,11 @@ export const paperPresentation = [
         id: 'paper-presentation',
         name: 'Paper Presentation',
         subtitle: 'Innovation',
-        icon: FaCode,
+        icon: FaScroll,
         color: '#ffa500',
+        teamSize: '1-3',
         desc: 'A platform to showcase innovative ideas and technical research. Participants present their papers on trending technologies.',
-        heads: 'To be announced',
+        heads: 'Gokul D',
         rounds: [
             'Round 1 – Abstract Submission',
             'Round 2 – Final Presentation'
@@ -179,9 +226,9 @@ export const paperPresentation = [
         rules: [
             'Teams must submit abstract before deadline.',
             'Presentation time limit: 7 minutes + 3 minutes Q&A.',
-            'Judges’ decision is final.'
+            'Judges\' decision is final.'
         ],
-        price: '₹149'
+        price: '₹120'
     }
 ];
 
@@ -190,50 +237,27 @@ export const workshops = [
         id: 'fintech-workshop',
         name: 'FinTech Workshop',
         subtitle: 'Finance Meets Technology',
-        icon: FaCode,
+        icon: FaWrench,
         color: '#e33e33',
+        teamSize: 'Individual',
         desc: 'Explore the systems that power digital payments, AI-driven finance, and secure transactions. An engaging, beginner-friendly workshop designed to give you real-world FinTech exposure.',
-        heads: 'Expert Speaker',
-        rounds: ['Interactive Workshop (2 Hours)'],
+        heads: 'Priyanka L Sharma, P T Manisha, Gayathri R',
+        rounds: ['Interactive Workshop'],
         rules: [
-            'Duration: 2 Hours',
             'Mode: Interactive & activity-driven',
-            'Team-based activities included',
+            'Quiz at the end',
             'Laptop recommended'
         ],
         highlights: [
             'FinTech Fundamentals',
             'Digital Payments & UPI Architecture',
-            'Cybersecurity & Fraud Detection',
+            'FinTech Architecture & Cloud Systems',
+            'Cybersecurity & Fraud Detection in FinTech',
             'AI in Finance',
-            'Blockchain & Crypto Basics',
-            'Career Opportunities in FinTech'
+            'Blockchain, Crypto & Digital Assets',
+            'FinTech Regulations & Ethics',
+            'Careers & Startup Opportunities in FinTech'
         ],
-        price: '₹1'
-    },
-    {
-        id: 'wealthx-workshop',
-        name: 'WealthX Workshop',
-        subtitle: 'Personal Finance & Career',
-        icon: FaTerminal,
-        color: '#97b85d',
-        desc: 'A practical, beginner-friendly learning experience designed to help individuals build strong personal finance foundations, gain career clarity, and understand how businesses and startups work.',
-        heads: 'Expert Speaker',
-        rounds: ['Interactive Workshop (3 Hours)'],
-        rules: [
-            'Duration: 3 Hours',
-            'Mode: Interactive & Activity-Driven',
-            'Team-based participation',
-            'Notebook recommended'
-        ],
-        highlights: [
-            'Personal Finance Fundamentals',
-            'Investing Basics & Wealth-Building',
-            'Career Planning & Skill Development',
-            'Business & Startup Fundamentals',
-            'Idea Validation & Business Models',
-            'Branding & Digital Presence'
-        ],
-        price: '₹1'
+        price: '₹50'
     }
 ];

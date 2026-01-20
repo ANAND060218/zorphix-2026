@@ -187,8 +187,29 @@ const Register = () => {
         try {
             await signInWithPopup(auth, googleProvider);
         } catch (error) {
+            // Suppress user-initiated cancellation errors (not actual errors)
+            const ignoredErrors = [
+                'auth/popup-closed-by-user',
+                'auth/cancelled-popup-request',
+                'auth/user-cancelled'
+            ];
+
+            if (ignoredErrors.includes(error.code)) {
+                // User closed popup or cancelled - this is expected behavior, not an error
+                console.log("Sign-in cancelled by user");
+                return;
+            }
+
             console.error("Error signing in with Google", error);
-            alert(`Sign-In Failed: ${error.message}`);
+
+            // Show user-friendly error messages for actual errors
+            if (error.code === 'auth/popup-blocked') {
+                alert('Popup was blocked. Please allow popups for this site.');
+            } else if (error.code === 'auth/network-request-failed') {
+                alert('Network error. Please check your connection.');
+            } else {
+                alert(`Sign-In Failed: ${error.message}`);
+            }
         }
     };
 
