@@ -52,7 +52,7 @@ const Sponsors = () => {
                     className="inline-block"
                 >
                     <h2 className="text-4xl md:text-7xl font-bold text-white mb-2 tracking-tighter mix-blend-difference">
-                        TRUSTED <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#e33e33] to-[#97b85d]">PARTNERS</span>
+                        PREVIOUS <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#e33e33] to-[#97b85d]">PARTNERS</span>
                     </h2>
                     <div className="h-1 w-full bg-gradient-to-r from-transparent via-white/20 to-transparent mt-4"></div>
                 </motion.div>

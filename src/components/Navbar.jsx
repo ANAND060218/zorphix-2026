@@ -74,7 +74,7 @@ const Navbar = () => {
                         {/* Mobile Menu Button */}
                         <button
                             onClick={toggleSidebar}
-                            className="md:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors duration-300"
+                            className="md:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors duration-300 ml-4"
                             aria-label="Toggle menu"
                         >
                             <svg

@@ -359,19 +359,12 @@ const EventsPage = () => {
                         <div className="flex justify-between items-end">
                             <div className="flex items-center gap-6">
                                 <div>
-                                    <span className="block text-[8px] text-gray-400 uppercase tracking-widest mb-0.5">Date</span>
-                                    <span className="text-xs md:text-sm text-white font-mono tracking-wider">5/2/2026</span>
+                                    <span className="block text-[8px] text-gray-400 uppercase tracking-widest mb-0.5">Member Since</span>
+                                    <span className="text-xs md:text-sm text-white font-mono tracking-wider">2022</span>
                                 </div>
                                 <div>
-                                    <span className="block text-[8px] text-gray-400 uppercase tracking-widest mb-0.5">Venue</span>
-                                    <a
-                                        href="https://maps.google.com/?q=Chennai+Institute+of+Technology,+Malayambakkam,+Tamil+Nadu+600133"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-xs md:text-sm text-[#97b85d] font-mono tracking-wider hover:text-white transition-colors"
-                                    >
-                                        CIT ↗
-                                    </a>
+                                    <span className="block text-[8px] text-gray-400 uppercase tracking-widest mb-0.5">Valid Thru</span>
+                                    <span className="text-xs md:text-sm text-white font-mono tracking-wider">02/26</span>
                                 </div>
                             </div>
                             <div className="text-right">
