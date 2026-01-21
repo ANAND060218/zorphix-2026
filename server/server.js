@@ -446,7 +446,10 @@ async function generateODLetterPDF(userDetails) {
         doc.fontSize(11).font('Helvetica')
             .text(`Name of the Student: ${userDetails.name || '______________________________'}`, { align: 'left' });
         doc.moveDown(0.5);
-        doc.text(`Department / Year: ${userDetails.department || '________________________________'}`, { align: 'left' });
+        const deptYear = userDetails.department && userDetails.year
+            ? `${userDetails.department} / ${userDetails.year}`
+            : userDetails.department || userDetails.year || '________________________________';
+        doc.text(`Department / Year: ${deptYear}`, { align: 'left' });
         doc.moveDown(0.5);
         doc.text(`College Name: ${userDetails.college || '_____________________________________'}`, { align: 'left' });
         doc.moveDown(2);

@@ -262,5 +262,41 @@ export const workshops = [
         ],
         price: '₹50',
         quote: 'Finance meets innovation.'
+    },
+    {
+        id: 'wealthx-workshop',
+        name: 'WealthX Workshop',
+        subtitle: 'Personal Finance & Investing',
+        icon: FaWrench,
+        color: '#97b85d',
+        teamSize: 'Individual',
+        desc: 'WealthX is a beginner-friendly, interactive workshop designed to help students build a strong foundation in personal finance and investing. Learn how wealth is built over time, the importance of financial discipline, and how to make smarter financial choices from an early stage.',
+        heads: 'Poonggundraan S (70106 25181), Haroon (93619 92667)',
+        rounds: ['Interactive Workshop'],
+        rules: [
+            'Duration: 2 Hours',
+            'Mode: Interactive, activity-driven & discussion-based',
+            'Participation: Individual & Team-based',
+            'No prior finance or investment knowledge required',
+            'Participants must bring a laptop',
+            'Arrive on time'
+        ],
+        highlights: [
+            'Personal Finance Fundamentals',
+            'Income, Expenses & Budgeting',
+            'Savings & Emergency Planning',
+            'Basics of Investing & Wealth Creation',
+            'Risk vs Reward Understanding',
+            'Financial Discipline & Long-Term Thinking',
+            'Common Financial Mistakes to Avoid'
+        ],
+        activities: [
+            'Budget Planning Challenge',
+            'Real-Life Financial Decision Scenarios',
+            'Investment Basics Simulation',
+            'WealthX Quiz'
+        ],
+        price: '₹50',
+        quote: 'Build wealth. Build your future.'
     }
 ];

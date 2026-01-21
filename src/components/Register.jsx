@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { auth, googleProvider, db } from '../firebase';
-import { signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
+import { signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { FaGoogle, FaUserTie, FaUniversity, FaBuilding, FaPhone, FaCheckCircle, FaChartLine, FaBriefcase, FaWallet, FaHandshake, FaTicketAlt, FaDownload } from 'react-icons/fa';
 import * as htmlToImage from 'html-to-image';
@@ -183,9 +183,35 @@ const Register = () => {
         return () => unsubscribe();
     }, []);
 
+    // Detect if user is on mobile device
+    const isMobile = () => {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+            (window.innerWidth <= 768);
+    };
+
+    // Handle redirect result on page load (for mobile sign-in)
+    useEffect(() => {
+        const handleRedirectResult = async () => {
+            try {
+                const result = await getRedirectResult(auth);
+                if (result?.user) {
+                    console.log('Redirect sign-in successful');
+                }
+            } catch (error) {
+                console.error('Redirect result error:', error);
+            }
+        };
+        handleRedirectResult();
+    }, []);
+
     const handleGoogleSignIn = async () => {
         try {
-            await signInWithPopup(auth, googleProvider);
+            // Use redirect for mobile, popup for desktop
+            if (isMobile()) {
+                await signInWithRedirect(auth, googleProvider);
+            } else {
+                await signInWithPopup(auth, googleProvider);
+            }
         } catch (error) {
             // Suppress user-initiated cancellation errors (not actual errors)
             const ignoredErrors = [
@@ -204,7 +230,9 @@ const Register = () => {
 
             // Show user-friendly error messages for actual errors
             if (error.code === 'auth/popup-blocked') {
-                alert('Popup was blocked. Please allow popups for this site.');
+                // Fallback to redirect if popup is blocked
+                console.log('Popup blocked, trying redirect...');
+                await signInWithRedirect(auth, googleProvider);
             } else if (error.code === 'auth/network-request-failed') {
                 alert('Network error. Please check your connection.');
             } else {

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { auth, googleProvider, db } from '../firebase';
-import { signInWithPopup, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { FaGoogle, FaUserTie, FaUniversity, FaBuilding, FaPhone, FaCheckCircle, FaBriefcase, FaChartLine, FaSignOutAlt, FaWallet, FaCoins, FaDownload, FaPen, FaEnvelope } from 'react-icons/fa';
 import * as htmlToImage from 'html-to-image';
@@ -623,6 +623,28 @@ const Profile = () => {
         return Object.keys(newErrors).length === 0;
     };
 
+    // Detect if user is on mobile device
+    const isMobile = () => {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+            (window.innerWidth <= 768);
+    };
+
+    // Handle redirect result on page load (for mobile sign-in)
+    useEffect(() => {
+        const handleRedirectResult = async () => {
+            try {
+                const result = await getRedirectResult(auth);
+                if (result?.user) {
+                    console.log('Redirect sign-in successful');
+                    toast.success('Signed in successfully!');
+                }
+            } catch (error) {
+                console.error('Redirect result error:', error);
+            }
+        };
+        handleRedirectResult();
+    }, []);
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             setUser(currentUser);
@@ -666,8 +688,13 @@ const Profile = () => {
     const handleGoogleSignIn = async () => {
         try {
             setAuthLoading(true);
-            await signInWithPopup(auth, googleProvider);
-            toast.success('Signed in successfully!');
+            // Use redirect for mobile, popup for desktop
+            if (isMobile()) {
+                await signInWithRedirect(auth, googleProvider);
+            } else {
+                await signInWithPopup(auth, googleProvider);
+                toast.success('Signed in successfully!');
+            }
         } catch (error) {
             // Suppress user-initiated cancellation errors (not actual errors)
             const ignoredErrors = [
@@ -687,7 +714,9 @@ const Profile = () => {
 
             // Show user-friendly error messages for actual errors
             if (error.code === 'auth/popup-blocked') {
-                toast.error('Popup was blocked. Please allow popups for this site.');
+                // Fallback to redirect if popup is blocked
+                console.log('Popup blocked, trying redirect...');
+                await signInWithRedirect(auth, googleProvider);
             } else if (error.code === 'auth/network-request-failed') {
                 toast.error('Network error. Please check your connection.');
             } else {
