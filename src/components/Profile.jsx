@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth, googleProvider, db } from '../firebase';
 import { signInWithPopup, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
-import { FaGoogle, FaUserTie, FaUniversity, FaBuilding, FaPhone, FaCheckCircle, FaBriefcase, FaChartLine, FaSignOutAlt, FaWallet, FaCoins, FaDownload, FaPen } from 'react-icons/fa';
+import { FaGoogle, FaUserTie, FaUniversity, FaBuilding, FaPhone, FaCheckCircle, FaBriefcase, FaChartLine, FaSignOutAlt, FaWallet, FaCoins, FaDownload, FaPen, FaEnvelope } from 'react-icons/fa';
 import * as htmlToImage from 'html-to-image';
 import CoinBackground from './CoinBackground';
 import CurrencyBackground from './CurrencyBackground';
@@ -793,6 +793,72 @@ const Profile = () => {
         }
     };
 
+    const [odLoading, setOdLoading] = useState(false);
+
+    const downloadODLetter = async () => {
+        if (!user || !formData.college) {
+            toast.error('Please complete your profile first');
+            return;
+        }
+
+        setOdLoading(true);
+        const toastId = toast.loading('Generating OD Letter...');
+
+        try {
+            const backendUrl = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000').replace(/\/$/, '');
+
+            // Get resolved college name
+            let finalCollege = formData.college;
+            if (formData.college === '10000') {
+                finalCollege = formData.collegeOther?.trim() || 'College';
+            } else {
+                const selectedOption = collegeOptions.find(opt => opt.value === formData.college);
+                if (selectedOption) finalCollege = selectedOption.label;
+            }
+
+            const response = await fetch(`${backendUrl}/api/download-od-letter`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userDetails: {
+                        uid: user.uid,
+                        name: formData.name || user.displayName,
+                        email: user.email,
+                        phone: formData.phone,
+                        college: finalCollege,
+                        department: formData.department === 'Other' ? formData.departmentOther : formData.department,
+                        year: formData.year,
+                        events: registeredEventsList
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to generate PDF');
+            }
+
+            // Get the PDF blob
+            const blob = await response.blob();
+
+            // Create download link
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `OD_Letter_${(formData.name || user.displayName || 'Student').replace(/\s+/g, '_')}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+            toast.success('OD Letter downloaded!', { id: toastId });
+        } catch (error) {
+            console.error('Failed to download OD letter', error);
+            toast.error('Failed to download OD letter', { id: toastId });
+        } finally {
+            setOdLoading(false);
+        }
+    };
+
     const handleSubmitProfile = async (e) => {
         e.preventDefault();
         if (!user) return;
@@ -1457,12 +1523,19 @@ const Profile = () => {
                                                                     {user.uid}
                                                                 </p>
 
-                                                                <div className="ticket-actions w-full">
+                                                                <div className="ticket-actions w-full space-y-2">
                                                                     <button
                                                                         onClick={handleDownloadTicket}
                                                                         className="w-full py-3 bg-[#e33e33] text-white font-bold uppercase tracking-widest text-xs hover:bg-[#c62828] transition-colors flex items-center justify-center gap-2 rounded-lg"
                                                                     >
                                                                         <FaDownload /> Download Ticket
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={downloadODLetter}
+                                                                        disabled={odLoading}
+                                                                        className="w-full py-3 bg-[#97b85d] text-black font-bold uppercase tracking-widest text-xs hover:bg-[#7a9a4a] transition-colors flex items-center justify-center gap-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                                                                    >
+                                                                        <FaDownload /> {odLoading ? 'Generating...' : 'Download OD Letter'}
                                                                     </button>
                                                                 </div>
                                                             </div>

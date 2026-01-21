@@ -11,6 +11,9 @@ const admin = require('firebase-admin');
 const { calculateTotalPrice, getEventByName } = require('./events');
 const { Resend } = require('resend');
 const QRCode = require('qrcode');
+const PDFDocument = require('pdfkit');
+const path = require('path');
+const fs = require('fs');
 
 // Initialize Resend with API key from environment
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -308,9 +311,13 @@ app.post('/api/send-welcome-email', async (req, res) => {
         });
 
         // Convert base64 data URL to buffer for attachment
-        const base64Data = qrDataUrl.replace(/^data:image\/png;base64,/, '');
+        const qrBase64Data = qrDataUrl.replace(/^data:image\/png;base64,/, '');
 
-        // Send email using Resend with QR as attachment
+        // Generate OD Letter PDF
+        const odPdfBuffer = await generateODLetterPDF(userDetails);
+        const odBase64Data = odPdfBuffer.toString('base64');
+
+        // Send email using Resend with QR and OD Letter as attachments
         const { data, error } = await resend.emails.send({
             from: 'Zorphix 2026 <noreply@zorphix.com>',
             to: userDetails.email,
@@ -318,7 +325,11 @@ app.post('/api/send-welcome-email', async (req, res) => {
             attachments: [
                 {
                     filename: 'zorphix-qr-code.png',
-                    content: base64Data,
+                    content: qrBase64Data,
+                },
+                {
+                    filename: `OD_Letter_${(userDetails.name || 'Student').replace(/\s+/g, '_')}.pdf`,
+                    content: odBase64Data,
                 }
             ],
             html: `
@@ -338,6 +349,12 @@ app.post('/api/send-welcome-email', async (req, res) => {
                         <p style="color: #888; font-size: 14px; margin-top: 10px;">Please download the attached QR code image (zorphix-qr-code.png)</p>
                     </div>
 
+                    <div style="text-align: center; margin: 20px 0; padding: 20px; background-color: #1a1a1a; border-radius: 10px; border: 2px solid #97b85d;">
+                        <p style="color: #97b85d; font-size: 18px; font-weight: bold; margin: 0;">📄 OD LETTER ATTACHED</p>
+                        <p style="color: #888; font-size: 14px; margin-top: 10px;">We have attached an On-Duty (OD) letter for your convenience.</p>
+                        <p style="color: #fff; font-size: 14px; margin-top: 10px;"><strong>Submit this letter to your college Principal/HOD to get permission for attending ZORPHIX Symposium 2026 on 05/02/2026.</strong></p>
+                    </div>
+
                     <p style="color: #888; font-size: 12px; text-align: center;">This QR code contains your identity data. Present it at the venue for scanning.</p>
                 </div>
             `
@@ -348,12 +365,176 @@ app.post('/api/send-welcome-email', async (req, res) => {
             return res.status(500).json({ error: 'Failed to send email', details: error.message });
         }
 
-        console.log(`✅ Welcome email sent to: ${userDetails.email}`);
+        console.log(`✅ Welcome email with OD Letter sent to: ${userDetails.email}`);
         res.json({ success: true, message: 'Email sent successfully', id: data.id });
 
     } catch (error) {
         console.error('❌ Email sending failed:', error);
         res.status(500).json({ error: 'Failed to send email', details: error.message });
+    }
+});
+
+// Helper function to generate OD Letter PDF buffer
+async function generateODLetterPDF(userDetails) {
+    return new Promise((resolve, reject) => {
+        const doc = new PDFDocument({
+            size: 'A4',
+            margin: 50
+        });
+
+        const chunks = [];
+        doc.on('data', chunk => chunks.push(chunk));
+        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('error', reject);
+
+        // PDF Content - Exact template as specified
+        const currentDate = new Date().toLocaleDateString('en-IN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // Header - To Address
+        doc.fontSize(11).font('Helvetica-Bold')
+            .text('To,', { align: 'left' });
+        doc.font('Helvetica')
+            .text('The Principal / Head of Department,', { align: 'left' })
+            .text(`${userDetails.college || '[Student College Name]'},`, { align: 'left' })
+            .text(currentDate, { align: 'left' });
+        doc.moveDown(2);
+
+        // Subject
+        doc.fontSize(11).font('Helvetica-Bold')
+            .text('Subject: Request to Grant On Duty (OD) – Participation in ZORPHIX Symposium 2026', { align: 'left' });
+        doc.moveDown(2);
+
+        // Body
+        doc.fontSize(11).font('Helvetica')
+            .text('Respected Sir/Madam,', { align: 'left' });
+        doc.moveDown();
+
+        doc.text(
+            'Greetings from the Department of Computer Science and Business Systems (CSBS) at the Chennai Institute of Technology.',
+            { align: 'justify', lineGap: 5 }
+        );
+        doc.moveDown();
+
+        // Paragraph with highlighted symposium name and date
+        doc.font('Helvetica')
+            .text('This is to inform you that the following student from your esteemed institution has registered to participate in ', { continued: true, align: 'justify', lineGap: 5 })
+            .font('Helvetica-Bold')
+            .text('"ZORPHIX Symposium – 2026"', { continued: true })
+            .font('Helvetica')
+            .text(', organized by our department, on ', { continued: true })
+            .font('Helvetica-Bold')
+            .text('05/02/2026', { continued: true })
+            .font('Helvetica')
+            .text('.');
+        doc.moveDown();
+
+        doc.text(
+            'We kindly request you to grant On Duty (OD) permission to the student for attending and participating in the symposium events on the scheduled date.',
+            { align: 'justify', lineGap: 5 }
+        );
+        doc.moveDown(2);
+
+        // Student Details Section
+        doc.fontSize(12).font('Helvetica-Bold')
+            .text('Student Details', { align: 'left', underline: true });
+        doc.moveDown();
+
+        doc.fontSize(11).font('Helvetica')
+            .text(`Name of the Student: ${userDetails.name || '______________________________'}`, { align: 'left' });
+        doc.moveDown(0.5);
+        doc.text(`Department / Year: ${userDetails.department || '________________________________'}`, { align: 'left' });
+        doc.moveDown(0.5);
+        doc.text(`College Name: ${userDetails.college || '_____________________________________'}`, { align: 'left' });
+        doc.moveDown(2);
+
+        doc.text(
+            'We appreciate your support in encouraging student participation in technical and innovative events.',
+            { align: 'justify', lineGap: 5 }
+        );
+        doc.moveDown();
+
+        doc.text('Thank you.', { align: 'left' });
+        doc.moveDown(2);
+
+        // First Signature Section - HOD
+        doc.fontSize(11).font('Helvetica')
+            .text('Yours faithfully,', { align: 'left' });
+        doc.moveDown();
+
+        // Add HOD signature image if exists (auto-scaled)
+        const hodSignaturePath = path.join(__dirname, 'assets', 'signature_hod.png');
+        if (fs.existsSync(hodSignaturePath)) {
+            try {
+                doc.image(hodSignaturePath, {
+                    fit: [150, 60],
+                    align: 'left'
+                });
+            } catch (imgErr) {
+                console.warn('Could not load HOD signature image:', imgErr.message);
+            }
+        }
+        doc.moveDown();
+
+        doc.fontSize(11).font('Helvetica-Bold')
+            .text('Mr. G Senthil Kumar', { align: 'left' });
+        doc.font('Helvetica')
+            .text('Head of the Department (CSBS)', { align: 'left' })
+            .text('Chennai Institute of Technology', { align: 'left' });
+        doc.moveDown(2);
+
+        // Second Signature Section - President
+        // Add President signature image if exists (auto-scaled)
+        const presidentSignaturePath = path.join(__dirname, 'assets', 'signature_president.png');
+        if (fs.existsSync(presidentSignaturePath)) {
+            try {
+                doc.image(presidentSignaturePath, {
+                    fit: [150, 60],
+                    align: 'left'
+                });
+            } catch (imgErr) {
+                console.warn('Could not load President signature image:', imgErr.message);
+            }
+        }
+        doc.moveDown();
+
+        doc.fontSize(11).font('Helvetica-Bold')
+            .text('Dhaneesh Bala', { align: 'left' });
+        doc.font('Helvetica')
+            .text('President – Zorphix 2026', { align: 'left' });
+
+        doc.end();
+    });
+}
+
+// Download OD Letter PDF directly
+app.post('/api/download-od-letter', async (req, res) => {
+    console.log('📄 OD Letter download endpoint called');
+    try {
+        const { userDetails } = req.body;
+
+        if (!userDetails) {
+            return res.status(400).json({ error: 'User details are required' });
+        }
+
+        // Generate PDF using shared function
+        const pdfBuffer = await generateODLetterPDF(userDetails);
+
+        // Set headers for PDF download
+        const fileName = `OD_Letter_${(userDetails.name || 'Student').replace(/\s+/g, '_')}.pdf`;
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+        res.setHeader('Content-Length', pdfBuffer.length);
+
+        console.log(`✅ OD Letter generated for: ${userDetails.name}`);
+        res.send(pdfBuffer);
+
+    } catch (error) {
+        console.error('❌ OD Letter generation failed:', error);
+        res.status(500).json({ error: 'Failed to generate OD letter', details: error.message });
     }
 });
 
