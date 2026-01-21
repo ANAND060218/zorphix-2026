@@ -629,54 +629,34 @@ const Profile = () => {
             (window.innerWidth <= 768);
     };
 
-    // Handle redirect result on page load (for mobile sign-in)
+    // Handle redirect result on page load (for mobile sign-in fallback)
     useEffect(() => {
         const handleRedirectResult = async () => {
-            console.log('🔄 [DEBUG] Checking for redirect result...');
-            console.log('🔄 [DEBUG] Current auth.currentUser:', auth.currentUser?.email || 'null');
-            console.log('🔄 [DEBUG] isMobile:', isMobile());
-            console.log('🔄 [DEBUG] User Agent:', navigator.userAgent);
-
             try {
-                // Set loading while we check for redirect result
                 setLoading(true);
                 const result = await getRedirectResult(auth);
-                console.log('🔄 [DEBUG] getRedirectResult returned:', result);
-
                 if (result?.user) {
-                    console.log('✅ [DEBUG] Redirect sign-in successful:', result.user.email);
                     toast.success('Signed in successfully!');
-                } else {
-                    console.log('⚠️ [DEBUG] No redirect result (result is null or no user)');
                 }
             } catch (error) {
-                console.error('❌ [DEBUG] Redirect result error:', error);
-                console.error('❌ [DEBUG] Error code:', error.code);
-                console.error('❌ [DEBUG] Error message:', error.message);
-                // Don't show error for user-cancelled redirects
                 if (error.code !== 'auth/popup-closed-by-user' &&
                     error.code !== 'auth/cancelled-popup-request') {
                     toast.error('Sign-in failed. Please try again.');
                 }
             }
-            // Note: Don't set loading to false here - onAuthStateChanged will handle it
         };
         handleRedirectResult();
     }, []);
 
     useEffect(() => {
-        console.log('👀 [DEBUG] Setting up onAuthStateChanged listener...');
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-            console.log('👤 [DEBUG] onAuthStateChanged fired, user:', currentUser?.email || 'null');
             setUser(currentUser);
             if (currentUser) {
-                console.log('👤 [DEBUG] User is logged in:', currentUser.email);
                 try {
                     const docRef = doc(db, 'registrations', currentUser.uid);
                     const docSnap = await getDoc(docRef);
                     if (docSnap.exists()) {
                         const data = docSnap.data();
-                        console.log('📄 [DEBUG] Profile data loaded:', data.displayName || data.email);
                         setFormData({
                             name: data.displayName || currentUser.displayName || '',
                             college: data.college || '',
@@ -692,43 +672,27 @@ const Profile = () => {
                             setRegisteredEventsList(data.events);
                         }
 
-                        // Check if critical fields are present to consider profile "complete"
-                        // Or check for a specific flag if we decide to use one.
-                        // Using field presence for robustness.
                         if (data.profileCompleted || (data.college && data.phone)) {
                             setIsProfileComplete(true);
                         }
-                    } else {
-                        console.log('📄 [DEBUG] No profile document exists yet');
                     }
                 } catch (error) {
-                    console.error("❌ [DEBUG] Error fetching profile:", error);
+                    console.error("Error fetching profile:", error);
                 }
-            } else {
-                console.log('👤 [DEBUG] No user logged in');
             }
-            console.log('🏁 [DEBUG] Setting loading to false');
             setLoading(false);
         });
         return () => unsubscribe();
     }, []);
 
     const handleGoogleSignIn = async () => {
-        console.log('🔐 [DEBUG] handleGoogleSignIn called, isMobile:', isMobile());
         try {
             setAuthLoading(true);
-
             // Always try popup first - it works better and maintains auth state
-            // Redirect is problematic on mobile as it loses auth state in many browsers
-            console.log('🔐 [DEBUG] Trying signInWithPopup...');
             await signInWithPopup(auth, googleProvider);
-            console.log('✅ [DEBUG] signInWithPopup successful');
             toast.success('Signed in successfully!');
 
         } catch (error) {
-            console.log('⚠️ [DEBUG] signInWithPopup error:', error.code);
-
-            // Suppress user-initiated cancellation errors (not actual errors)
             const ignoredErrors = [
                 'auth/popup-closed-by-user',
                 'auth/cancelled-popup-request',
@@ -736,8 +700,6 @@ const Profile = () => {
             ];
 
             if (ignoredErrors.includes(error.code)) {
-                // User closed popup or cancelled - this is expected behavior, not an error
-                console.log("Sign-in cancelled by user");
                 setAuthLoading(false);
                 return;
             }
@@ -746,12 +708,11 @@ const Profile = () => {
 
             // If popup is blocked, try redirect as fallback
             if (error.code === 'auth/popup-blocked') {
-                console.log('🔄 [DEBUG] Popup blocked, trying redirect...');
                 toast.loading('Opening Google Sign-In...', { duration: 2000 });
                 try {
                     await signInWithRedirect(auth, googleProvider);
                 } catch (redirectError) {
-                    console.error('❌ [DEBUG] Redirect also failed:', redirectError);
+                    console.error('Redirect also failed:', redirectError);
                     toast.error('Sign-in failed. Please allow popups for this site.');
                 }
             } else if (error.code === 'auth/network-request-failed') {
