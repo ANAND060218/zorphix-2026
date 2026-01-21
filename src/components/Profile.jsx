@@ -633,14 +633,22 @@ const Profile = () => {
     useEffect(() => {
         const handleRedirectResult = async () => {
             try {
+                // Set loading while we check for redirect result
+                setLoading(true);
                 const result = await getRedirectResult(auth);
                 if (result?.user) {
-                    console.log('Redirect sign-in successful');
+                    console.log('Redirect sign-in successful:', result.user.email);
                     toast.success('Signed in successfully!');
                 }
             } catch (error) {
                 console.error('Redirect result error:', error);
+                // Don't show error for user-cancelled redirects
+                if (error.code !== 'auth/popup-closed-by-user' &&
+                    error.code !== 'auth/cancelled-popup-request') {
+                    toast.error('Sign-in failed. Please try again.');
+                }
             }
+            // Note: Don't set loading to false here - onAuthStateChanged will handle it
         };
         handleRedirectResult();
     }, []);
