@@ -20,7 +20,7 @@ export const technicalEvents = [
         color: '#e33e33',
         teamSize: '1-2',
         desc: 'Pixel Reforge is a two-round UI engineering challenge where teams redesign a given interface to improve usability, responsiveness, and visual appeal. The event tests core frontend skills first, followed by real-world UI enhancement using AI.',
-        heads: 'S. Aishwarya (73056 03846), Mohanapriya D (86789 18941), Shanjay (63807 16338), Vishal S (79047 72563)',
+        heads: 'S. Aishwarya (73056 03846), Mohanapriya D (86789 18941)',
         rounds: [
             'Round 1 – Core UI Fundamentals (No AI): Design and build a webpage using HTML, CSS, JavaScript, React. Focus on clean layout, responsive design, typography. Power Cards may be used strategically.',
             'Round 2 – Advanced UI Enhancement (AI Allowed): Fix bugs in a pre-built project, improve responsiveness, add features. AI tools allowed but must explain every change.'
@@ -32,7 +32,8 @@ export const technicalEvents = [
             'VSCode platform must be used',
             'Strictly abide by all rules'
         ],
-        price: 'FREE'
+        price: 'FREE',
+        quote: 'Redesign. Rethink. Reimagine.'
     },
     {
         id: 'promptcraft',
@@ -42,7 +43,7 @@ export const technicalEvents = [
         color: '#97b85d',
         teamSize: '1-2',
         desc: 'PromptCraft (Promptopia) is a two-round prompt engineering challenge that tests how well participants convert visual understanding into precise AI prompts. Teams attempt to recreate a given reference image using AI image-generation tools within limited attempts. The event highlights creativity, accuracy, and strategic thinking.',
-        heads: 'Ashanthika Raja (63836 68658), Jyotsna S (99400 86664), Stefin Jude (87541 85297), Ramalingam (98944 25368)',
+        heads: 'Ashanthika Raja (63836 68658), Jyotsna S (99400 86664)',
         rounds: [
             'Round 1 – Open Prompt Recreation',
             'Round 2 – Constrained Prompt Engineering (With Restrictions)'
@@ -55,7 +56,8 @@ export const technicalEvents = [
             'Round 2 restrictions must be followed strictly',
             'Judges\' decision is final'
         ],
-        price: 'FREE'
+        price: 'FREE',
+        quote: 'Where words command intelligence.'
     },
     {
         id: 'algopulse',
@@ -65,7 +67,7 @@ export const technicalEvents = [
         color: '#ffa500',
         teamSize: '1-2',
         desc: 'AlgoPulse (Algo Rhythm) is a high-energy algorithmic coding competition where participants solve programming problems while loud background music plays continuously to create distraction. The event also includes Advantage and Hindrance tasks to test focus, adaptability, and performance under pressure.',
-        heads: 'Kiruthika M (63829 81249), Amirthavarshini H (98410 75452), Pavadharani (63790 17912), Pradeep (93847 43668)',
+        heads: 'Kiruthika M (63829 81249), Amirthavarshini H (98410 75452)',
         rounds: [
             'Round 1 – Algorithmic Screening: Basic to intermediate problems',
             'Round 2 – Advanced Algorithm Challenge: For shortlisted teams only'
@@ -78,7 +80,8 @@ export const technicalEvents = [
             'AI tools strictly prohibited',
             'Screen sharing & camera must remain ON'
         ],
-        price: 'FREE'
+        price: 'FREE',
+        quote: 'Feel the beat of logic.'
     },
     {
         id: 'reverse-coding',
@@ -88,7 +91,7 @@ export const technicalEvents = [
         color: '#e33e33',
         teamSize: '1-2',
         desc: 'Think you can crack the code? In Reverse Coding, the problem statement remains hidden. Participants rely only on output patterns, sample inputs, or program behavior to uncover the logic and build the solution. It\'s a true test of analytical thinking, pattern recognition, and real-world problem-solving skills.',
-        heads: 'Subha Shree (97877 57657), Kaladevi (63820 30143), Mahathi (98407 51242), Rahul Elango (63690 13069), Deepak (81899 14560)',
+        heads: 'Subha Shree (97877 57657), Kaladevi (63820 30143)',
         rounds: [
             'Round 1 – Logic Deduction (30 mins)',
             'Round 2 – Advanced Reverse Coding (30 mins)'
@@ -101,7 +104,8 @@ export const technicalEvents = [
             'Programs must generate exact expected output',
             'Malpractice leads to disqualification'
         ],
-        price: 'FREE'
+        price: 'FREE',
+        quote: 'Decode the outcome. Rebuild the logic.'
     },
     {
         id: 'sip-to-survive',
@@ -111,7 +115,7 @@ export const technicalEvents = [
         color: '#97b85d',
         teamSize: '2-3',
         desc: 'A fast-paced technical endurance challenge where teams solve continuous coding, debugging, and logic-based tasks while handling intentional distractions through interval-based beverage consumption.',
-        heads: 'Maneesh (90251 12972), Anand (73583 10946), Meghaaa (93636 38134), Shreenidhi (63749 78872)',
+        heads: 'Maneesh (90251 12972), Anand (73583 10946)',
         rounds: [
             'Continuous coding, debugging, and logic-based tasks',
             'Beverage consumption at regular intervals'
@@ -125,7 +129,8 @@ export const technicalEvents = [
             'Bring your own laptops',
             'Only organizer-suggested AI tools allowed'
         ],
-        price: 'FREE'
+        price: 'FREE',
+        quote: 'Test the test. Break the rules.'
     },
     {
         id: 'codecrypt',
@@ -135,7 +140,7 @@ export const technicalEvents = [
         color: '#ffa500',
         teamSize: '1-2',
         desc: 'CodeCrypt is a technical puzzle-based coding event where participants analyze code snippets to uncover hidden clues. Instead of writing programs, teams must understand, interpret, and decode given code under time pressure. It challenges how well you can think through code, predict outputs, and identify patterns.',
-        heads: 'Diya Akshita (63691 53979), Sangeetha B (89255 30515), Pawan Eswaran (90258 16772), Aarya (72006 11307)',
+        heads: 'Diya Akshita (63691 53979), Sangeetha B (89255 30515)',
         rounds: [
             'Multiple rounds with increasing difficulty',
             'Code snippets hide clues to uncover'
@@ -149,7 +154,8 @@ export const technicalEvents = [
             'Solve all required questions to advance',
             'Rankings based on total time + penalties'
         ],
-        price: 'FREE'
+        price: 'FREE',
+        quote: 'Every clue compiles a truth.'
     },
     {
         id: 'linklogic',
@@ -159,7 +165,7 @@ export const technicalEvents = [
         color: '#e33e33',
         teamSize: '2',
         desc: 'A multi-round technical linking challenge designed to test analytical thinking, pattern recognition, and speed. Teams race against the clock to identify hidden relationships between technical terms, concepts, and code elements. Progress from basic connections to complex cross-domain logic.',
-        heads: 'Shreyas Manivannan (94980 73776), Muthaiah Pandi RP (85318 19732), Joel Niruban Isaac (72009 20486), Bhavana (73395 16814)',
+        heads: 'Shreyas Manivannan (94980 73776), Muthaiah Pandi RP (85318 19732)',
         rounds: [
             'Round 1 (20 mins): Direct relationships between terms & symbols',
             'Round 2 (20 mins): Indirect connections between algorithms, APIs',
@@ -173,7 +179,8 @@ export const technicalEvents = [
             'Clear current round to advance',
             'Judges\' decisions are final'
         ],
-        price: 'FREE'
+        price: 'FREE',
+        quote: 'Connect the dots. Crack the logic.'
     },
     {
         id: 'pitchfest',
@@ -183,7 +190,7 @@ export const technicalEvents = [
         color: '#97b85d',
         teamSize: '1-4',
         desc: 'On-the-spot problem statements will be given to the players, who must create a business model with a proper revenue model and strategy, and pitch the business model to the judge.',
-        heads: 'Puvaneshwari K (97910 33668), Sivadarshan (93615 35161), Pragadeesh (88255 44140), Sam Francis (96008 55057)',
+        heads: 'Puvaneshwari K (97910 33668), Sivadarshan (93615 35161)',
         rounds: [
             'Model Development: 20 minutes',
             'Pitch: 3 minutes + Q&A: 2 minutes'
@@ -197,7 +204,8 @@ export const technicalEvents = [
             'Rankings based on solution accuracy',
             'Time penalties for hints/assistance'
         ],
-        price: 'FREE'
+        price: 'FREE',
+        quote: 'Where ideas ignite opportunity.'
     }
 ];
 
@@ -221,7 +229,8 @@ export const paperPresentation = [
             'Presentation: 7 mins + Q&A: 3 mins',
             'Judges\' decision is final'
         ],
-        price: '₹120'
+        price: '₹120',
+        quote: 'Present. Publish. Prevail.'
     }
 ];
 
@@ -234,7 +243,7 @@ export const workshops = [
         color: '#e33e33',
         teamSize: 'Individual',
         desc: 'Explore the systems that power digital payments, AI-driven finance, and secure transactions. An engaging, beginner-friendly workshop designed to give you real-world FinTech exposure.',
-        heads: 'Priyanka L Sharma (63854 94091), P T Manisha (95081 47649), Gayathri R (86107 70289)',
+        heads: 'Priyanka L Sharma (63854 94091), P T Manisha (95081 47649)',
         rounds: ['Interactive Workshop'],
         rules: [
             'Mode: Interactive & activity-driven',
@@ -251,6 +260,7 @@ export const workshops = [
             'FinTech Regulations & Ethics',
             'Careers & Startup Opportunities'
         ],
-        price: '₹50'
+        price: '₹50',
+        quote: 'Finance meets innovation.'
     }
 ];

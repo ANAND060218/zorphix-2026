@@ -386,7 +386,12 @@ const EventsPage = () => {
                             <div className="w-6 h-4 bg-white/10 rounded-sm flex items-center justify-center border border-white/5">
                                 <span className="text-[6px] text-white/50 font-bold">VIP</span>
                             </div>
-                            <div className="text-[10px] md:text-xs text-gray-300 font-mono uppercase tracking-wider">{event.subtitle}</div>
+                            <div className="flex flex-col">
+                                <div className="text-[10px] md:text-xs text-gray-300 font-mono uppercase tracking-wider">{event.subtitle}</div>
+                                {event.quote && (
+                                    <div className="text-[8px] text-gray-500 italic font-mono mt-0.5">"{event.quote}"</div>
+                                )}
+                            </div>
                         </div>
 
                         <div className="text-right flex items-center gap-3">
