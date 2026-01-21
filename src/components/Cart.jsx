@@ -351,28 +351,22 @@ const Cart = () => {
                                 <span className="text-xl md:text-3xl font-black text-white tracking-tight drop-shadow-md block leading-none">{event.price}</span>
                             </div>
                         </div>
-                        {/* Team formation note */}
-                        {event.teamSize && event.teamSize !== '1' && event.teamSize !== 'Individual' && (
-                            <div className="mt-2 text-[8px] text-yellow-400/80 font-mono">
-                                *Team: {event.teamSize} members. Register individually.
-                            </div>
-                        )}
-                    </div>
 
-                    {/* Bottom Footer */}
-                    <div className="flex justify-between items-end border-t border-white/5 pt-2 mt-2">
-                        <div className="flex items-center gap-2">
-                            <div className="w-6 h-4 bg-white/10 rounded-sm flex items-center justify-center border border-white/5">
-                                <span className="text-[6px] text-white/50 font-bold">VIP</span>
+                        {/* Bottom Footer */}
+                        <div className="flex justify-between items-end border-t border-white/5 pt-2 mt-2">
+                            <div className="flex items-center gap-2">
+                                <div className="w-6 h-4 bg-white/10 rounded-sm flex items-center justify-center border border-white/5">
+                                    <span className="text-[6px] text-white/50 font-bold">VIP</span>
+                                </div>
+                                <div className="text-[10px] md:text-xs text-gray-300 font-mono uppercase tracking-wider">{event.subtitle}</div>
                             </div>
-                            <div className="text-[10px] md:text-xs text-gray-300 font-mono uppercase tracking-wider">{event.subtitle}</div>
+
+                            <div className="text-right flex items-center gap-3">
+                                <div className="text-white/30 font-bold italic text-lg md:text-xl tracking-tighter">VISA</div>
+                            </div>
                         </div>
 
-                        <div className="text-right flex items-center gap-3">
-                            <div className="text-white/30 font-bold italic text-lg md:text-xl tracking-tighter">VISA</div>
-                        </div>
                     </div>
-
                 </div>
             </div>
 
