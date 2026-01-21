@@ -21,9 +21,66 @@ import CoinBackground from './components/CoinBackground'
 import { Toaster } from 'react-hot-toast'
 import './App.css'
 
+import { useEffect } from 'react'
+
 const App = () => {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith('/admin');
+
+  // Console Easter Egg - runs once on app load
+  useEffect(() => {
+    console.log(`
+                             ###
+                            ###
+                           ###
+        __________________###_
+        \\\\ ################### \\\\
+    /###/\\\\    __________#######\\\\
+   /###/  \\\\##/         ###  \\\\###\\\\
+  /###/    \\\\/  ###    ###    \\\\###\\\\
+ /###/        ###    ###      \\\\###\\\\
+ \\\\###\\\\       ###    ###       /###/
+  \\\\###\\\\     ###    ###   /\\\\  /###/
+   \\\\###\\\\___### _________/  \\\\/###/
+    \\\\###################### \\\\
+     \\\\__ ### ________________\\\\
+           ###
+          ###
+         ###
+    `);
+
+    console.log(`
+ ███████╗  ██████╗  ██████╗  ██████╗  ██╗  ██╗   ██╗ ██╗  ██╗
+ ╚══███╔╝ ██╔═══██╗ ██╔══██╗ ██╔══██╗ ██║  ██║   ██║ ╚██╗██╔╝
+    ███╔╝ ██║   ██║ ██████╔╝ ██████╔╝ ███████║   ██║   ╚███╔╝ 
+ ███╔╝    ██║   ██║ ██╔══██╗ ██╔══    ██╔══██║   ██║   ██╔██╗ 
+███████╗  ╚██████╔╝ ██║  ██║ ██║      ██║  ██║   ██║  ██╔╝ ██╗
+╚══════╝   ╚═════╝  ╚═╝  ╚═╝ ╚═╝      ╚═╝  ╚═╝   ╚═╝  ╚═╝  ╚═╝
+    `);
+
+    console.log('%c👋 Welcome, Curious Human.', 'font-size: 16px; font-weight: bold;');
+    console.log('%cYou\'ve opened the Developer Console.', 'font-size: 14px;');
+    console.log('');
+    console.log('%c💀 Welcome to the Dark Side of ZORPHIX.', 'font-size: 14px; color: #e33e33;');
+    console.log('');
+    console.log('%c⚠️ Warning:', 'font-size: 14px; color: #ffa500; font-weight: bold;');
+    console.log('This site is not built by developers.😉');
+    console.log('not Secured by logic.');
+    console.log('not Protected by curiosity.');
+    console.log('not Broken only by normal human or imagination or by you 😉.');
+    console.log('');
+    console.log('%c🔐 No exploits here.', 'color: #97b85d;');
+    console.log('%c🧠 No vulnerabilities exposed.', 'color: #97b85d;');
+    console.log('%c🚀 Only innovation, code & creativity.', 'color: #97b85d;');
+    console.log('');
+    console.log('If you\'re here to:');
+    console.log('%c✔ Learn — Welcome.', 'color: #97b85d;');
+    console.log('%c✔ Explore — Respect.', 'color: #97b85d;');
+    console.log('%c✔ Hack — Sorry, wrong universe.', 'color: #e33e33;');
+    console.log('');
+    console.log('%c🎯 ZORPHIX Symposium — Where Coders Rise.', 'font-size: 16px; font-weight: bold; color: #e33e33;');
+  }, []);
+
 
   return (
     <div className="relative min-h-screen bg-black text-white overflow-x-hidden font-mono">
@@ -101,3 +158,4 @@ const App = () => {
 }
 
 export default App
+
