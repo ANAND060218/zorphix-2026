@@ -1,9 +1,12 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaTimes, FaTrophy, FaCalendarAlt, FaMapMarkerAlt, FaUsers } from 'react-icons/fa';
+import { FaTimes, FaTrophy, FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaUserFriends, FaClipboardList, FaLightbulb, FaClock, FaGamepad } from 'react-icons/fa';
 
 const EventModal = ({ isOpen, onClose, event, isTechnical, isRegistered, isSelected, onAction }) => {
     if (!event) return null;
+
+    // Check if this is a workshop
+    const isWorkshop = event.workshopFocusAreas || event.workshopFormat || event.activities;
 
     return (
         <AnimatePresence>
@@ -78,19 +81,76 @@ const EventModal = ({ isOpen, onClose, event, isTechnical, isRegistered, isSelec
                             </div>
 
                             <div className="space-y-6">
+                                {/* What is this event about? */}
                                 <div>
-                                    <h3 className="text-[#97b85d] font-bold tracking-widest uppercase mb-2 text-sm">Description</h3>
+                                    <h3 className="text-[#97b85d] font-bold tracking-widest uppercase mb-2 text-sm">
+                                        {isWorkshop ? 'What is this event about? (in short)' : 'What is this event about?'}
+                                    </h3>
                                     <p className="text-gray-300 leading-relaxed text-sm md:text-base">
-                                        {event.desc}
+                                        {event.whatIsThisEventAbout || event.desc}
                                     </p>
                                 </div>
 
-                                <div>
-                                    <h3 className="text-[#e33e33] font-bold tracking-widest uppercase mb-3 text-sm">Event Heads</h3>
-                                    <p className="text-gray-300 font-mono text-sm">{event.heads}</p>
-                                </div>
+                                {/* Event Heads (first 2 members only) */}
+                                {event.heads && (
+                                    <div>
+                                        <h3 className="text-[#e33e33] font-bold tracking-widest uppercase mb-3 text-sm flex items-center gap-2">
+                                            <FaUserFriends /> Event Heads
+                                        </h3>
+                                        <p className="text-gray-300 font-mono text-sm">{event.heads}</p>
+                                    </div>
+                                )}
 
-                                {event.rounds && (
+                                {/* Workshop Focus Areas */}
+                                {event.workshopFocusAreas && event.workshopFocusAreas.length > 0 && (
+                                    <div>
+                                        <h3 className="text-[#97b85d] font-bold tracking-widest uppercase mb-3 text-sm flex items-center gap-2">
+                                            <FaLightbulb /> Workshop Focus Areas
+                                        </h3>
+                                        <ul className="space-y-2">
+                                            {event.workshopFocusAreas.map((area, index) => (
+                                                <li key={index} className="flex gap-3 text-sm text-gray-400">
+                                                    <span className="text-[#97b85d] font-mono mt-0.5">•</span>
+                                                    <span>{area}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+
+                                {/* Workshop Format */}
+                                {event.workshopFormat && (
+                                    <div>
+                                        <h3 className="text-[#e33e33] font-bold tracking-widest uppercase mb-3 text-sm flex items-center gap-2">
+                                            <FaClock /> Workshop Format
+                                        </h3>
+                                        <div className="space-y-2 text-sm text-gray-400">
+                                            <p><span className="text-[#e33e33] font-mono">1.</span> Duration: {event.workshopFormat.duration}</p>
+                                            <p><span className="text-[#e33e33] font-mono">2.</span> Mode: {event.workshopFormat.mode}</p>
+                                            <p><span className="text-[#e33e33] font-mono">3.</span> Participation: {event.workshopFormat.participation}</p>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Activities */}
+                                {event.activities && event.activities.length > 0 && (
+                                    <div>
+                                        <h3 className="text-[#97b85d] font-bold tracking-widest uppercase mb-3 text-sm flex items-center gap-2">
+                                            <FaGamepad /> Activities
+                                        </h3>
+                                        <ul className="space-y-2">
+                                            {event.activities.map((activity, index) => (
+                                                <li key={index} className="flex gap-3 text-sm text-gray-400">
+                                                    <span className="text-[#97b85d] font-mono mt-0.5">•</span>
+                                                    <span>{activity}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+
+                                {/* Rounds (for events only) */}
+                                {event.rounds && !isWorkshop && (
                                     <div>
                                         <h3 className="text-[#97b85d] font-bold tracking-widest uppercase mb-3 text-sm">Rounds</h3>
                                         <ul className="space-y-2">
@@ -106,17 +166,39 @@ const EventModal = ({ isOpen, onClose, event, isTechnical, isRegistered, isSelec
                                     </div>
                                 )}
 
-                                <div>
-                                    <h3 className="text-[#e33e33] font-bold tracking-widest uppercase mb-3 text-sm">Rules & Guidelines</h3>
-                                    <ul className="space-y-2">
-                                        {event.rules && event.rules.map((rule, index) => (
-                                            <li key={index} className="flex gap-3 text-sm text-gray-400 group hover:text-gray-200 transition-colors">
-                                                <span className="text-[#e33e33] font-mono mt-0.5">{`0${index + 1}`}</span>
-                                                <span>{rule}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
+                                {/* Rules */}
+                                {event.rules && event.rules.length > 0 && (
+                                    <div>
+                                        <h3 className="text-[#e33e33] font-bold tracking-widest uppercase mb-3 text-sm flex items-center gap-2">
+                                            <FaClipboardList /> Rules
+                                        </h3>
+                                        <ul className="space-y-2">
+                                            {event.rules.map((rule, index) => (
+                                                <li key={index} className="flex gap-3 text-sm text-gray-400 group hover:text-gray-200 transition-colors">
+                                                    <span className="text-[#e33e33] font-mono mt-0.5">{String(index + 1).padStart(2, '0')}</span>
+                                                    <span>{rule}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+
+                                {/* Instructions */}
+                                {event.instructions && event.instructions.length > 0 && (
+                                    <div>
+                                        <h3 className="text-[#97b85d] font-bold tracking-widest uppercase mb-3 text-sm flex items-center gap-2">
+                                            <FaClipboardList /> Instructions
+                                        </h3>
+                                        <ul className="space-y-2">
+                                            {event.instructions.map((instruction, index) => (
+                                                <li key={index} className="flex gap-3 text-sm text-gray-400 group hover:text-gray-200 transition-colors">
+                                                    <span className="text-[#97b85d] font-mono mt-0.5">•</span>
+                                                    <span>{instruction}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
                             </div>
                         </div>
 

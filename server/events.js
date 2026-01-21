@@ -15,7 +15,7 @@ const paperPresentation = [
 ];
 
 const workshops = [
-    { id: 'fintech-workshop', name: 'FinTech Workshop', price: '₹50' },
+    { id: 'fintech-workshop', name: 'FinTech 360°', price: '₹50' },
     { id: 'wealthx-workshop', name: 'WealthX Workshop', price: '₹50' }
 ];
 
