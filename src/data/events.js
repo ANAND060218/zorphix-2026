@@ -251,6 +251,6 @@ export const workshops = [
             'FinTech Regulations & Ethics',
             'Careers & Startup Opportunities'
         ],
-        price: '₹1'
+        price: '₹50'
     }
 ];
