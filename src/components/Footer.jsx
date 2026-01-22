@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaInstagram, FaLinkedin, FaMapMarkerAlt, FaEnvelope, FaPaperPlane } from 'react-icons/fa';
-import { FaXTwitter } from 'react-icons/fa6';
+import { FaInstagram, FaLinkedin, FaMapMarkerAlt, FaEnvelope, FaPaperPlane, FaGlobe } from 'react-icons/fa';
 import { db, auth } from '../firebase';
 import { collection, addDoc, serverTimestamp, doc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -77,20 +76,22 @@ const Footer = () => {
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 pointer-events-none"></div>
 
             <div className="max-w-7xl mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-12 gap-4 mb-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 
-                    {/* 1. Brand Card - Large */}
-                    <div className="col-span-1 md:col-span-4 lg:col-span-5 relative group overflow-hidden rounded-3xl bg-[#111] border border-white/5 p-8 flex flex-col justify-between min-h-[300px]">
+                    {/* Row 1: Brand Card (50%) + Socials (50%) */}
+
+                    {/* 1. Brand Card */}
+                    <div className="col-span-1 relative group overflow-hidden rounded-3xl bg-[#111] border border-white/5 p-8 flex flex-col justify-between min-h-[250px]">
                         <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                         <div className="absolute -right-20 -top-20 w-64 h-64 bg-[#e33e33] rounded-full blur-[100px] opacity-10 group-hover:opacity-20 transition-opacity duration-500" />
 
                         <div>
                             <Link to="/" className="inline-block">
-                                <h2 className="text-6xl font-black text-white tracking-tighter mb-2">
+                                <h2 className="text-5xl md:text-6xl font-black text-white tracking-tighter mb-2">
                                     ZORPHIX<span className="text-[#e33e33]">.</span>
                                 </h2>
                             </Link>
-                            <p className="text-gray-400 text-lg max-w-md mt-2">
+                            <p className="text-gray-400 text-base md:text-lg max-w-md mt-2">
                                 Converging Finance & Deep Tech.
                             </p>
                         </div>
@@ -106,27 +107,18 @@ const Footer = () => {
                         </div>
                     </div>
 
-                    {/* 2. Navigation Card */}
-                    <div className="col-span-1 md:col-span-2 lg:col-span-3 rounded-3xl bg-[#111] border border-white/5 p-6 flex flex-col hover:border-[#97b85d]/30 transition-colors duration-300">
-                        <h3 className="text-[#97b85d] text-xs font-bold uppercase tracking-[0.2em] mb-6">Navigation</h3>
-                        <nav className="flex flex-col gap-3 flex-grow">
-                            <FooterLink to="/" text="Home" num="01" />
-                            <FooterLink to="/events" text="Events" num="02" />
-                            <FooterLink to="/profile" text="Profile" num="03" />
-                            <FooterLink to="/about" text="About" num="04" />
-                        </nav>
-                    </div>
-
-                    {/* 3. Socials Grid */}
-                    <div className="col-span-1 md:col-span-2 lg:col-span-4 grid grid-cols-2 gap-4">
+                    {/* 2. Socials Grid (50%) */}
+                    <div className="col-span-1 grid grid-cols-2 gap-4">
                         <SocialCard icon={FaInstagram} label="Instagram" href="https://www.instagram.com/zorphix.cit/" color="#E1306C" />
                         <SocialCard icon={FaLinkedin} label="LinkedIn" href="https://www.linkedin.com/school/chennai-institute-of-technology/" color="#0077B5" />
                         <SocialCard icon={FaEnvelope} label="Email" href="mailto:zorphix@citchennai.net" color="#97b85d" />
-                        <SocialCard icon={FaXTwitter} label="X" href="https://x.com/citchennai" color="#000000" />
+                        <SocialCard icon={FaGlobe} label="College" href="https://www.citchennai.edu.in/" color="#97b85d" />
                     </div>
 
-                    {/* 4. Ask a Question / Query Form */}
-                    <div className="col-span-1 md:col-span-2 lg:col-span-4 rounded-3xl bg-[#e33e33] p-6 text-white relative overflow-hidden group">
+                    {/* Row 2: Query Form (50%) + Location (50%) */}
+
+                    {/* 3. Ask a Question / Query Form */}
+                    <div className="col-span-1 rounded-3xl bg-[#e33e33] p-6 text-white relative overflow-hidden group">
                         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
                         <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-black/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
 
@@ -177,18 +169,18 @@ const Footer = () => {
                         </div>
                     </div>
 
-                    {/* 5. Location Card */}
+                    {/* 4. Location Card (50%) */}
                     <a
                         href="https://maps.google.com/?q=Chennai+Institute+of+Technology,+Malayambakkam,+Tamil+Nadu+600133"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="col-span-1 md:col-span-2 lg:col-span-5 rounded-3xl bg-[#111] border border-white/5 p-6 relative overflow-hidden group hover:border-[#e33e33]/50 transition-colors cursor-pointer block"
+                        className="col-span-1 rounded-3xl bg-[#111] border border-white/5 p-6 relative overflow-hidden group hover:border-[#e33e33]/50 transition-colors cursor-pointer block flex flex-col justify-between"
                     >
                         <div className="flex items-start justify-between">
                             <div>
                                 <h3 className="text-gray-500 text-xs font-bold uppercase tracking-[0.2em] mb-4">Event Location</h3>
                                 <div className="space-y-1 text-gray-300 text-sm">
-                                    <p className="font-bold text-white group-hover:text-[#e33e33] transition-colors">Chennai Institute of Technology</p>
+                                    <p className="font-bold text-white text-lg group-hover:text-[#e33e33] transition-colors">Chennai Institute of Technology</p>
                                     <p>Malayambakkam</p>
                                     <p>Tamil Nadu - 600133</p>
                                 </div>
@@ -201,17 +193,6 @@ const Footer = () => {
                             <span className="text-gray-500 group-hover:text-white transition-colors">Click to view on Google Maps →</span>
                         </div>
                     </a>
-
-                    {/* 6. Legal / Copyright */}
-                    <div className="col-span-1 md:col-span-4 lg:col-span-3 rounded-3xl bg-[#111] border border-white/5 p-6 flex flex-col justify-between">
-                        <div className="flex flex-col gap-2">
-                            <span className="text-gray-500 text-xs">Privacy Policy</span>
-                            <span className="text-gray-500 text-xs">Terms of Service</span>
-                        </div>
-                        <div className="mt-8 text-[10px] text-gray-600 uppercase tracking-wider">
-                            &copy; {currentYear} Zorphix Symposium
-                        </div>
-                    </div>
 
                 </div>
             </div>
@@ -229,13 +210,6 @@ const SocialCard = ({ icon: Icon, label, href, color }) => (
         <Icon size={24} className="text-gray-400 group-hover:scale-110 transition-transform duration-300" style={{ color: 'inherit' }} />
         <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider group-hover:text-white transition-colors">{label}</span>
     </a>
-);
-
-const FooterLink = ({ to, text, num }) => (
-    <Link to={to} className="group flex items-center justify-between p-2 rounded-lg hover:bg-white/5 transition-colors">
-        <span className="text-gray-400 font-medium group-hover:text-white transition-colors">{text}</span>
-        <span className="text-[10px] text-gray-700 font-mono group-hover:text-[#97b85d] transition-colors">{num}</span>
-    </Link>
 );
 
 export default Footer;

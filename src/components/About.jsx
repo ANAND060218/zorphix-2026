@@ -23,7 +23,7 @@ const About = () => {
             phone: "+91 824 875 0936"
         },
         {
-            name: "Subiksha",
+            name: "Subiksha K",
             role: "Secretary",
             phone: "+91 97861 04200"
         },
@@ -116,9 +116,9 @@ const About = () => {
                             transition={{ delay: 0.1 }}
                             className="md:col-span-2 bg-gradient-to-br from-[#111] to-black border border-white/10 rounded-2xl p-8 flex flex-col justify-center items-start hover:border-[#e33e33]/30 transition-colors relative overflow-hidden group"
                         >
-                            <div className="absolute right-4 top-4 opacity-20 text-6xl font-black text-gray-800 pointer-events-none group-hover:scale-110 transition-transform">1100+</div>
+                            <div className="absolute right-4 top-4 opacity-20 text-6xl font-black text-gray-800 pointer-events-none group-hover:scale-110 transition-transform">5000+</div>
                             <h4 className="text-xs font-mono text-gray-500 uppercase tracking-widest mb-2">Growing Community</h4>
-                            <h3 className="text-3xl font-black text-white">1100+ Participants</h3>
+                            <h3 className="text-3xl font-black text-white">5000+ Participants</h3>
                             <p className="text-sm text-gray-400 mt-2">in past events from colleges across the nation</p>
                         </motion.div>
 
@@ -144,7 +144,7 @@ const About = () => {
                             className="md:col-span-1 bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 flex flex-col justify-center hover:bg-white/5 transition-colors"
                         >
                             <FaBrain className="text-3xl text-[#e33e33] mb-4" />
-                            <h4 className="font-bold text-lg mb-1">8+ Events</h4>
+                            <h4 className="font-bold text-lg mb-1">11+ Events</h4>
                             <p className="text-xs text-gray-500">Exciting events & workshops conducted.</p>
                         </motion.div>
 
