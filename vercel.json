@@ -8,8 +8,14 @@
           "value": "(.*)vercel.app"
         }
       ],
-      "destination": "https://zorphix.com/$1",
+      "destination": "https://www.zorphix.com/$1",
       "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
