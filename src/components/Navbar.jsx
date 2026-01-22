@@ -43,7 +43,7 @@ const Navbar = () => {
                         <div className="flex items-center gap-3">
                             <img src={citLogo} alt="Zorphix Logo" className="h-8 md:h-10 drop-shadow-[0_0_10px_rgba(227,62,51,0.5)] mr-5" />
 
-                            <img src={zorphixLogo} alt="Zorphix Logo" className="w-8 h-8 md:w-10 md:h-10 drop-shadow-[0_0_10px_rgba(227,62,51,0.5)]" />
+
                             <span className="text-white font-bold text-xl tracking-wider">ZORPHIX</span>
                         </div>
 
@@ -120,7 +120,7 @@ const Navbar = () => {
                 {/* Sidebar Header */}
                 <div className="flex items-center justify-between p-6 border-b border-white/10">
                     <div className="flex items-center gap-3">
-                        <img src={zorphixLogo} alt="Zorphix Logo" className="w-8 h-8 drop-shadow-[0_0_10px_rgba(227,62,51,0.5)]" />
+
                         <span className="text-white font-bold text-lg tracking-wider">ZORPHIX</span>
                     </div>
                     <button

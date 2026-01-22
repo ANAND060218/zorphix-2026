@@ -111,8 +111,10 @@ const EventModal = ({ isOpen, onClose, event, isTechnical, isRegistered, isSelec
                                         <div className="text-gray-400 text-xs uppercase mb-1 flex items-center gap-1">
                                             <FaUsers /> Team
                                         </div>
-                                        <div className="text-white font-mono text-sm">{event.teamSize || '1-2'} Members</div>
-                                        {event.teamSize && event.teamSize !== '1' && event.teamSize !== 'Individual' && (
+                                        <div className="text-white font-mono text-sm">
+                                            {isWorkshop ? 'Individual' : `${event.teamSize || '1-2'} Members`}
+                                        </div>
+                                        {!isWorkshop && event.teamSize && event.teamSize !== '1' && event.teamSize !== 'Individual' && (
                                             <div className="text-yellow-400/80 text-[8px] font-mono mt-1">*Teams formed offline</div>
                                         )}
                                     </div>
