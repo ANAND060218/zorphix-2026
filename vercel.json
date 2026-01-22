@@ -5,7 +5,7 @@
       "has": [
         {
           "type": "host",
-          "value": "zorphix.vercel.app"
+          "value": "(.*)vercel.app"
         }
       ],
       "destination": "https://zorphix.com/$1",
