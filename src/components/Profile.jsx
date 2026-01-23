@@ -1083,15 +1083,15 @@ const Profile = () => {
                                     className="relative w-full py-4 bg-white hover:bg-gray-100 text-black font-bold uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-3 group overflow-hidden disabled:opacity-50"
                                 >
                                     <FaGoogle className="text-lg" />
-                                    <span>Google Access</span>
+                                    <span>{isLoginMode ? "Sign in with Google" : "Sign up with Google"}</span>
                                 </button>
 
                                 <div className="mt-8 pt-6 border-t border-white/5">
-                                    <p className="text-gray-400 text-xs">
+                                    <p className="text-gray-400 text-sm md:text-base">
                                         {isLoginMode ? "Don't have an account?" : "Already have an account?"}{" "}
                                         <button
                                             onClick={() => setIsLoginMode(!isLoginMode)}
-                                            className="text-[#e33e33] font-bold hover:underline uppercase tracking-wide ml-1"
+                                            className="text-[#e33e33] font-bold hover:underline uppercase tracking-wide ml-1 text-sm md:text-base"
                                         >
                                             {isLoginMode ? "Sign Up" : "Sign In"}
                                         </button>

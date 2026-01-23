@@ -31,6 +31,7 @@ const EventsPage = () => {
     const [processingId, setProcessingId] = useState(null);
     const [activeTab, setActiveTab] = useState('events');
     const [isProfileComplete, setIsProfileComplete] = useState(false);
+    const [showPaymentBanner, setShowPaymentBanner] = useState(false);
     const [selectedEventsList, setSelectedEventsList] = useState(() => {
         try {
             const stored = localStorage.getItem('selectedEvents');
@@ -143,10 +144,16 @@ const EventsPage = () => {
             // Remove
             updatedList = selectedEventsList.filter(title => title !== event.name);
             toast.success(`Successfully removed ${event.name} from cart!`);
+            // Hide payment banner if cart becomes empty
+            if (updatedList.length === 0) {
+                setShowPaymentBanner(false);
+            }
         } else {
             // Add
             updatedList = [...selectedEventsList, event.name];
             toast.success(`Successfully added ${event.name} to cart!`);
+            // Show payment pending banner after adding to cart
+            setShowPaymentBanner(true);
         }
         setSelectedEventsList(updatedList);
         localStorage.setItem('selectedEvents', JSON.stringify(updatedList));
@@ -456,6 +463,59 @@ const EventsPage = () => {
 
             {/* Vignette */}
             <div className="absolute inset-0 pointer-events-none z-10 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)]"></div>
+
+            {/* Payment Pending Banner */}
+            <AnimatePresence>
+                {showPaymentBanner && selectedEventsList.filter(name => !registeredEventsList.includes(name)).length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -50 }}
+                        transition={{ duration: 0.3, type: "spring", stiffness: 100 }}
+                        className="fixed top-32 left-1/2 transform -translate-x-1/2 z-[90] w-[95%] max-w-xl"
+                    >
+                        <div className="bg-gradient-to-r from-[#1a1a1a] via-[#0d0d0d] to-[#1a1a1a] border border-[#97b85d]/50 rounded-xl shadow-[0_10px_40px_rgba(151,184,93,0.3)] backdrop-blur-md overflow-hidden">
+                            {/* Animated glow effect */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-[#97b85d]/5 via-[#97b85d]/10 to-[#97b85d]/5 animate-pulse pointer-events-none"></div>
+
+                            <div className="relative p-4 flex items-center justify-between gap-4">
+                                <div className="flex items-center gap-3 flex-1">
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#97b85d] to-[#4a5c2d] flex items-center justify-center flex-shrink-0 shadow-lg">
+                                        <FaShoppingCart className="text-white text-sm" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-white font-bold text-sm md:text-base truncate">
+                                            Payment Pending!
+                                        </p>
+                                        <p className="text-gray-400 text-xs md:text-sm truncate">
+                                            Complete the payment in cart ({selectedEventsList.filter(name => !registeredEventsList.includes(name)).length} item{selectedEventsList.filter(name => !registeredEventsList.includes(name)).length > 1 ? 's' : ''})
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-2 flex-shrink-0">
+                                    <button
+                                        onClick={() => navigate('/cart')}
+                                        className="px-4 py-2 bg-gradient-to-r from-[#97b85d] to-[#4a5c2d] text-white font-mono text-xs font-bold uppercase tracking-wider rounded-lg hover:shadow-[0_0_20px_rgba(151,184,93,0.6)] transition-all duration-300 flex items-center gap-2"
+                                    >
+                                        <FaWallet className="text-xs" />
+                                        <span>Pay</span>
+                                    </button>
+                                    <button
+                                        onClick={() => setShowPaymentBanner(false)}
+                                        className="w-8 h-8 rounded-lg bg-white/10 hover:bg-[#e33e33] text-gray-400 hover:text-white flex items-center justify-center transition-all duration-300"
+                                        aria-label="Close"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <div className="relative z-20 container mx-auto px-4 py-24 md:py-32">
                 {/* Header */}
