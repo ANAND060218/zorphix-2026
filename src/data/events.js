@@ -345,7 +345,7 @@ export const workshops = [
             'No prior FinTech or coding knowledge is required.',
             'Bring curiosity, enthusiasm, and an open mind.'
         ],
-        price: '₹100',
+        price: '₹120',
         quote: 'Finance meets innovation.'
     },
     {
@@ -387,7 +387,7 @@ export const workshops = [
             'No prior finance or investment knowledge is required',
             'Participants must bring a laptop.'
         ],
-        price: '₹100',
+        price: '₹120',
         quote: 'Build wealth. Build your future.'
     }
 ];
