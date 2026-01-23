@@ -1,12 +1,50 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth, db } from '../firebase';
+import { doc, getDoc } from 'firebase/firestore';
 import zorphixLogo from '../assets/zorphix-logo.png';
 import zorphixName from '../assets/zorphix.png';
 
 
 const Hero = () => {
+    const navigate = useNavigate();
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
     const containerRef = useRef(null);
+    const [user, setUser] = useState(null);
+    const [isProfileComplete, setIsProfileComplete] = useState(false);
+
+    // Track user auth state
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+            setUser(currentUser);
+            if (currentUser) {
+                try {
+                    const docRef = doc(db, 'registrations', currentUser.uid);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        setIsProfileComplete(data.profileCompleted === true || (data.college && data.phone));
+                    }
+                } catch (error) {
+                    console.error("Error checking profile:", error);
+                }
+            } else {
+                setIsProfileComplete(false);
+            }
+        });
+        return () => unsubscribe();
+    }, []);
+
+    // Handle register button click
+    const handleRegisterClick = (e) => {
+        e.preventDefault();
+        if (user && isProfileComplete) {
+            navigate('/events');
+        } else {
+            navigate('/profile');
+        }
+    };
 
     const [targetDate] = useState(() => {
         // February 4, 2026 at 23:59:00
@@ -177,8 +215,8 @@ const Hero = () => {
                         <a href="/about" className="relative z-10">Learn More</a>
                         <div className="absolute inset-0 bg-[#e33e33] transform -translate-x-full skew-x-12 group-hover:translate-x-0 transition-transform duration-300"></div>
                     </button>
-                    <button className="relative px-8 py-3 md:px-8 md:py-3 bg-transparent border border-[#97b85d] text-[#97b85d] font-bold uppercase tracking-widest hover:bg-[#97b85d] hover:text-black transition-all duration-300 group overflow-hidden text-base md:text-base w-full sm:w-auto">
-                        <a href="/events" className="relative z-10">Register</a>
+                    <button onClick={handleRegisterClick} className="relative px-8 py-3 md:px-8 md:py-3 bg-transparent border border-[#97b85d] text-[#97b85d] font-bold uppercase tracking-widest hover:bg-[#97b85d] hover:text-black transition-all duration-300 group overflow-hidden text-base md:text-base w-full sm:w-auto">
+                        <span className="relative z-10">Register</span>
                         <div className="absolute inset-0 bg-[#97b85d] transform translate-x-full skew-x-12 group-hover:translate-x-0 transition-transform duration-300"></div>
                     </button>
                 </div>

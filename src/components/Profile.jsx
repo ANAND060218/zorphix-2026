@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth, googleProvider, db } from '../firebase';
 import { signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
-import { FaGoogle, FaUserTie, FaUniversity, FaBuilding, FaPhone, FaCheckCircle, FaBriefcase, FaChartLine, FaSignOutAlt, FaWallet, FaCoins, FaDownload, FaPen, FaEnvelope } from 'react-icons/fa';
+import { FaGoogle, FaUserTie, FaUniversity, FaBuilding, FaPhone, FaCheckCircle, FaBriefcase, FaChartLine, FaSignOutAlt, FaWallet, FaCoins, FaDownload, FaPen, FaEnvelope, FaEye, FaEyeSlash } from 'react-icons/fa';
 import * as htmlToImage from 'html-to-image';
 import CoinBackground from './CoinBackground';
 import CurrencyBackground from './CurrencyBackground';
@@ -18,7 +18,8 @@ const Profile = () => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [authLoading, setAuthLoading] = useState(false);
-    const [isLoginMode, setIsLoginMode] = useState(true);
+    const [isLoginMode, setIsLoginMode] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isProfileComplete, setIsProfileComplete] = useState(false);
@@ -954,6 +955,13 @@ const Profile = () => {
                 downloadQR();
             }, 1000);
 
+            // Redirect to events page after profile completion (only for new profile)
+            if (!wasAlreadyComplete) {
+                setTimeout(() => {
+                    navigate('/events');
+                }, 1500);
+            }
+
         } catch (error) {
             console.error("Error saving profile:", error);
             toast.error('Failed to save profile. Please try again.');
@@ -1052,14 +1060,23 @@ const Profile = () => {
                                     </div>
                                     <div>
                                         <label className="text-[10px] font-mono text-gray-500 uppercase tracking-widest pl-1">Password</label>
-                                        <input
-                                            type="password"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            required
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white placeholder-white/20 focus:outline-none focus:border-[#e33e33] transition-colors mt-1"
-                                            placeholder="••••••••"
-                                        />
+                                        <div className="relative">
+                                            <input
+                                                type={showPassword ? "text" : "password"}
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                required
+                                                className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 pr-12 text-white placeholder-white/20 focus:outline-none focus:border-[#e33e33] transition-colors mt-1"
+                                                placeholder="••••••••"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 mt-0.5 text-gray-400 hover:text-white transition-colors p-1"
+                                            >
+                                                {showPassword ? <FaEyeSlash className="text-lg" /> : <FaEye className="text-lg" />}
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <button
@@ -1557,13 +1574,7 @@ const Profile = () => {
                                                                     >
                                                                         <FaDownload /> Download Ticket
                                                                     </button>
-                                                                    <button
-                                                                        onClick={downloadODLetter}
-                                                                        disabled={odLoading}
-                                                                        className="w-full py-3 bg-[#97b85d] text-black font-bold uppercase tracking-widest text-xs hover:bg-[#7a9a4a] transition-colors flex items-center justify-center gap-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                                                                    >
-                                                                        <FaDownload /> {odLoading ? 'Generating...' : 'Download OD Letter'}
-                                                                    </button>
+                                                                    {/* OD Letter download button removed as per requirements */}
                                                                 </div>
                                                             </div>
                                                         </div>

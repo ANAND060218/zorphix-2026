@@ -251,10 +251,10 @@ export const technicalEvents = [
         icon: FaLightbulb,
         color: '#97b85d',
         teamSize: '1-4',
-        heads: 'Puvaneshwari K (97910 33668), Sivadarshan (93615 35161)',
+        heads: 'Puvaneshwari K (97910 33668), Shivadharshan (93615 35161)',
         teamMembers: [
             'Puvaneshwari K - 9791033668',
-            'Sivadarshan - 93615 35161',
+            'Shivadharshan - 93615 35161',
             'Pragadeesh - 88255 44140',
             'Sam Francis - 9600855057'
         ],
