@@ -1550,6 +1550,8 @@ const Profile = () => {
                                                                         value={JSON.stringify({
                                                                             uid: user.uid,
                                                                             name: user.displayName,
+                                                                            email: user.email,
+                                                                            phone: formData.phone,
                                                                             college: formData.college,
                                                                             dept: formData.department,
                                                                             year: formData.year,
