@@ -120,7 +120,7 @@ const EventModal = ({ isOpen, onClose, event, isTechnical, isRegistered, isSelec
                                     </div>
                                     <div className="bg-white/5 p-3 rounded-lg border border-white/5">
                                         <div className="text-gray-400 text-xs uppercase mb-1 flex items-center gap-1">
-                                            <FaTrophy /> Price
+                                            <FaTrophy /> Fee
                                         </div>
                                         <div className="text-white font-mono text-sm text-[#e33e33]">{event.price}</div>
                                     </div>
