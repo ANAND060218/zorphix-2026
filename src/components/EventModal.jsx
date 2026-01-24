@@ -115,7 +115,7 @@ const EventModal = ({ isOpen, onClose, event, isTechnical, isRegistered, isSelec
                                             {isWorkshop ? 'Individual' : `${event.teamSize || '1-2'} Members`}
                                         </div>
                                         {!isWorkshop && event.teamSize && event.teamSize !== '1' && event.teamSize !== 'Individual' && (
-                                            <div className="text-yellow-400/80 text-[8px] font-mono mt-1">*Teams formed offline</div>
+                                            <div className="text-yellow-400/80 text-[8px] font-mono mt-1">*Teams formed onspot</div>
                                         )}
                                     </div>
                                     <div className="bg-white/5 p-3 rounded-lg border border-white/5">
@@ -125,6 +125,16 @@ const EventModal = ({ isOpen, onClose, event, isTechnical, isRegistered, isSelec
                                         <div className="text-white font-mono text-sm text-[#e33e33]">{event.price}</div>
                                     </div>
                                 </div>
+
+                                {/* Prizes Section */}
+                                {event.prizes && (
+                                    <div className="bg-gradient-to-r from-[#e33e33]/10 to-[#97b85d]/10 p-4 rounded-xl border border-white/10 mb-6">
+                                        <div className="text-gray-400 text-xs uppercase mb-2 flex items-center gap-2">
+                                            <FaTrophy className="text-[#ffa500]" /> Prize Pool
+                                        </div>
+                                        <div className="text-white font-mono text-sm font-bold tracking-wide">{event.prizes}</div>
+                                    </div>
+                                )}
 
                                 <div className="space-y-6">
                                     {/* What is this event about? */}

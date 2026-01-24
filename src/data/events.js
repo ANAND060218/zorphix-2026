@@ -46,6 +46,7 @@ export const technicalEvents = [
             'VScode platform should be used for coding.'
         ],
         price: 'FREE',
+        prizes: '1st - ₹1500 | 2nd - ₹1000 | 3rd - ₹700',
         quote: 'Redesign. Rethink. Reimagine.'
     },
     {
@@ -78,6 +79,7 @@ export const technicalEvents = [
             'Each team gets a maximum of 3 prompt attempts per round—do not exceed this limit.'
         ],
         price: 'FREE',
+        prizes: '1st - ₹1500 | 2nd - ₹1000 | 3rd - ₹700',
         quote: 'Where words command intelligence.'
     },
     {
@@ -111,6 +113,7 @@ export const technicalEvents = [
             'AI tools are strictly prohibited.'
         ],
         price: 'FREE',
+        prizes: '1st - ₹1500 | 2nd - ₹1000 | 3rd - ₹700',
         quote: 'Feel the beat of logic.'
     },
     {
@@ -146,6 +149,7 @@ export const technicalEvents = [
             'Programs must generate the exact expected output.'
         ],
         price: 'FREE',
+        prizes: '1st - ₹1500 | 2nd - ₹1000 | 3rd - ₹700',
         quote: 'Decode the outcome. Rebuild the logic.'
     },
     {
@@ -178,6 +182,7 @@ export const technicalEvents = [
             'Tasks can be expected to be from producing output of a code snippet, writing programs for a problem, debugging code, up to creating simple webpages (only HTML, CSS, JS involved)'
         ],
         price: 'FREE',
+        prizes: '1st - ₹1500 | 2nd - ₹1000 | 3rd - ₹700',
         quote: 'Test the test. Break the rules.'
     },
     {
@@ -208,6 +213,7 @@ export const technicalEvents = [
             'Any violation of the rules will result in immediate disqualification'
         ],
         price: 'FREE',
+        prizes: '1st - ₹1500 | 2nd - ₹1000 | 3rd - ₹700',
         quote: 'Every clue compiles a truth.'
     },
     {
@@ -242,6 +248,7 @@ export const technicalEvents = [
             'Participants must use exclusively the tools authorized by the organisation.'
         ],
         price: 'FREE',
+        prizes: '1st - ₹1500 | 2nd - ₹1000 | 3rd - ₹700',
         quote: 'Connect the dots. Crack the logic.'
     },
     {
@@ -278,6 +285,7 @@ export const technicalEvents = [
             'The top-ranked teams based on the final leaderboard will be declared as winners.'
         ],
         price: 'FREE',
+        prizes: '1st - ₹1500 | 2nd - ₹1000 | 3rd - ₹700',
         quote: 'Where ideas ignite opportunity.'
     }
 ];
@@ -299,6 +307,7 @@ export const paperPresentation = [
             'Judges\' decision is final'
         ],
         price: '₹120',
+        prizes: '1st - ₹1500 | 2nd - ₹1000 | 3rd - ₹700',
         quote: 'Present. Publish. Prevail.'
     }
 ];

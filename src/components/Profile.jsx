@@ -1525,7 +1525,7 @@ const Profile = () => {
                                                                     <div className="flex justify-between items-end border-t border-[#333] pt-6">
                                                                         <div>
                                                                             <p className="text-gray-600 text-[9px] uppercase tracking-widest mb-1">Date</p>
-                                                                            <p className="text-gray-400 font-mono text-xs">March 15-16, 2026</p>
+                                                                            <p className="text-gray-400 font-mono text-xs">February 5, 2026</p>
                                                                         </div>
                                                                         <div className="text-right">
                                                                             <p className="text-gray-600 text-[9px] uppercase tracking-widest mb-1">Total Value</p>
