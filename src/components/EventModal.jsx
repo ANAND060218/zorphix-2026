@@ -133,6 +133,7 @@ const EventModal = ({ isOpen, onClose, event, isTechnical, isRegistered, isSelec
                                             <FaTrophy className="text-[#ffa500]" /> Prize Pool
                                         </div>
                                         <div className="text-white font-mono text-sm font-bold tracking-wide">{event.prizes}</div>
+                                        <div className="text-[#97b85d] text-xs mt-2">🎁 Goodies & Certificates will be provided</div>
                                     </div>
                                 )}
 
