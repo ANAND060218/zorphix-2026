@@ -19,8 +19,8 @@ const EventsShowcase = () => {
             description: 'Competitive coding, hackathons, and cutting-edge tech challenges'
         },
         {
-            id: 'Paper Presentation',
-            name: 'Paper Presentation',
+            id: 'Thesis Precised',
+            name: 'Thesis Precised',
             count: '1',
             icon: FaPalette,
             color: '#97b85d',

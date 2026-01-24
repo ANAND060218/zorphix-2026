@@ -633,13 +633,13 @@ const EventsPage = () => {
                                     </div>
                                 </section>
 
-                                {/* Paper Presentation Section */}
+                                {/* Thesis Precised Section */}
                                 <section>
                                     <div className="flex items-center gap-4 mb-8">
                                         <div className="p-3 rounded-xl bg-gradient-to-br from-[#ffa500] to-[#ffd700] shadow-lg">
                                             <FaScroll className="text-2xl text-black" />
                                         </div>
-                                        <h2 className="text-3xl md:text-4xl font-bold text-white tracking-widest">PAPER PRESENTATION</h2>
+                                        <h2 className="text-3xl md:text-4xl font-bold text-white tracking-widest">THESIS PRECISED</h2>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                         {paperPresentation.map((event, index) => renderEventCard(event, index))}

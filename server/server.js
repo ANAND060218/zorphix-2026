@@ -357,7 +357,7 @@ app.post('/api/send-welcome-email', async (req, res) => {
 
                     <div style="text-align: center; margin: 20px 0; padding: 25px; background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%); border-radius: 10px; border: 2px dashed #ffa500;">
                         <p style="color: #ffa500; font-size: 20px; font-weight: bold; margin: 0;">🚀 REGISTER FOR EVENTS!</p>
-                        <p style="color: #fff; font-size: 14px; margin-top: 15px; line-height: 1.6;">Your profile is ready, but don't stop here! Explore and register for our exciting <strong style="color: #e33e33;">Technical Events</strong>, <strong style="color: #97b85d;">Workshops</strong>, and <strong style="color: #ffa500;">Paper Presentation</strong> to make the most of Zorphix 2026!</p>
+                        <p style="color: #fff; font-size: 14px; margin-top: 15px; line-height: 1.6;">Your profile is ready, but don't stop here! Explore and register for our exciting <strong style="color: #e33e33;">Technical Events</strong>, <strong style="color: #97b85d;">Workshops</strong>, and <strong style="color: #ffa500;">Thesis Precised</strong> to make the most of Zorphix 2026!</p>
                         <a href="https://www.zorphix.com/events" style="display: inline-block; margin-top: 20px; padding: 15px 40px; background: linear-gradient(135deg, #e33e33 0%, #ff6b6b 100%); color: #fff; text-decoration: none; font-weight: bold; font-size: 16px; border-radius: 5px; text-transform: uppercase; letter-spacing: 2px;">Browse Events →</a>
                         <p style="color: #888; font-size: 12px; margin-top: 15px;">Visit: <a href="https://www.zorphix.com/events" style="color: #e33e33;">www.zorphix.com/events</a></p>
                     </div>

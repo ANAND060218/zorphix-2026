@@ -19,7 +19,7 @@ const Register = () => {
         { name: 'Sip to Survive', type: 'tech', price: 0 },
         { name: 'CodeCrypt', type: 'tech', price: 0 },
         { name: 'LinkLogic', type: 'tech', price: 0 },
-        { name: 'Paper Presentation', type: 'tech', price: 149 },
+        { name: 'Thesis Precised', type: 'tech', price: 149 },
 
         // Keeping existing Non-Tech and Workshops for now
         { name: 'Lens Legends', type: 'non-tech', price: 0 },

@@ -3,7 +3,7 @@ const technicalEvents = [
     { id: 'pixel-reforge', name: 'Pixel Reforge', price: 'FREE' },
     { id: 'promptcraft', name: 'PromptCraft', price: 'FREE' },
     { id: 'algopulse', name: 'AlgoPulse', price: 'FREE' },
-    { id: 'reverse-coding', name: 'Reverse Coding', price: 'FREE' },
+    { id: 'reverse-coding', name: 'CodeBack', price: 'FREE' },
     { id: 'sip-to-survive', name: 'Sip to Survive', price: 'FREE' },
     { id: 'codecrypt', name: 'CodeCrypt', price: 'FREE' },
     { id: 'linklogic', name: 'LinkLogic', price: 'FREE' },
@@ -11,7 +11,7 @@ const technicalEvents = [
 ];
 
 const paperPresentation = [
-    { id: 'paper-presentation', name: 'Paper Presentation', price: '₹120' }
+    { id: 'paper-presentation', name: 'Thesis Precised', price: '₹120' }
 ];
 
 const workshops = [

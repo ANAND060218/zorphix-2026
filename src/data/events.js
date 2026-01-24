@@ -115,7 +115,7 @@ export const technicalEvents = [
     },
     {
         id: 'reverse-coding',
-        name: 'Reverse Coding',
+        name: 'CodeBack',
         subtitle: 'CodeBack',
         icon: FaUndo,
         color: '#e33e33',
@@ -128,12 +128,12 @@ export const technicalEvents = [
             'Rahul Elango - 63690 13069',
             'Deepak - 81899 14560'
         ],
-        whatIsThisEventAbout: 'Think you can crack the code? 🧩💻 Test your analytical and problem-solving skills in Reverse Coding, where you must figure out the logic behind the results. In Reverse Coding, the problem statement remains hidden. Participants rely only on output patterns, sample inputs, or program behavior to uncover the logic and build the solution. It\'s a true test of analytical thinking, pattern recognition, and real-world problem-solving skills.',
+        whatIsThisEventAbout: 'Think you can crack the code? 🧩💻 Test your analytical and problem-solving skills in CodeBack, where you must figure out the logic behind the results. In CodeBack, the problem statement remains hidden. Participants rely only on output patterns, sample inputs, or program behavior to uncover the logic and build the solution. It\'s a true test of analytical thinking, pattern recognition, and real-world problem-solving skills.',
         rules: [
             'Team size: 1–2 members',
             'The event consists of two rounds:',
             'Round 1 – Logic Deduction',
-            'Round 2 – Advanced Reverse Coding',
+            'Round 2 – Advanced CodeBack',
             'Each round duration: 30 minutes',
             'The complete problem statement will not be provided.',
             'Any programming language may be used.',
@@ -285,7 +285,7 @@ export const technicalEvents = [
 export const paperPresentation = [
     {
         id: 'paper-presentation',
-        name: 'Paper Presentation',
+        name: 'Thesis Precised',
         subtitle: 'Innovation',
         icon: FaScroll,
         color: '#ffa500',
