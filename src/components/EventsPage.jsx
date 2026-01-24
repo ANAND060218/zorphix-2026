@@ -472,41 +472,58 @@ const EventsPage = () => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -50 }}
                         transition={{ duration: 0.3, type: "spring", stiffness: 100 }}
-                        className="fixed top-32 left-1/2 transform -translate-x-1/2 z-[90] w-[95%] max-w-xl"
+                        className="fixed top-20 md:top-32 left-1/2 transform -translate-x-1/2 z-[90] w-[92%] max-w-xl"
                     >
-                        <div className="bg-gradient-to-r from-[#1a1a1a] via-[#0d0d0d] to-[#1a1a1a] border border-[#97b85d]/50 rounded-xl shadow-[0_10px_40px_rgba(151,184,93,0.3)] backdrop-blur-md overflow-hidden">
+                        <div
+                            onClick={(e) => {
+                                // Navigate to cart when clicking anywhere except the X button
+                                if (!e.target.closest('[data-close-btn]')) {
+                                    navigate('/cart');
+                                }
+                            }}
+                            className="bg-gradient-to-r from-[#1a1a1a] via-[#0d0d0d] to-[#1a1a1a] border border-[#97b85d]/50 rounded-xl shadow-[0_10px_40px_rgba(151,184,93,0.3)] backdrop-blur-md overflow-hidden cursor-pointer hover:border-[#97b85d] transition-all duration-300"
+                        >
                             {/* Animated glow effect */}
                             <div className="absolute inset-0 bg-gradient-to-r from-[#97b85d]/5 via-[#97b85d]/10 to-[#97b85d]/5 animate-pulse pointer-events-none"></div>
 
-                            <div className="relative p-4 flex items-center justify-between gap-4">
-                                <div className="flex items-center gap-3 flex-1">
-                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#97b85d] to-[#4a5c2d] flex items-center justify-center flex-shrink-0 shadow-lg">
-                                        <FaShoppingCart className="text-white text-sm" />
+                            <div className="relative p-3 md:p-4 flex flex-wrap md:flex-nowrap items-center justify-between gap-2 md:gap-4">
+                                {/* Icon and Text */}
+                                <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
+                                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-[#97b85d] to-[#4a5c2d] flex items-center justify-center flex-shrink-0 shadow-lg">
+                                        <FaShoppingCart className="text-white text-xs md:text-sm" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-white font-bold text-sm md:text-base truncate">
+                                        <p className="text-white font-bold text-xs md:text-base leading-tight">
                                             Payment Pending!
                                         </p>
-                                        <p className="text-gray-400 text-xs md:text-sm truncate">
-                                            Complete the payment in cart ({selectedEventsList.filter(name => !registeredEventsList.includes(name)).length} item{selectedEventsList.filter(name => !registeredEventsList.includes(name)).length > 1 ? 's' : ''})
+                                        <p className="text-gray-400 text-[10px] md:text-sm leading-tight mt-0.5">
+                                            {selectedEventsList.filter(name => !registeredEventsList.includes(name)).length} item{selectedEventsList.filter(name => !registeredEventsList.includes(name)).length > 1 ? 's' : ''} in cart • Tap to pay
                                         </p>
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-2 flex-shrink-0">
+                                {/* Buttons */}
+                                <div className="flex items-center gap-2 flex-shrink-0 ml-auto">
                                     <button
-                                        onClick={() => navigate('/cart')}
-                                        className="px-4 py-2 bg-gradient-to-r from-[#97b85d] to-[#4a5c2d] text-white font-mono text-xs font-bold uppercase tracking-wider rounded-lg hover:shadow-[0_0_20px_rgba(151,184,93,0.6)] transition-all duration-300 flex items-center gap-2"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            navigate('/cart');
+                                        }}
+                                        className="px-3 md:px-4 py-1.5 md:py-2 bg-gradient-to-r from-[#97b85d] to-[#4a5c2d] text-white font-mono text-[10px] md:text-xs font-bold uppercase tracking-wider rounded-lg hover:shadow-[0_0_20px_rgba(151,184,93,0.6)] transition-all duration-300 flex items-center gap-1 md:gap-2"
                                     >
-                                        <FaWallet className="text-xs" />
+                                        <FaWallet className="text-[10px] md:text-xs" />
                                         <span>Pay</span>
                                     </button>
                                     <button
-                                        onClick={() => setShowPaymentBanner(false)}
-                                        className="w-8 h-8 rounded-lg bg-white/10 hover:bg-[#e33e33] text-gray-400 hover:text-white flex items-center justify-center transition-all duration-300"
+                                        data-close-btn
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setShowPaymentBanner(false);
+                                        }}
+                                        className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-white/10 hover:bg-[#e33e33] text-gray-400 hover:text-white flex items-center justify-center transition-all duration-300"
                                         aria-label="Close"
                                     >
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                         </svg>
                                     </button>
