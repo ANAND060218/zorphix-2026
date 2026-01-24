@@ -59,7 +59,34 @@ const Footer = () => {
                 createdAt: serverTimestamp()
             });
 
-            toast.success("Query submitted! We'll get back to you soon.");
+            // Show appropriate success message based on user type
+            if (user) {
+                toast.success("Query submitted successfully! 🎉", { duration: 3000 });
+                setTimeout(() => {
+                    toast("📬 Response within 24 hours. Check your Profile page to view the response!", {
+                        duration: 5000,
+                        icon: '💡',
+                        style: {
+                            background: '#111',
+                            color: '#97b85d',
+                            border: '1px solid #97b85d30'
+                        }
+                    });
+                }, 1000);
+            } else {
+                toast.success("Query submitted successfully! 🎉", { duration: 3000 });
+                setTimeout(() => {
+                    toast("📧 Response within 24 hours. If email is correct, you'll receive the response in your inbox. Keep an eye on it!", {
+                        duration: 6000,
+                        icon: '💡',
+                        style: {
+                            background: '#111',
+                            color: '#97b85d',
+                            border: '1px solid #97b85d30'
+                        }
+                    });
+                }, 1000);
+            }
             setQueryMessage('');
             if (!user) setQueryEmail('');
         } catch (error) {
