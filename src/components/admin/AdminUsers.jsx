@@ -19,7 +19,7 @@ const AdminUsers = () => {
     const [allEvents, setAllEvents] = useState([]);
     const [allColleges, setAllColleges] = useState([]);
     const [showFilters, setShowFilters] = useState(false);
-    const [sortBy, setSortBy] = useState('createdAt');
+    const [sortBy, setSortBy] = useState('registeredAt');
     const [sortOrder, setSortOrder] = useState('desc');
 
     useEffect(() => {
@@ -32,7 +32,8 @@ const AdminUsers = () => {
             const usersData = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data(),
-                createdAt: doc.data().createdAt?.toDate?.() || new Date()
+                // Use updatedAt as the registration date (this is what Firebase stores)
+                registeredAt: doc.data().updatedAt?.toDate?.() || new Date()
             }));
 
             setUsers(usersData);
@@ -84,9 +85,10 @@ const AdminUsers = () => {
             let aVal = a[sortBy];
             let bVal = b[sortBy];
 
-            if (sortBy === 'createdAt') {
-                aVal = new Date(aVal).getTime();
-                bVal = new Date(bVal).getTime();
+            if (sortBy === 'registeredAt') {
+                // Handle Date objects properly - use getTime() directly
+                aVal = aVal instanceof Date ? aVal.getTime() : new Date(aVal).getTime();
+                bVal = bVal instanceof Date ? bVal.getTime() : new Date(bVal).getTime();
             } else if (typeof aVal === 'string') {
                 aVal = aVal.toLowerCase();
                 bVal = bVal?.toLowerCase() || '';
@@ -118,7 +120,7 @@ const AdminUsers = () => {
             'Degree': user.degree || '-',
             'Year': user.year || '-',
             'Events': user.events?.join(', ') || '-',
-            'Registration Date': user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-IN') : '-'
+            'Registration Date': user.registeredAt ? new Date(user.registeredAt).toLocaleDateString('en-IN') : '-'
         }));
 
         const ws = XLSX.utils.json_to_sheet(exportData);
@@ -148,7 +150,7 @@ const AdminUsers = () => {
         setSearchTerm('');
         setEventFilter('all');
         setCollegeFilter('all');
-        setSortBy('createdAt');
+        setSortBy('registeredAt');
         setSortOrder('desc');
     };
 
@@ -265,7 +267,7 @@ const AdminUsers = () => {
                                     onChange={(e) => setSortBy(e.target.value)}
                                     className="flex-1 bg-[#1a1a1a] border border-white/10 rounded-lg py-2 px-3 text-white focus:outline-none focus:border-[#e33e33] [&>option]:bg-[#1a1a1a] [&>option]:text-white"
                                 >
-                                    <option value="createdAt">Registration Date</option>
+                                    <option value="registeredAt">Registration Date</option>
                                     <option value="displayName">Name</option>
                                     <option value="college">College</option>
                                 </select>
@@ -355,7 +357,7 @@ const AdminUsers = () => {
                                         <td className="px-6 py-4">
                                             <span className="text-xs text-gray-400 flex items-center gap-1">
                                                 <FaCalendarAlt size={10} />
-                                                {formatDate(user.createdAt)}
+                                                {formatDate(user.registeredAt)}
                                             </span>
                                         </td>
                                     </motion.tr>

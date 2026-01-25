@@ -50,8 +50,8 @@ const AdminDashboard = ({ children }) => {
             // Process registration dates for chart
             const dateMap = {};
             registrations.forEach(reg => {
-                // Use createdAt, or fallback to updatedAt
-                const timestamp = reg.createdAt || reg.updatedAt;
+                // Use updatedAt as the registration date (this is what Firebase stores)
+                const timestamp = reg.updatedAt;
                 if (timestamp) {
                     const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
                     const dateStr = date.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
@@ -59,10 +59,19 @@ const AdminDashboard = ({ children }) => {
                 }
             });
 
-            // Convert to array and sort by date
+            // Convert to array and sort by date chronologically
             const chartData = Object.entries(dateMap)
                 .map(([date, count]) => ({ date, users: count }))
-                .slice(-10); // Last 10 entries
+                .sort((a, b) => {
+                    // Parse the date strings (format: "Jan 25") to sort chronologically
+                    const parseDate = (dateStr) => {
+                        const [month, day] = dateStr.split(' ');
+                        const monthIndex = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].indexOf(month);
+                        return new Date(2026, monthIndex, parseInt(day));
+                    };
+                    return parseDate(a.date) - parseDate(b.date);
+                })
+                .slice(-10); // Last 10 entries after sorting
             setRegistrationData(chartData);
 
             // Process event registrations
