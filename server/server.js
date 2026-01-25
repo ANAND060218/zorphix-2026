@@ -8,7 +8,7 @@ const axios = require('axios');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const admin = require('firebase-admin');
-const { calculateTotalPrice, getEventByName } = require('./events');
+const { calculateTotalPrice, getEventByName, getPaperUploadLink } = require('./events');
 const { Resend } = require('resend');
 const QRCode = require('qrcode');
 const PDFDocument = require('pdfkit');
@@ -545,6 +545,68 @@ app.post('/api/download-od-letter', async (req, res) => {
     } catch (error) {
         console.error('❌ OD Letter generation failed:', error);
         res.status(500).json({ error: 'Failed to generate OD letter', details: error.message });
+    }
+});
+
+// Get Paper Upload Link (Only for registered users)
+app.post('/api/get-paper-upload-link', async (req, res) => {
+    console.log('📄 Paper upload link request received');
+    try {
+        const { userId } = req.body;
+
+        if (!userId) {
+            return res.status(400).json({ error: 'User ID is required' });
+        }
+
+        // Check if user is registered for paper presentation
+        if (!db) {
+            return res.status(500).json({ error: 'Database not connected' });
+        }
+
+        const userRef = db.collection('registrations').doc(userId);
+        const docSnap = await userRef.get();
+
+        if (!docSnap.exists) {
+            return res.status(403).json({
+                error: 'Not registered',
+                message: 'You need to register for Thesis Precised first to access the paper upload form.'
+            });
+        }
+
+        const userData = docSnap.data();
+        const userEvents = userData.events || [];
+
+        // Check if user is registered for "Thesis Precised" (paper presentation)
+        const isRegisteredForPaper = userEvents.some(event =>
+            event === 'Thesis Precised' ||
+            event === 'Paper Presentation' ||
+            event.toLowerCase().includes('thesis') ||
+            event.toLowerCase().includes('paper presentation')
+        );
+
+        if (!isRegisteredForPaper) {
+            return res.status(403).json({
+                error: 'Not registered for paper presentation',
+                message: 'Please register and pay for Thesis Precised to access the paper upload form.'
+            });
+        }
+
+        // User is registered, return the link
+        const uploadLink = getPaperUploadLink();
+
+        if (!uploadLink) {
+            return res.status(500).json({ error: 'Paper upload link not configured' });
+        }
+
+        console.log(`✅ Paper upload link provided to user: ${userId}`);
+        res.json({
+            success: true,
+            paperUploadLink: uploadLink
+        });
+
+    } catch (error) {
+        console.error('❌ Error fetching paper upload link:', error);
+        res.status(500).json({ error: 'Failed to fetch paper upload link', details: error.message });
     }
 });
 

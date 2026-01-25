@@ -11,7 +11,12 @@ const technicalEvents = [
 ];
 
 const paperPresentation = [
-    { id: 'paper-presentation', name: 'Thesis Precised', price: '₹120' }
+    {
+        id: 'paper-presentation',
+        name: 'Thesis Precised',
+        price: '₹120',
+        paperUploadLink: 'https://forms.gle/rgHascw4RsaGy9qG9' // Only returned to registered users
+    }
 ];
 
 const workshops = [
@@ -50,6 +55,12 @@ const calculateTotalPrice = (eventNames) => {
     return total;
 };
 
+// Get paper upload link (for registered users only)
+const getPaperUploadLink = () => {
+    const paperEvent = paperPresentation.find(e => e.id === 'paper-presentation');
+    return paperEvent ? paperEvent.paperUploadLink : null;
+};
+
 module.exports = {
     technicalEvents,
     workshops,
@@ -58,5 +69,6 @@ module.exports = {
     parsePrice,
     getEventById,
     getEventByName,
-    calculateTotalPrice
+    calculateTotalPrice,
+    getPaperUploadLink
 };

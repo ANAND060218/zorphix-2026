@@ -704,6 +704,7 @@ const EventsPage = () => {
                 isTechnical={selectedEvent && technicalEvents.some(e => e.id === selectedEvent.id)}
                 isRegistered={selectedEvent && registeredEventsList.includes(selectedEvent.name)}
                 isSelected={selectedEvent && selectedEventsList.includes(selectedEvent.name)}
+                userId={auth.currentUser?.uid}
                 onAction={() => {
                     if (selectedEvent) {
                         const isTechnical = technicalEvents.some(e => e.id === selectedEvent.id);

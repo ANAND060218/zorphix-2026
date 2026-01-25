@@ -294,17 +294,53 @@ export const paperPresentation = [
     {
         id: 'paper-presentation',
         name: 'Thesis Precised',
-        subtitle: 'Innovation',
+        subtitle: 'Paper Presentation',
         icon: FaScroll,
         color: '#ffa500',
         teamSize: '1-3',
-        heads: 'Gokul D (93455 41273)',
-        whatIsThisEventAbout: 'A platform to showcase innovative ideas and technical research. Participants present their papers on trending technologies.',
-        rules: [
-            'Team: 1-3 members',
-            'Submit abstract before deadline',
-            'Presentation: 7 mins + Q&A: 3 mins',
-            'Judges\' decision is final'
+        heads: 'Subha K (+91 88254 42042), Varadha Rajan S (+91 89397 77852)',
+        teamMembers: [
+            'Subha K - +91 88254 42042',
+            'Varadha Rajan S - +91 89397 77852'
+        ],
+        whatIsThisEventAbout: 'The Paper Presentation is an academic event designed to provide students with a platform to present their ideas, research, and innovative concepts in their chosen domain. Participants are required to submit their papers through the official registration form. All submissions will undergo a shortlisting process based on quality, relevance, and originality. Shortlisted papers will then be reviewed and approved by the faculty committee. 👉 Only shortlisted teams will be invited for offline participation and final presentation during the main event. Each selected team will be given 10 minutes to present their paper, followed by evaluation by an expert panel of judges. Winners will be selected based on originality, technical depth, clarity, and presentation skills.',
+        eventFocusAreas: [
+            'Domain-based Research & Innovation',
+            'Technical & Conceptual Understanding',
+            'Problem Identification and Solution Approach',
+            'Research Methodology & Analysis',
+            'Presentation & Communication Skills'
+        ],
+        eventFormat: [
+            'Paper Submission & Registration',
+            'Paper Shortlisting',
+            'Faculty Review & Approval',
+            'Final Offline Presentation (Shortlisted Teams Only)',
+            'Presentation Duration: 10 minutes per team',
+            'Evaluation by an Expert Panel'
+        ],
+        hasPaperUpload: true, // Flag to show paper upload section (link fetched from backend)
+        instructions: [
+            'Papers must be submitted in IEEE format within the deadline.',
+            'Registration must be done in the website before uploading paper in the gform.',
+            'Only shortlisted teams are eligible for offline presentation.',
+            'Teams must strictly adhere to the 10-minute time limit.',
+            'Participants must report on time for their allotted slots.',
+            'Plagiarism will result in immediate disqualification.'
+        ],
+        judgingCriteria: [
+            'Innovation & Originality',
+            'Technical Content & Depth',
+            'Relevance to the Selected Domain',
+            'Clarity of Presentation',
+            'Response to Judges\' Questions'
+        ],
+        perks: [
+            'Prizes for Best Papers',
+            'Participation Certificates',
+            'Faculty & Expert Evaluation',
+            'Research & Presentation Experience',
+            'Exposure to Peer Innovations'
         ],
         price: '₹120',
         prizes: '1st - ₹1500 | 2nd - ₹1000 | 3rd - ₹700',

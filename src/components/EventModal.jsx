@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaTimes, FaTrophy, FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaUserFriends, FaClipboardList, FaLightbulb, FaClock, FaGamepad } from 'react-icons/fa';
+import { FaTimes, FaTrophy, FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaUserFriends, FaClipboardList, FaLightbulb, FaClock, FaGamepad, FaExternalLinkAlt, FaStar, FaGift, FaLock } from 'react-icons/fa';
 
 // Import event images
 import pixelReforgeImg from '../assets/events/PIXEL REFORGE.png';
@@ -14,6 +14,9 @@ import pitchfestImg from '../assets/events/PITCHFEST.png';
 import thesisPrecisedImg from '../assets/events/THESIS PRECISED.png';
 import fintech360Img from '../assets/events/FINTECH 360 .png';
 import wealthxImg from '../assets/events/WEALTHX.png';
+
+// Backend API URL
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 // Map event IDs to their background images
 const eventBackgrounds = {
@@ -30,14 +33,57 @@ const eventBackgrounds = {
     'wealthx-workshop': wealthxImg
 };
 
-const EventModal = ({ isOpen, onClose, event, isTechnical, isRegistered, isSelected, onAction }) => {
-    if (!event) return null;
+const EventModal = ({ isOpen, onClose, event, isTechnical, isRegistered, isSelected, onAction, userId }) => {
+    const [paperUploadLink, setPaperUploadLink] = useState(null);
+    const [paperLinkLoading, setPaperLinkLoading] = useState(false);
+    const [paperLinkError, setPaperLinkError] = useState(null);
 
     // Check if this is a workshop
-    const isWorkshop = event.workshopFocusAreas || event.workshopFormat || event.activities;
+    const isWorkshop = event?.workshopFocusAreas || event?.workshopFormat || event?.activities;
 
     // Get background image for this event
-    const backgroundImage = eventBackgrounds[event.id];
+    const backgroundImage = event ? eventBackgrounds[event.id] : null;
+
+    // Fetch paper upload link when modal opens and user is registered
+    useEffect(() => {
+        const fetchPaperUploadLink = async () => {
+            if (!event?.hasPaperUpload || !isRegistered || !userId) {
+                setPaperUploadLink(null);
+                return;
+            }
+
+            setPaperLinkLoading(true);
+            setPaperLinkError(null);
+
+            try {
+                const response = await fetch(`${API_URL}/api/get-paper-upload-link`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    setPaperUploadLink(data.paperUploadLink);
+                } else {
+                    setPaperLinkError(data.message || 'Unable to fetch paper upload link');
+                }
+            } catch (error) {
+                console.error('Error fetching paper upload link:', error);
+                setPaperLinkError('Failed to fetch paper upload link');
+            } finally {
+                setPaperLinkLoading(false);
+            }
+        };
+
+        if (isOpen && event) {
+            fetchPaperUploadLink();
+        }
+    }, [isOpen, event?.hasPaperUpload, isRegistered, userId, event]);
+
+    // Early return AFTER all hooks
+    if (!event) return null;
 
     return (
         <AnimatePresence>
@@ -155,6 +201,120 @@ const EventModal = ({ isOpen, onClose, event, isTechnical, isRegistered, isSelec
                                                 <FaUserFriends /> Event Heads
                                             </h3>
                                             <p className="text-gray-300 font-mono text-sm">{event.heads}</p>
+                                        </div>
+                                    )}
+
+                                    {/* Event Focus Areas (for paper presentation and similar events) */}
+                                    {event.eventFocusAreas && event.eventFocusAreas.length > 0 && (
+                                        <div>
+                                            <h3 className="text-[#97b85d] font-bold tracking-widest uppercase mb-3 text-sm flex items-center gap-2">
+                                                <FaLightbulb /> Event Focus Areas
+                                            </h3>
+                                            <ul className="space-y-2">
+                                                {event.eventFocusAreas.map((area, index) => (
+                                                    <li key={index} className="flex gap-3 text-sm text-gray-400">
+                                                        <span className="text-[#97b85d] font-mono mt-0.5">•</span>
+                                                        <span>{area}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                    {/* Event Format (for paper presentation and similar events) */}
+                                    {event.eventFormat && event.eventFormat.length > 0 && (
+                                        <div>
+                                            <h3 className="text-[#e33e33] font-bold tracking-widest uppercase mb-3 text-sm flex items-center gap-2">
+                                                <FaClock /> Event Format
+                                            </h3>
+                                            <ul className="space-y-2">
+                                                {event.eventFormat.map((step, index) => (
+                                                    <li key={index} className="flex gap-3 text-sm text-gray-400">
+                                                        <span className="text-[#e33e33] font-mono mt-0.5">{index + 1}.</span>
+                                                        <span>{step}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                    {/* Paper Upload Section */}
+                                    {event.hasPaperUpload && (
+                                        <div className={`p-4 rounded-xl border ${isRegistered ? 'bg-gradient-to-r from-[#ffa500]/20 to-[#e33e33]/20 border-[#ffa500]/30' : 'bg-gray-900/50 border-gray-700/50'}`}>
+                                            <h3 className={`font-bold tracking-widest uppercase mb-3 text-sm flex items-center gap-2 ${isRegistered ? 'text-[#ffa500]' : 'text-gray-500'}`}>
+                                                {isRegistered ? '📌' : <FaLock className="text-gray-500" />} Paper Upload
+                                            </h3>
+
+                                            {!isRegistered ? (
+                                                // Not registered - Show disabled state
+                                                <div>
+                                                    <button
+                                                        disabled
+                                                        className="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-gray-400 font-bold rounded-lg cursor-not-allowed text-sm uppercase tracking-wider opacity-60"
+                                                    >
+                                                        <FaLock /> Register First to Upload Paper
+                                                    </button>
+                                                    <p className="text-gray-500 text-xs mt-2">
+                                                        Complete registration and payment to access the paper upload form.
+                                                    </p>
+                                                </div>
+                                            ) : paperLinkLoading ? (
+                                                // Loading state
+                                                <div className="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-gray-300 font-bold rounded-lg text-sm uppercase tracking-wider">
+                                                    <span className="animate-spin">⏳</span> Loading...
+                                                </div>
+                                            ) : paperUploadLink ? (
+                                                // Registered and link available
+                                                <a
+                                                    href={paperUploadLink}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#ffa500] to-[#e33e33] text-white font-bold rounded-lg hover:from-[#e33e33] hover:to-[#ffa500] transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(255,165,0,0.4)] text-sm uppercase tracking-wider"
+                                                >
+                                                    <FaExternalLinkAlt /> Upload Paper via Google Form
+                                                </a>
+                                            ) : (
+                                                // Error or link not available
+                                                <div>
+                                                    <p className="text-yellow-400 text-sm">
+                                                        {paperLinkError || 'Paper upload link will be available after successful registration.'}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Judging Criteria */}
+                                    {event.judgingCriteria && event.judgingCriteria.length > 0 && (
+                                        <div>
+                                            <h3 className="text-[#97b85d] font-bold tracking-widest uppercase mb-3 text-sm flex items-center gap-2">
+                                                <FaStar /> Judging Criteria
+                                            </h3>
+                                            <ul className="space-y-2">
+                                                {event.judgingCriteria.map((criteria, index) => (
+                                                    <li key={index} className="flex gap-3 text-sm text-gray-400">
+                                                        <span className="text-[#97b85d] font-mono mt-0.5">•</span>
+                                                        <span>{criteria}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                    {/* Perks of the Event */}
+                                    {event.perks && event.perks.length > 0 && (
+                                        <div>
+                                            <h3 className="text-[#e33e33] font-bold tracking-widest uppercase mb-3 text-sm flex items-center gap-2">
+                                                <FaGift /> Perks of the Event
+                                            </h3>
+                                            <ul className="space-y-2">
+                                                {event.perks.map((perk, index) => (
+                                                    <li key={index} className="flex gap-3 text-sm text-gray-400">
+                                                        <span className="text-[#e33e33] font-mono mt-0.5">•</span>
+                                                        <span>{perk}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
                                         </div>
                                     )}
 

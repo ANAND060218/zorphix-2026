@@ -508,6 +508,7 @@ const Cart = () => {
                     isTechnical={false}
                     isRegistered={selectedEvent && registeredEventsList.includes(selectedEvent.name)}
                     isSelected={selectedEvent && selectedEventsList.includes(selectedEvent.name)}
+                    userId={auth.currentUser?.uid}
                     onAction={() => {
                         if (selectedEvent) {
                             handleAddeEvent(selectedEvent);
