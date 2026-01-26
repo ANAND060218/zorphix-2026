@@ -432,7 +432,7 @@ export const workshops = [
             'No prior finance or investment knowledge is required',
             'Participants must bring a laptop.'
         ],
-        price: '₹120',
+        price: '₹1',
         quote: 'Build wealth. Build your future.'
     }
 ];
