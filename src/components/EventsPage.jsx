@@ -702,7 +702,11 @@ const EventsPage = () => {
                 onClose={() => setSelectedEvent(null)}
                 event={selectedEvent}
                 isTechnical={selectedEvent && technicalEvents.some(e => e.id === selectedEvent.id)}
-                isRegistered={selectedEvent && registeredEventsList.includes(selectedEvent.name)}
+                isRegistered={selectedEvent && (
+                    registeredEventsList.includes(selectedEvent.name) ||
+                    (selectedEvent.id === 'paper-presentation' && registeredEventsList.includes('Paper Presentation')) ||
+                    (selectedEvent.id === 'reverse-coding' && registeredEventsList.includes('Reverse Coding'))
+                )}
                 isSelected={selectedEvent && selectedEventsList.includes(selectedEvent.name)}
                 userId={auth.currentUser?.uid}
                 onAction={() => {
