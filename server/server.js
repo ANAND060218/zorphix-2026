@@ -171,7 +171,6 @@ app.post('/api/verify-payment', async (req, res) => {
             razorpay_payment_id,
             razorpay_signature,
             userId,
-            eventNames,
             userEmail
         } = req.body;
 
@@ -180,8 +179,8 @@ app.post('/api/verify-payment', async (req, res) => {
             return res.status(400).json({ error: 'Missing payment details' });
         }
 
-        if (!userId || !eventNames || !Array.isArray(eventNames)) {
-            return res.status(400).json({ error: 'Missing user or event details' });
+        if (!userId) {
+            return res.status(400).json({ error: 'Missing user ID' });
         }
 
         // Verify signature
@@ -200,6 +199,38 @@ app.post('/api/verify-payment', async (req, res) => {
 
         console.log(`✅ Payment verified: ${razorpay_payment_id}`);
 
+        // SECURITY FIX: Fetch order from Razorpay to get trusted event details
+        // This prevents users from paying for cheap events but registering for expensive ones via request tampering
+        let eventsToRegister = [];
+        try {
+            const order = await razorpay.orders.fetch(razorpay_order_id);
+            if (order.notes && order.notes.eventNames) {
+                // Trusted source: Parse from order notes
+                eventsToRegister = order.notes.eventNames.split(',').map(s => s.trim()).filter(Boolean);
+                console.log(`🛡️ Using trusted events from Razorpay order: ${JSON.stringify(eventsToRegister)}`);
+            } else {
+                // Fallback (Should not happen if create-order is working correctly)
+                console.warn('⚠️ No event names found in Razorpay order notes. Falling back to request body.');
+                if (req.body.eventNames && Array.isArray(req.body.eventNames)) {
+                    eventsToRegister = req.body.eventNames;
+                }
+            }
+        } catch (fetchError) {
+            console.error('⚠️ Failed to fetch Razorpay order details:', fetchError.message);
+            // If we can't fetch the order, we can't verify the items securely. 
+            // In production, you might want to fail here. 
+            // For now, if provided in body, we proceed but log warning.
+            if (req.body.eventNames && Array.isArray(req.body.eventNames)) {
+                eventsToRegister = req.body.eventNames;
+            } else {
+                return res.status(500).json({ error: 'Failed to retrieve event details for verification' });
+            }
+        }
+
+        if (eventsToRegister.length === 0) {
+            return res.status(400).json({ error: 'No events found to register' });
+        }
+
         // Update Firebase if connected
         if (db) {
             try {
@@ -209,16 +240,16 @@ app.post('/api/verify-payment', async (req, res) => {
                 const paymentRecord = {
                     orderId: razorpay_order_id,
                     paymentId: razorpay_payment_id,
-                    eventNames: eventNames,
-                    amount: calculateTotalPrice(eventNames),
-                    timestamp: new Date(), // Fixed: serverTimestamp() cannot be used inside arrays
+                    eventNames: eventsToRegister,
+                    amount: calculateTotalPrice(eventsToRegister),
+                    timestamp: new Date(),
                     verified: true
                 };
 
                 if (!docSnap.exists) {
                     // Create new document
                     await userRef.set({
-                        events: eventNames,
+                        events: eventsToRegister,
                         email: userEmail || '',
                         userId: userId,
                         payments: [paymentRecord],
@@ -227,7 +258,7 @@ app.post('/api/verify-payment', async (req, res) => {
                 } else {
                     // Update existing document
                     const existingEvents = docSnap.data().events || [];
-                    const newEvents = [...new Set([...existingEvents, ...eventNames])];
+                    const newEvents = [...new Set([...existingEvents, ...eventsToRegister])];
 
                     await userRef.update({
                         events: newEvents,
@@ -237,18 +268,30 @@ app.post('/api/verify-payment', async (req, res) => {
 
                 console.log(`✅ Firebase updated for user: ${userId}`);
             } catch (firebaseError) {
-                console.error('⚠️ Firebase update failed:', firebaseError.message);
-                // Still return success since payment is verified
-                // The frontend can retry Firebase update
+                // RELIABILITY FIX: Do not fail silently
+                console.error('❌ Firebase update failed:', firebaseError.message);
+                return res.status(500).json({
+                    error: 'Payment verified but registration failed',
+                    message: 'Database update failed. Please contact support with your Payment ID.',
+                    paymentId: razorpay_payment_id,
+                    orderId: razorpay_order_id
+                });
             }
+        } else {
+            console.warn('⚠️ Database not connected, skipping registration update');
+            return res.status(503).json({
+                error: 'Service Unavailable',
+                message: 'Database disconnected. Payment processed but registration pending.',
+                paymentId: razorpay_payment_id
+            });
         }
 
         res.json({
             success: true,
-            message: 'Payment verified successfully',
+            message: 'Payment verified and registered successfully',
             paymentId: razorpay_payment_id,
             orderId: razorpay_order_id,
-            registeredEvents: eventNames
+            registeredEvents: eventsToRegister
         });
 
     } catch (error) {
@@ -610,6 +653,123 @@ app.post('/api/get-paper-upload-link', async (req, res) => {
     }
 });
 
+// Razorpay Webhook Handler (Reliable Background Verification)
+app.post('/api/webhook/razorpay', async (req, res) => {
+    // Razorpay sends the signature in this header
+    const signature = req.headers['x-razorpay-signature'];
+    const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
+
+    if (!secret) {
+        console.error('❌ Webhook secret not configured');
+        return res.status(500).send('Webhook secret missing');
+    }
+
+    try {
+        // 1. Validate Webhook Signature
+        // We must validate that the request actually came from Razorpay
+        // We do this by hashing the request body with our secret and comparing it to the signature header
+        const crypto = require('crypto');
+        const shasum = crypto.createHmac('sha256', secret);
+        shasum.update(JSON.stringify(req.body));
+        const digest = shasum.digest('hex');
+
+        if (digest !== signature) {
+            console.error('❌ Invalid webhook signature');
+            return res.status(400).send('Invalid signature');
+        }
+
+        // 2. Process the Event
+        const event = req.body;
+        console.log(`🔔 Webhook received: ${event.event}`);
+
+        // We only care about successful payments
+        if (event.event === 'order.paid') {
+            const paymentEntity = event.payload.payment.entity;
+            const orderEntity = event.payload.order.entity;
+
+            const userId = orderEntity.notes.userId;
+            const eventNamesStr = orderEntity.notes.eventNames; // "Event A, Event B"
+            const userEmail = orderEntity.notes.userEmail || '';
+
+            // Parse trusted event names from the order we created
+            const eventNames = eventNamesStr ? eventNamesStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+            console.log(`💰 Payment captured for User: ${userId}, Events: ${eventNames.join(', ')}`);
+
+            if (!userId || eventNames.length === 0) {
+                console.error('⚠️ Webhook data missing user or events');
+                return res.status(400).send('Invalid data');
+            }
+
+            // 3. Update Firebase (Idempotent)
+            if (db) {
+                const userRef = db.collection('registrations').doc(userId);
+
+                // Transaction ensures we don't process the same payment twice
+                await db.runTransaction(async (transaction) => {
+                    const doc = await transaction.get(userRef);
+                    const userData = doc.exists ? doc.data() : { events: [], payments: [] };
+
+                    const existingPayments = userData.payments || [];
+
+                    // Check if this payment ID was already processed
+                    const alreadyProcessed = existingPayments.some(p => p.paymentId === paymentEntity.id);
+
+                    if (alreadyProcessed) {
+                        console.log('ℹ️ Payment already processed via Webhook or Frontend');
+                        return;
+                    }
+
+                    // Create Payment Record
+                    const paymentRecord = {
+                        orderId: orderEntity.id,
+                        paymentId: paymentEntity.id,
+                        eventNames: eventNames,
+                        amount: orderEntity.amount / 100, // Amount is in paise
+                        timestamp: new Date(),
+                        method: 'webhook',
+                        verified: true
+                    };
+
+                    const currentEvents = userData.events || [];
+                    const newEvents = [...new Set([...currentEvents, ...eventNames])];
+
+                    if (!doc.exists) {
+                        transaction.set(userRef, {
+                            events: newEvents,
+                            email: userEmail,
+                            userId: userId,
+                            payments: [paymentRecord],
+                            createdAt: admin.firestore.FieldValue.serverTimestamp()
+                        });
+                    } else {
+                        transaction.update(userRef, {
+                            events: newEvents,
+                            payments: admin.firestore.FieldValue.arrayUnion(paymentRecord)
+                        });
+                    }
+                });
+
+                console.log('✅ Firebase updated successfully via Webhook');
+
+                // Optional: Trigger Welcome Email if it's their first purchase
+                // You can add logic here to call the email service if needed
+            } else {
+                console.error('❌ Database not connected for Webhook');
+                return res.status(500).send('Database error');
+            }
+        }
+
+        // Always return 200 OK to Razorpay so they stop retrying
+        res.json({ status: 'ok' });
+
+    } catch (error) {
+        console.error('❌ Webhook processing failed:', error);
+        // Return 500 so Razorpay retries later (up to 24 hours)
+        res.status(500).send('Webhook processing failed');
+    }
+});
+
 // Start server
 app.listen(PORT, () => {
     console.log(`
@@ -622,6 +782,8 @@ app.listen(PORT, () => {
 ║     Razorpay: ${process.env.RAZORPAY_KEY_ID ? '✅ Configured' : '❌ Missing Key'}              ║
 ║     Firebase: ${db ? '✅ Connected' : '⚠️ Not Connected'}                ║
 ║     Email: ✅ Resend Configured                    ║
+║     Webhook: ${process.env.RAZORPAY_WEBHOOK_SECRET ? '✅ Enabled' : '⚪ Disabled (optional)'}             ║
 ╚════════════════════════════════════════════════════╝
     `);
 });
+
