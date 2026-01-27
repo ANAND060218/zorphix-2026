@@ -56,7 +56,8 @@ const EventModal = ({ isOpen, onClose, event, isTechnical, isRegistered, isSelec
             setPaperLinkError(null);
 
             try {
-                const response = await fetch(`${API_URL}/api/get-paper-upload-link`, {
+                const sanitizedApiUrl = API_URL.replace(/\/$/, '');
+                const response = await fetch(`${sanitizedApiUrl}/api/get-paper-upload-link`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ userId })
