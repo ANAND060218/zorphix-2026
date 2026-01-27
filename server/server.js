@@ -79,91 +79,76 @@ try {
     db = admin.firestore();
     console.log('✅ Firebase Admin initialized');
 
-    // TEMPORARY MANUAL FIX: Run once on startup to fix missing registrations
-    runManualFix();
+    // TEMPORARY AUTO-MERGE FIX: Run on startup to merge duplicate users
+    runAutoMerge();
 
 } catch (error) {
     console.error('⚠️ Firebase Admin initialization failed:', error.message);
     console.log('⚠️ Firebase operations will be skipped. Set FIREBASE_SERVICE_ACCOUNT or GOOGLE_APPLICATION_CREDENTIALS.');
 }
 
-async function runManualFix() {
-    console.log('🔧 Starting Manual Fix for Missing Registrations...');
+async function runAutoMerge() {
+    console.log('🔄 Starting Auto-Merge for Duplicate Users...');
 
-    const updates = [
+    const merges = [
         {
-            userId: 'VNaayc9oh5euguV3INFQlhwYzII2',
-            email: 'kathiejohanna.29csa@licet.ac.in',
-            events: ['FinTech 360°', 'WealthX'],
-            payment: {
-                paymentId: 'pay_S8Zi1PDquxSy3T',
-                orderId: 'order_S8Zhv0J1vJ4ha0',
-                amount: 240
-            }
+            // Kathie Johanna
+            badId: 'VNaayc9oh5euguV3INFQlhwYzII2',  // Created by script (with 'I')
+            goodId: 'VNaayc9oh5euguV3lNFlQhwYzII2', // Existing correct (with 'l')
+            email: 'kathiejohanna.29csa@licet.ac.in'
         },
         {
-            userId: '00vWtYOFUfgFazKuVL4sqp72rVx2',
-            email: 'joavan06@gmail.com',
-            events: ['FinTech 360°', 'WealthX'],
-            payment: {
-                paymentId: 'pay_S8Zo45lZcfhv4H',
-                orderId: 'order_S8Znbetjveo7U2',
-                amount: 240
-            }
+            // Joavan
+            badId: '00vWtYOFUfgFazKuVL4sqp72rVx2', // Created by script (with 'f')
+            goodId: '00vWtYOFUtgFazKuVL4sqp72rVx2', // Existing correct (with 't')
+            email: 'joavan06@gmail.com'
         }
     ];
 
-    for (const data of updates) {
+    for (const merge of merges) {
+        console.log(`Processing merge for ${merge.email}...`);
         try {
-            const userRef = db.collection('registrations').doc(data.userId);
-            const docSnap = await userRef.get();
+            const badRef = db.collection('registrations').doc(merge.badId);
+            const goodRef = db.collection('registrations').doc(merge.goodId);
 
-            // Check if already fixed to avoid duplicates
-            if (docSnap.exists) {
-                const payments = docSnap.data().payments || [];
-                if (payments.some(p => p.paymentId === data.payment.paymentId)) {
-                    console.log(`ℹ️ User ${data.userId} already has this payment. Skipping.`);
-                    continue;
-                }
+            const [badSnap, goodSnap] = await Promise.all([badRef.get(), goodRef.get()]);
+
+            if (!badSnap.exists) {
+                console.log(`ℹ️ Bad ID ${merge.badId} does not exist. Already merged? Skipping.`);
+                continue;
+            }
+            if (!goodSnap.exists) {
+                console.log(`⚠️ Good ID ${merge.goodId} does not exist. Cannot merge. Please check IDs.`);
+                continue;
             }
 
-            const paymentRecord = {
-                orderId: data.payment.orderId,
-                paymentId: data.payment.paymentId,
-                eventNames: data.events,
-                amount: data.payment.amount,
-                timestamp: new Date(),
-                verified: true,
-                method: 'manual_recovery'
-            };
+            const badData = badSnap.data();
+            const eventsToMove = badData.events || [];
+            const paymentsToMove = badData.payments || [];
 
-            if (!docSnap.exists) {
-                await userRef.set({
-                    userId: data.userId,
-                    email: data.email,
-                    events: data.events,
-                    payments: [paymentRecord],
-                    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            console.log(`> Found ${eventsToMove.length} events and ${paymentsToMove.length} payments to move.`);
+
+            if (eventsToMove.length > 0 || paymentsToMove.length > 0) {
+                // Merge update
+                await goodRef.update({
+                    events: admin.firestore.FieldValue.arrayUnion(...eventsToMove),
+                    payments: admin.firestore.FieldValue.arrayUnion(...paymentsToMove),
                     updatedAt: admin.firestore.FieldValue.serverTimestamp()
                 });
-                console.log(`✅ CREATED user document for ${data.userId}`);
+                console.log(`✅ Data merged into ${merge.goodId}`);
+
+                // Delete bad doc
+                await badRef.delete();
+                console.log(`🗑️ Deleted duplicate document ${merge.badId}`);
             } else {
-                const currentEvents = docSnap.data().events || [];
-                const newEvents = [...new Set([...currentEvents, ...data.events])];
-
-                await userRef.update({
-                    events: newEvents,
-                    payments: admin.firestore.FieldValue.arrayUnion(paymentRecord),
-                    updatedAt: admin.firestore.FieldValue.serverTimestamp()
-                });
-                console.log(`✅ UPDATED user document for ${data.userId}`);
+                console.log(`ℹ️ No data to move for ${merge.email}.`);
             }
 
-        } catch (err) {
-            console.error(`❌ Failed to fix user ${data.userId}:`, err);
+        } catch (error) {
+            console.error(`❌ Error processing ${merge.email}:`, error);
         }
     }
-    console.log('🔧 Manual Fix Complete.');
+    console.log('✨ Auto-Merge Process Complete.');
 }
 
 // Health check endpoint
