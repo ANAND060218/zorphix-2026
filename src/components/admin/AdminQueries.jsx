@@ -5,7 +5,7 @@ import {
     FaCheck, FaClock, FaUser, FaFilter
 } from 'react-icons/fa';
 import { db } from '../../firebase';
-import { collection, getDocs, doc, updateDoc, serverTimestamp, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, serverTimestamp, query, orderBy, onSnapshot, arrayUnion } from 'firebase/firestore';
 import toast from 'react-hot-toast';
 
 const AdminQueries = () => {
@@ -67,11 +67,18 @@ const AdminQueries = () => {
         setIsReplying(true);
         try {
             const queryRef = doc(db, 'queries', selectedQuery.id);
+            const newResponse = {
+                text: replyText.trim(),
+                respondedAt: new Date(),
+                respondedBy: 'admin'
+            };
+
             await updateDoc(queryRef, {
                 status: 'responded',
-                response: replyText.trim(),
-                respondedAt: serverTimestamp(),
-                respondedBy: 'admin'
+                // Use arrayUnion to append new response to the responses array
+                responses: arrayUnion(newResponse),
+                // Keep legacy field for backward compatibility if needed, or update timestamp
+                lastRespondedAt: serverTimestamp()
             });
 
             toast.success('Response sent successfully!');
@@ -96,8 +103,12 @@ const AdminQueries = () => {
             const queryRef = doc(db, 'queries', queryItem.id);
             await updateDoc(queryRef, {
                 status: 'responded',
-                response: 'Responded via email',
-                respondedAt: serverTimestamp()
+                responses: arrayUnion({
+                    text: 'Responded via email',
+                    respondedAt: new Date(),
+                    respondedBy: 'admin'
+                }),
+                lastRespondedAt: serverTimestamp()
             });
             toast.success('Email client opened');
         } catch (error) {
@@ -161,8 +172,8 @@ const AdminQueries = () => {
                             key={status}
                             onClick={() => setStatusFilter(status)}
                             className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${statusFilter === status
-                                    ? 'bg-[#e33e33] text-white'
-                                    : 'bg-white/5 text-gray-400 hover:text-white'
+                                ? 'bg-[#e33e33] text-white'
+                                : 'bg-white/5 text-gray-400 hover:text-white'
                                 }`}
                         >
                             {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -198,8 +209,8 @@ const AdminQueries = () => {
                                             </span>
                                         )}
                                     </div>
-                                    <p className="text-gray-300 mb-3">{q.message}</p>
-                                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                                    <p className="text-gray-300 mb-3 bg-white/5 p-3 rounded-lg border border-white/5">"{q.message}"</p>
+                                    <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
                                         <span className="flex items-center gap-1">
                                             <FaClock size={10} />
                                             {formatDate(q.createdAt)}
@@ -207,41 +218,62 @@ const AdminQueries = () => {
                                         {q.name && <span>From: {q.name}</span>}
                                     </div>
 
-                                    {/* Show response if exists */}
-                                    {q.response && (
-                                        <div className="mt-4 p-4 bg-[#97b85d]/10 border border-[#97b85d]/20 rounded-xl">
-                                            <p className="text-xs text-[#97b85d] font-bold uppercase tracking-wider mb-2">Your Response</p>
-                                            <p className="text-gray-300 text-sm">{q.response}</p>
-                                        </div>
-                                    )}
+                                    {/* Discussion Thread */}
+                                    <div className="space-y-3 pl-4 border-l-2 border-white/10">
+                                        {/* Legacy single response */}
+                                        {q.response && !q.responses && (
+                                            <div className="relative">
+                                                <div className="absolute -left-[21px] top-3 w-4 h-[2px] bg-white/10"></div>
+                                                <div className="p-3 bg-[#97b85d]/10 border border-[#97b85d]/20 rounded-xl">
+                                                    <div className="flex justify-between items-center mb-1">
+                                                        <span className="text-xs text-[#97b85d] font-bold uppercase tracking-wider">Admin</span>
+                                                        <span className="text-[10px] text-gray-400">{formatDate(q.respondedAt)}</span>
+                                                    </div>
+                                                    <p className="text-gray-300 text-sm">{q.response}</p>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* New Threaded Responses */}
+                                        {q.responses && q.responses.map((resp, idx) => (
+                                            <div key={idx} className="relative">
+                                                <div className="absolute -left-[21px] top-3 w-4 h-[2px] bg-white/10"></div>
+                                                <div className="p-3 bg-[#97b85d]/10 border border-[#97b85d]/20 rounded-xl">
+                                                    <div className="flex justify-between items-center mb-1">
+                                                        <span className="text-xs text-[#97b85d] font-bold uppercase tracking-wider">{resp.respondedBy || 'Admin'}</span>
+                                                        <span className="text-[10px] text-gray-400">{formatDate(resp.respondedAt?.toDate ? resp.respondedAt.toDate() : resp.respondedAt)}</span>
+                                                    </div>
+                                                    <p className="text-gray-300 text-sm">{resp.text}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
 
                                 {/* Actions */}
                                 <div className="flex md:flex-col gap-2">
-                                    {q.status === 'pending' && (
-                                        <>
-                                            {q.userId ? (
-                                                <button
-                                                    onClick={() => setSelectedQuery(q)}
-                                                    className="flex items-center gap-2 px-4 py-2 bg-[#e33e33] text-white rounded-xl text-sm font-medium hover:bg-[#c62828] transition-colors"
-                                                >
-                                                    <FaReply size={12} />
-                                                    Reply
-                                                </button>
-                                            ) : (
-                                                <button
-                                                    onClick={() => handleSendEmail(q)}
-                                                    className="flex items-center gap-2 px-4 py-2 bg-[#3b82f6] text-white rounded-xl text-sm font-medium hover:bg-[#2563eb] transition-colors"
-                                                >
-                                                    <FaEnvelope size={12} />
-                                                    Send Email
-                                                </button>
-                                            )}
-                                        </>
+                                    {/* Always show Reply button for registered users to allow follow-up */}
+                                    {q.userId ? (
+                                        <button
+                                            onClick={() => setSelectedQuery(q)}
+                                            className="flex items-center gap-2 px-4 py-2 bg-[#e33e33] text-white rounded-xl text-sm font-medium hover:bg-[#c62828] transition-colors"
+                                        >
+                                            <FaReply size={12} />
+                                            {q.status === 'pending' ? 'Reply' : 'Follow Up'}
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={() => handleSendEmail(q)}
+                                            className="flex items-center gap-2 px-4 py-2 bg-[#3b82f6] text-white rounded-xl text-sm font-medium hover:bg-[#2563eb] transition-colors"
+                                        >
+                                            <FaEnvelope size={12} />
+                                            Send Email
+                                        </button>
                                     )}
-                                    <span className={`text-xs px-3 py-2 rounded-xl text-center ${q.status === 'pending'
-                                            ? 'bg-[#e33e33]/20 text-[#e33e33]'
-                                            : 'bg-[#97b85d]/20 text-[#97b85d]'
+
+                                    <span className={`text-xs px-3 py-2 rounded-xl text-center flex items-center justify-center ${q.status === 'pending'
+                                        ? 'bg-[#e33e33]/20 text-[#e33e33]'
+                                        : 'bg-[#97b85d]/20 text-[#97b85d]'
                                         }`}>
                                         {q.status === 'pending' ? 'Pending' : 'Responded'}
                                     </span>

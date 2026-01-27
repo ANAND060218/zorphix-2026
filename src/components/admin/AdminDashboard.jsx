@@ -86,8 +86,7 @@ const AdminDashboard = ({ children }) => {
 
             const eventChartData = Object.entries(eventMap)
                 .map(([name, value]) => ({ name: name.length > 15 ? name.slice(0, 15) + '...' : name, value }))
-                .sort((a, b) => b.value - a.value)
-                .slice(0, 6);
+                .sort((a, b) => b.value - a.value);
 
             setEventData(eventChartData);
             setStats(prev => ({ ...prev, totalEvents: Object.keys(eventMap).length }));
