@@ -78,9 +78,92 @@ try {
     }
     db = admin.firestore();
     console.log('✅ Firebase Admin initialized');
+
+    // TEMPORARY MANUAL FIX: Run once on startup to fix missing registrations
+    runManualFix();
+
 } catch (error) {
     console.error('⚠️ Firebase Admin initialization failed:', error.message);
     console.log('⚠️ Firebase operations will be skipped. Set FIREBASE_SERVICE_ACCOUNT or GOOGLE_APPLICATION_CREDENTIALS.');
+}
+
+async function runManualFix() {
+    console.log('🔧 Starting Manual Fix for Missing Registrations...');
+
+    const updates = [
+        {
+            userId: 'VNaayc9oh5euguV3INFQlhwYzII2',
+            email: 'kathiejohanna.29csa@licet.ac.in',
+            events: ['FinTech 360°', 'WealthX'],
+            payment: {
+                paymentId: 'pay_S8Zi1PDquxSy3T',
+                orderId: 'order_S8Zhv0J1vJ4ha0',
+                amount: 240
+            }
+        },
+        {
+            userId: '00vWtYOFUfgFazKuVL4sqp72rVx2',
+            email: 'joavan06@gmail.com',
+            events: ['FinTech 360°', 'WealthX'],
+            payment: {
+                paymentId: 'pay_S8Zo45lZcfhv4H',
+                orderId: 'order_S8Znbetjveo7U2',
+                amount: 240
+            }
+        }
+    ];
+
+    for (const data of updates) {
+        try {
+            const userRef = db.collection('registrations').doc(data.userId);
+            const docSnap = await userRef.get();
+
+            // Check if already fixed to avoid duplicates
+            if (docSnap.exists) {
+                const payments = docSnap.data().payments || [];
+                if (payments.some(p => p.paymentId === data.payment.paymentId)) {
+                    console.log(`ℹ️ User ${data.userId} already has this payment. Skipping.`);
+                    continue;
+                }
+            }
+
+            const paymentRecord = {
+                orderId: data.payment.orderId,
+                paymentId: data.payment.paymentId,
+                eventNames: data.events,
+                amount: data.payment.amount,
+                timestamp: new Date(),
+                verified: true,
+                method: 'manual_recovery'
+            };
+
+            if (!docSnap.exists) {
+                await userRef.set({
+                    userId: data.userId,
+                    email: data.email,
+                    events: data.events,
+                    payments: [paymentRecord],
+                    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                });
+                console.log(`✅ CREATED user document for ${data.userId}`);
+            } else {
+                const currentEvents = docSnap.data().events || [];
+                const newEvents = [...new Set([...currentEvents, ...data.events])];
+
+                await userRef.update({
+                    events: newEvents,
+                    payments: admin.firestore.FieldValue.arrayUnion(paymentRecord),
+                    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+                });
+                console.log(`✅ UPDATED user document for ${data.userId}`);
+            }
+
+        } catch (err) {
+            console.error(`❌ Failed to fix user ${data.userId}:`, err);
+        }
+    }
+    console.log('🔧 Manual Fix Complete.');
 }
 
 // Health check endpoint
