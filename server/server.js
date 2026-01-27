@@ -79,8 +79,7 @@ try {
     db = admin.firestore();
     console.log('✅ Firebase Admin initialized');
 
-    // TEMPORARY AUTO-MERGE FIX: Run on startup to merge duplicate users
-    runAutoMerge();
+
 
 } catch (error) {
     console.error('⚠️ Firebase Admin initialization failed:', error.message);
