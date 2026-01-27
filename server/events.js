@@ -72,4 +72,3 @@ module.exports = {
     calculateTotalPrice,
     getPaperUploadLink
 };
-git 
