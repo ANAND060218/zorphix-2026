@@ -16,7 +16,7 @@ import fintech360Img from '../assets/events/FINTECH 360 .png';
 import wealthxImg from '../assets/events/WEALTHX.png';
 
 // Backend API URL
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
 // Map event IDs to their background images
 const eventBackgrounds = {
