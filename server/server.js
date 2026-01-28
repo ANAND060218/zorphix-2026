@@ -498,7 +498,7 @@ async function generateODLetterPDF(userDetails) {
     return new Promise((resolve, reject) => {
         const doc = new PDFDocument({
             size: 'A4',
-            margin: 50
+            margin: 40
         });
 
         const chunks = [];
@@ -520,12 +520,12 @@ async function generateODLetterPDF(userDetails) {
             .text('The Principal / Head of Department,', { align: 'left' })
             .text(`${userDetails.college || '[Student College Name]'},`, { align: 'left' })
             .text(currentDate, { align: 'left' });
-        doc.moveDown(2);
+        doc.moveDown(1);
 
         // Subject
         doc.fontSize(11).font('Helvetica-Bold')
             .text('Subject: Request to Grant On Duty (OD) – Participation in ZORPHIX Symposium 2026', { align: 'left' });
-        doc.moveDown(2);
+        doc.moveDown(1);
 
         // Body
         doc.fontSize(11).font('Helvetica')
@@ -552,10 +552,10 @@ async function generateODLetterPDF(userDetails) {
         doc.moveDown();
 
         doc.text(
-            'We kindly request you to grant On Duty (OD) permission to the student for attending and participating in the symposium events on the scheduled date.',
+            'We kindly request you to grant On Duty (OD) permission to the student for attending and participating in the symposium events on the scheduled date. We request students to be present at the venue by 7:50 a.m. The events will begin shortly after the inauguration program, around 9:00 a.m., and will continue until 2:00 p.m.',
             { align: 'justify', lineGap: 5 }
         );
-        doc.moveDown(2);
+        doc.moveDown(1.5);
 
         // Student Details Section
         doc.fontSize(12).font('Helvetica-Bold')
@@ -571,7 +571,7 @@ async function generateODLetterPDF(userDetails) {
         doc.text(`Department / Year: ${deptYear}`, { align: 'left' });
         doc.moveDown(0.5);
         doc.text(`College Name: ${userDetails.college || '_____________________________________'}`, { align: 'left' });
-        doc.moveDown(2);
+        doc.moveDown(1);
 
         doc.text(
             'We appreciate your support in encouraging student participation in technical and innovative events.',
@@ -580,7 +580,7 @@ async function generateODLetterPDF(userDetails) {
         doc.moveDown();
 
         doc.text('Thank you.', { align: 'left' });
-        doc.moveDown(2);
+        doc.moveDown(1);
 
         // First Signature Section - HOD
         doc.fontSize(11).font('Helvetica')
