@@ -552,7 +552,7 @@ async function generateODLetterPDF(userDetails) {
         doc.moveDown();
 
         doc.text(
-            'We kindly request you to grant On Duty (OD) permission to the student for attending and participating in the symposium events on the scheduled date. We request students to be present at the venue by 7:50 a.m. The events will begin shortly after the inauguration program, around 9:00 a.m., and will continue until 2:00 p.m.',
+            'We kindly request you to grant On Duty (OD) permission to the student for attending and participating in the symposium events on the scheduled date. We request students to be present at the venue by 7:50 a.m. The events will begin shortly after the inauguration program, around 9:00 a.m., and will continue until 2:00 p.m. Bus routes will be updated on the Feb 4 in our official instagram page',
             { align: 'justify', lineGap: 5 }
         );
         doc.moveDown(1.5);
