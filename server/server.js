@@ -152,6 +152,152 @@ async function runAutoMerge() {
     console.log('✨ Auto-Merge Process Complete.');
 }
 
+async function runManualFixes() {
+    if (!db) return;
+    console.log('🔧 Starting Manual Fixes for Failed Webhooks...');
+
+    // 1. CLEANUP: Delete the incorrect user we created previously
+    const wrongId = 'S6UOaRTWEjXvjgGP4Az97MxZrIY2';
+    try {
+        const wrongRef = db.collection('registrations').doc(wrongId);
+        const wrongSnap = await wrongRef.get();
+        if (wrongSnap.exists && wrongSnap.data().manualFix) {
+            await wrongRef.delete();
+            console.log(`🗑️ Deleted incorrectly created user: ${wrongId}`);
+        }
+    } catch (cleanupError) {
+        console.warn(`⚠️ Cleanup failed for ${wrongId}:`, cleanupError.message);
+    }
+
+    const fixes = [
+        {
+            userId: 'S6UOaRTWEjXvjqGP4Az97MxZrlY2', // CORRECTED ID
+            email: 'kruthika.2509@gmail.com',
+            eventNames: ['FinTech 360°'],
+            payment: {
+                orderId: 'order_S9ztVC7RjJHwsf',
+                paymentId: 'pay_S9ztZAOBBhdAVv',
+                amount: 120, // 120, assuming standard price
+                verified: true,
+                method: 'manual_fix',
+                timestamp: new Date()
+            }
+        },
+        {
+            userId: 'zCGkzJUepecNiMI0uADRpBHFUnt1',
+            email: 'mothish2007@gmail.com',
+            eventNames: ['FinTech 360°'],
+            payment: {
+                orderId: 'order_S9xoQXykLmiCOT',
+                paymentId: 'pay_S9zjElIBMjICvA',
+                amount: 120,
+                verified: true,
+                method: 'manual_fix',
+                timestamp: new Date()
+            }
+        },
+        {
+            userId: 'rQngzghNRZYQ9j0zFn9Czurt08p2',
+            email: 'gokulkarthikeyan2210@gmail.com',
+            eventNames: ['Thesis Precised'],
+            payment: {
+                orderId: 'order_S9ze66oAXpzJP3',
+                paymentId: 'pay_S9zeupRTaRtNNH',
+                amount: 120,
+                verified: true,
+                method: 'manual_fix',
+                timestamp: new Date()
+            }
+        }
+    ];
+
+    for (const fix of fixes) {
+        try {
+            const userRef = db.collection('registrations').doc(fix.userId);
+            const docSnap = await userRef.get();
+
+            if (!docSnap.exists) {
+                console.log(`⚠️ User ${fix.email} not found. Creating simplified record...`);
+                await userRef.set({
+                    userId: fix.userId,
+                    email: fix.email,
+                    events: fix.eventNames,
+                    payments: [fix.payment],
+                    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                    manualFix: true
+                });
+                console.log(`✅ Created record for ${fix.email}`);
+            } else {
+                const data = docSnap.data();
+                const existingPayments = data.payments || [];
+                const alreadyHasPayment = existingPayments.some(p => p.paymentId === fix.payment.paymentId);
+
+                if (alreadyHasPayment) {
+                    console.log(`ℹ️ User ${fix.email} already has payment ${fix.payment.paymentId}. Skipping.`);
+                } else {
+                    console.log(`➕ Adding missing payment/events for ${fix.email}...`);
+                    await userRef.update({
+                        events: admin.firestore.FieldValue.arrayUnion(...fix.eventNames),
+                        payments: admin.firestore.FieldValue.arrayUnion(fix.payment)
+                    });
+                    console.log(`✅ Fixed record for ${fix.email}`);
+                }
+            }
+        } catch (error) {
+            console.error(`❌ Failed to fix ${fix.email}:`, error.message);
+        }
+    }
+    console.log('✨ Manual Fixes Complete.');
+}
+
+
+// Run fixes on startup
+/* 
+setTimeout(() => {
+    runManualFixes();
+}, 5000);
+*/
+
+// Helper to send Paper Submission Email
+async function sendPaperSubmissionEmail(userEmail) {
+    if (!userEmail) return;
+
+    try {
+        const uploadLink = getPaperUploadLink() || 'https://forms.gle/rgHascw4RsaGy9qG9'; // Fallback
+
+        console.log(`📧 Sending Paper Submission Link to ${userEmail}...`);
+
+        await resend.emails.send({
+            from: 'Zorphix 2026 <noreply@zorphix.com>',
+            to: userEmail,
+            subject: 'Action Required: Submit Your Paper - Thesis Precised | Zorphix 2026',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #000; color: #fff; padding: 20px; border-radius: 10px;">
+                    <h1 style="color: #ffa500; text-align: center;">THESIS PRECISED REGISTRATION CONFIRMED</h1>
+                    <p>Greetings,</p>
+                    <p>You have successfully registered for <strong>Thesis Precised (Paper Presentation)</strong>. We are excited to see your research!</p>
+                    
+                    <div style="background-color: #1a1a1a; padding: 20px; margin: 20px 0; border-radius: 10px; border: 1px solid #ffa500; text-align: center;">
+                        <p style="margin: 0 0 15px 0; color: #ccc;">Please submit your paper/abstract using the link below:</p>
+                        <a href="${uploadLink}" style="display: inline-block; padding: 12px 25px; background-color: #ffa500; color: #000; font-weight: bold; text-decoration: none; border-radius: 5px;">Submit Paper Here</a>
+                        <p style="margin: 15px 0 0 0; font-size: 12px; color: #888;">${uploadLink}</p>
+                    </div>
+
+                    <p style="color: #999; font-size: 13px;">
+                        <strong>Note:</strong> Ensure your submission follows the IEEE format. Only shortlisted teams will be eligible for the offline presentation.
+                    </p>
+                    
+                    <hr style="border-color: #333; margin: 20px 0;">
+                    <p style="color: #666; font-size: 11px; text-align: center;">Zorphix 2026 Organizing Team</p>
+                </div>
+            `
+        });
+        console.log(`✅ Paper submission email sent to ${userEmail}`);
+    } catch (error) {
+        console.error('❌ Failed to send paper submission email:', error);
+    }
+}
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
     res.json({
@@ -354,6 +500,18 @@ app.post('/api/verify-payment', async (req, res) => {
                 paymentId: razorpay_payment_id
             });
         }
+
+        // --- EMAIL NOTIFICATION FOR PAPER PRESENTATION ---
+        const hasPaperEvent = eventsToRegister.some(e =>
+            e === 'Thesis Precised' || e === 'Paper Presentation' || e.toLowerCase().includes('thesis')
+        );
+
+        if (hasPaperEvent) {
+            sendPaperSubmissionEmail(userEmail).catch(err =>
+                console.error('⚠️ Failed to send paper submission email (Background Process):', err)
+            );
+        }
+        // ------------------------------------------------
 
         res.json({
             success: true,
@@ -836,6 +994,19 @@ app.post('/api/webhook/razorpay', async (req, res) => {
 
                 // Optional: Trigger Welcome Email if it's their first purchase
                 // You can add logic here to call the email service if needed
+
+                // --- EMAIL NOTIFICATION FOR PAPER PRESENTATION ---
+                const hasPaperEvent = eventNames.some(e =>
+                    e === 'Thesis Precised' || e === 'Paper Presentation' || e.toLowerCase().includes('thesis')
+                );
+
+                if (hasPaperEvent) {
+                    sendPaperSubmissionEmail(userEmail).catch(err =>
+                        console.error('⚠️ Failed to send paper submission email (Webhook):', err)
+                    );
+                }
+                // ------------------------------------------------
+
             } else {
                 console.error('❌ Database not connected for Webhook');
                 return res.status(500).send('Database error');
