@@ -298,10 +298,10 @@ export const paperPresentation = [
         icon: FaScroll,
         color: '#ffa500',
         teamSize: '1-3',
-        heads: 'Subha K (+91 88254 42042), Varadha Rajan S (+91 89397 77852)',
+        heads: 'Subha K (+91 88254 42042), Varadha Rajan S (+91 76048 96935)',
         teamMembers: [
             'Subha K - +91 88254 42042',
-            'Varadha Rajan S - +91 89397 77852'
+            'Varadha Rajan S - +91 76048 96935'
         ],
         whatIsThisEventAbout: 'The Paper Presentation is an academic event designed to provide students with a platform to present their ideas, research, and innovative concepts in their chosen domain. Participants are required to submit their papers through the official registration form. All submissions will undergo a shortlisting process based on quality, relevance, and originality. Shortlisted papers will then be reviewed and approved by the faculty committee. 👉 Only shortlisted teams will be invited for offline participation and final presentation during the main event. Each selected team will be given 10 minutes to present their paper, followed by evaluation by an expert panel of judges. Winners will be selected based on originality, technical depth, clarity, and presentation skills.',
         eventFocusAreas: [
