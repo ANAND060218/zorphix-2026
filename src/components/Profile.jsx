@@ -24,6 +24,7 @@ const Profile = () => {
     const [password, setPassword] = useState('');
     const [isProfileComplete, setIsProfileComplete] = useState(false);
     const [registeredEventsList, setRegisteredEventsList] = useState([]);
+    const [submitting, setSubmitting] = useState(false);
     const ticketRef = useRef(null);
 
     // Combine all events for lookup
@@ -898,6 +899,7 @@ const Profile = () => {
         }
 
         try {
+            setSubmitting(true);
             // Update Auth Profile if name is provided
             const cleanName = formData.name.trim();
             if (cleanName && user.displayName !== cleanName) {
@@ -965,6 +967,8 @@ const Profile = () => {
         } catch (error) {
             console.error("Error saving profile:", error);
             toast.error('Failed to save profile. Please try again.');
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -1427,9 +1431,12 @@ const Profile = () => {
                                                     <div className="pt-4 flex flex-col items-center">
                                                         <button
                                                             type="submit"
-                                                            className="w-full md:w-auto px-10 py-3 bg-white text-black font-black text-sm uppercase tracking-widest rounded-xl hover:bg-[#e33e33] hover:text-white transition-all duration-300 shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_-5px_rgba(227,62,51,0.6)] flex items-center justify-center gap-2"
+                                                            disabled={submitting}
+                                                            className="w-full md:w-auto px-10 py-3 bg-white text-black font-black text-sm uppercase tracking-widest rounded-xl hover:bg-[#e33e33] hover:text-white transition-all duration-300 shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_-5px_rgba(227,62,51,0.6)] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                                         >
-                                                            Complete Profile <FaCheckCircle />
+                                                            {submitting ? 'Processing...' : (
+                                                                <>Complete Profile <FaCheckCircle /></>
+                                                            )}
                                                         </button>
                                                     </div>
                                                 </form>

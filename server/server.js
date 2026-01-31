@@ -197,12 +197,12 @@ async function runManualFixes() {
             }
         },
         {
-            userId: 'rQngzghNRZYQ9j0zFn9Czurt08p2',
-            email: 'gokulkarthikeyan2210@gmail.com',
+            userId: '2pGJqv5EaJa7GcusKy5Tcfyntgl1',
+            email: 'admin@zorphix.com',
             eventNames: ['Thesis Precised'],
             payment: {
-                orderId: 'order_S9ze66oAXpzJP3',
-                paymentId: 'pay_S9zeupRTaRtNNH',
+                orderId: 'order_S9se66oAXpzJP3',
+                paymentId: 'pay_S9xeupRTaRtNNH',
                 amount: 120,
                 verified: true,
                 method: 'manual_fix',
@@ -252,11 +252,11 @@ async function runManualFixes() {
 
 
 // Run fixes on startup
-/* 
+
 setTimeout(() => {
     runManualFixes();
 }, 5000);
-*/
+
 
 // Helper to send Paper Submission Email
 async function sendPaperSubmissionEmail(userEmail) {
@@ -850,10 +850,9 @@ app.post('/api/get-paper-upload-link', async (req, res) => {
                 );
             }
         } catch (dbError) {
-            console.warn('⚠️ Database check failed (Auth/Network). Allowing access for debug/fallback:', dbError.message);
-            // FAIL OPEN: If DB fails, we assume they might be registered or we just want to unblock them.
-            // set to true to allow link generation
-            isRegisteredForPaper = true;
+
+            console.error('❌ Database check failed:', dbError.message);
+            return res.status(500).json({ error: 'System error checking registration status', details: dbError.message });
         }
 
         // Only block if we successfully CHECKED and they are NOT registered
