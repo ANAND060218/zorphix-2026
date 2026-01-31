@@ -253,9 +253,9 @@ async function runManualFixes() {
 
 // Run fixes on startup
 
-setTimeout(() => {
-    runManualFixes();
-}, 5000);
+// setTimeout(() => {
+//     runManualFixes();
+// }, 5000);
 
 
 // Helper to send Paper Submission Email
@@ -558,6 +558,32 @@ app.post('/api/send-welcome-email', async (req, res) => {
             return res.status(400).json({ error: 'User details with email are required' });
         }
 
+        // IDEMPOTENCY CHECK: Prevent double sends using Firestore Transaction
+        if (db && userDetails.uid) {
+            const userRef = db.collection('registrations').doc(userDetails.uid);
+            let alreadyProcessed = false;
+
+            try {
+                await db.runTransaction(async (t) => {
+                    const doc = await t.get(userRef);
+                    if (doc.exists && doc.data().welcomeEmailSent) {
+                        alreadyProcessed = true;
+                    } else {
+                        // Lock: Mark as sent immediately to prevent race conditions
+                        t.set(userRef, { welcomeEmailSent: true }, { merge: true });
+                    }
+                });
+            } catch (err) {
+                console.error('❌ Idempotency check failed:', err);
+                return res.status(500).json({ error: 'System busy, please try again.' });
+            }
+
+            if (alreadyProcessed) {
+                console.log(`ℹ️ Welcome email already processed for ${userDetails.email}. Skipping.`);
+                return res.json({ success: true, message: 'Email already sent (Idempotent loop)' });
+            }
+        }
+
         // Generate QR Data
         const qrData = JSON.stringify({
             uid: userDetails.uid,
@@ -639,6 +665,10 @@ app.post('/api/send-welcome-email', async (req, res) => {
 
         if (error) {
             console.error('❌ Resend error:', error);
+            // ROLLBACK: If email failed, allow retrying by resetting the flag
+            if (db && userDetails.uid) {
+                await db.collection('registrations').doc(userDetails.uid).update({ welcomeEmailSent: false }).catch(err => console.error('⚠️ Failed to rollback email flag:', err));
+            }
             return res.status(500).json({ error: 'Failed to send email', details: error.message });
         }
 
