@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
     FaUsers, FaCalendarAlt, FaQuestionCircle, FaChartBar,
-    FaSignOutAlt, FaTachometerAlt, FaUsersCog, FaEnvelope
+    FaSignOutAlt, FaTachometerAlt, FaUsersCog, FaEnvelope, FaDownload
 } from 'react-icons/fa';
+import { toPng } from 'html-to-image';
 import { db, auth } from '../../firebase';
 import { collection, getDocs, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
@@ -24,6 +25,25 @@ const AdminDashboard = ({ children }) => {
     const [eventData, setEventData] = useState([]);
     const [recentQueries, setRecentQueries] = useState([]);
     const [loading, setLoading] = useState(true);
+    const reportRef = useRef(null);
+
+    const downloadStats = async () => {
+        if (reportRef.current === null) {
+            return;
+        }
+
+        try {
+            const dataUrl = await toPng(reportRef.current, { cacheBust: true, backgroundColor: '#050505' });
+            const link = document.createElement('a');
+            link.download = `zorphix-stats-${new Date().toISOString().split('T')[0]}.png`;
+            link.href = dataUrl;
+            link.click();
+            toast.success('Stats downloaded successfully');
+        } catch (err) {
+            console.error('Failed to download stats', err);
+            toast.error('Failed to download stats');
+        }
+    };
 
     useEffect(() => {
         fetchDashboardData();
@@ -75,11 +95,23 @@ const AdminDashboard = ({ children }) => {
             setRegistrationData(chartData);
 
             // Process event registrations
+            // Process event registrations
             const eventMap = {};
+            const eventNameMapping = {
+                "Reverse Coding": "CodeBack",
+                "ReverseCoding": "CodeBack" // Handle potential variations
+            };
+
             registrations.forEach(reg => {
                 if (reg.events && Array.isArray(reg.events)) {
                     reg.events.forEach(event => {
-                        eventMap[event] = (eventMap[event] || 0) + 1;
+                        // Normalize the event name
+                        let normalizedEventName = event.trim();
+                        if (eventNameMapping[normalizedEventName]) {
+                            normalizedEventName = eventNameMapping[normalizedEventName];
+                        }
+
+                        eventMap[normalizedEventName] = (eventMap[normalizedEventName] || 0) + 1;
                     });
                 }
             });
@@ -189,6 +221,13 @@ const AdminDashboard = ({ children }) => {
                                 <h1 className="text-3xl font-black">Dashboard</h1>
                                 <p className="text-gray-500 text-sm">Welcome back, Admin</p>
                             </div>
+                            <button
+                                onClick={downloadStats}
+                                className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors text-sm font-medium"
+                            >
+                                <FaDownload />
+                                <span>Download Report</span>
+                            </button>
                         </div>
 
                         {/* Stats Cards */}
@@ -326,13 +365,106 @@ const AdminDashboard = ({ children }) => {
                                 )}
                             </div>
                         </div>
+
+                        {/* Off-screen stats report for downloading */}
+                        <div style={{ position: 'fixed', left: '-9999px', top: 0 }}>
+                            <div ref={reportRef} className="bg-[#050505] p-8 min-w-[600px] text-white font-mono border border-white/10 rounded-3xl relative overflow-hidden">
+                                {/* Background Elements */}
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-[#e33e33]/10 rounded-full blur-[100px] pointer-events-none"></div>
+                                <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#97b85d]/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+                                {/* Header */}
+                                <div className="flex items-center gap-4 mb-8 relative z-10">
+                                    <div className="w-20 h-20 bg-gradient-to-br from-[#e33e33] to-[#97b85d] rounded-2xl flex items-center justify-center shadow-lg shadow-[#e33e33]/20">
+                                        <span className="text-white font-black text-4xl">Z</span>
+                                    </div>
+                                    <div>
+                                        <h1 className="text-4xl font-black tracking-tight mb-1">ZORPHIX '26</h1>
+                                        <div className="flex items-center gap-2">
+                                            <span className="w-2 h-2 rounded-full bg-[#97b85d] animate-pulse"></span>
+                                            <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">Live Statistics</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Key Metrics */}
+                                <div className="grid grid-cols-2 gap-6 mb-8 relative z-10">
+                                    <div className="bg-[#0a0a0a] border border-white/10 p-6 rounded-2xl">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <div className="w-8 h-8 rounded-lg bg-[#97b85d]/20 flex items-center justify-center">
+                                                <FaUsers className="text-[#97b85d]" />
+                                            </div>
+                                            <p className="text-gray-500 text-xs uppercase tracking-wider font-bold">Total Users</p>
+                                        </div>
+                                        <p className="text-5xl font-black text-white mb-2">{stats.totalUsers}</p>
+                                        <div className="flex items-center gap-2 text-[#97b85d] text-xs font-bold bg-[#97b85d]/10 w-fit px-2 py-1 rounded-full">
+                                            <span>+12% Trend</span>
+                                        </div>
+                                    </div>
+                                    <div className="bg-[#0a0a0a] border border-white/10 p-6 rounded-2xl">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <div className="w-8 h-8 rounded-lg bg-[#3b82f6]/20 flex items-center justify-center">
+                                                <FaCalendarAlt className="text-[#3b82f6]" />
+                                            </div>
+                                            <p className="text-gray-500 text-xs uppercase tracking-wider font-bold">Total Events</p>
+                                        </div>
+                                        <p className="text-5xl font-black text-white mb-2">{stats.totalEvents}</p>
+                                        <div className="flex items-center gap-2 text-[#3b82f6] text-xs font-bold bg-[#3b82f6]/10 w-fit px-2 py-1 rounded-full">
+                                            <span>Active Categories</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Event Breakdown */}
+                                <div className="bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden relative z-10">
+                                    <div className="p-4 border-b border-white/5 bg-white/5 flex justify-between items-center">
+                                        <h3 className="font-bold flex items-center gap-2">
+                                            <FaChartBar className="text-[#e33e33]" />
+                                            Event Breakdown
+                                        </h3>
+                                        <span className="text-xs text-gray-500 font-mono">{new Date().toLocaleTimeString()}</span>
+                                    </div>
+                                    <div className="divide-y divide-white/5">
+                                        {eventData.map((event, idx) => (
+                                            <div key={idx} className="flex justify-between items-center p-4 hover:bg-white/5 transition-colors">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-gray-500 font-mono text-xs">{(idx + 1).toString().padStart(2, '0')}</span>
+                                                    <span className="text-gray-200 font-bold">{event.name}</span>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-32 h-2 bg-white/5 rounded-full overflow-hidden">
+                                                        <div
+                                                            className="h-full bg-gradient-to-r from-[#e33e33] to-[#97b85d] rounded-full"
+                                                            style={{ width: `${(event.value / Math.max(...eventData.map(e => e.value), 1)) * 100}%` }}
+                                                        ></div>
+                                                    </div>
+                                                    <span className="bg-white/10 px-3 py-1 rounded-lg text-white font-mono font-bold w-12 text-center text-sm">{event.value}</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Footer */}
+                                <div className="mt-8 flex justify-between items-center pt-6 border-t border-white/10 relative z-10">
+                                    <div className="flex flex-col">
+                                        <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">Generated via Admin Panel</span>
+                                        <span className="text-[10px] text-gray-600 font-mono">{new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                                    </div>
+                                    <div className="text-right">
+                                        <span className="text-[#e33e33] font-black tracking-tighter text-lg">ZORPHIX</span>
+                                        <span className="text-xs text-gray-500 block">Where Coders Rise</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </motion.div>
                 )}
 
                 {/* Render child routes */}
                 {children}
             </main>
-        </div>
+        </div >
     );
 };
 
