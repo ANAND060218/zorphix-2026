@@ -18,6 +18,7 @@ const AdminUsers = () => {
     const [collegeFilter, setCollegeFilter] = useState('all');
     const [allEvents, setAllEvents] = useState([]);
     const [allColleges, setAllColleges] = useState([]);
+    const [dateFilter, setDateFilter] = useState('');
     const [showFilters, setShowFilters] = useState(false);
     const [sortBy, setSortBy] = useState('registeredAt');
     const [sortOrder, setSortOrder] = useState('desc');
@@ -80,6 +81,20 @@ const AdminUsers = () => {
             result = result.filter(u => u.college === collegeFilter);
         }
 
+        // Filter by date
+        if (dateFilter) {
+            result = result.filter(u => {
+                if (!u.registeredAt) return false;
+                // Convert timestamp to YYYY-MM-DD using local time
+                const d = u.registeredAt instanceof Date ? u.registeredAt : new Date(u.registeredAt);
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                const userDate = `${year}-${month}-${day}`;
+                return userDate === dateFilter;
+            });
+        }
+
         // Sort
         result.sort((a, b) => {
             let aVal = a[sortBy];
@@ -101,7 +116,7 @@ const AdminUsers = () => {
         });
 
         setFilteredUsers(result);
-    }, [users, searchTerm, eventFilter, collegeFilter, sortBy, sortOrder]);
+    }, [users, searchTerm, eventFilter, collegeFilter, dateFilter, sortBy, sortOrder]);
 
     const exportToExcel = (exportAll = false) => {
         const dataToExport = exportAll ? users : filteredUsers;
@@ -120,7 +135,8 @@ const AdminUsers = () => {
             'Degree': user.degree || '-',
             'Year': user.year || '-',
             'Events': user.events?.join(', ') || '-',
-            'Registration Date': user.registeredAt ? new Date(user.registeredAt).toLocaleDateString('en-IN') : '-'
+            'Registration Date': user.registeredAt ? new Date(user.registeredAt).toLocaleDateString('en-IN') : '-',
+            'Registration Time': user.registeredAt ? new Date(user.registeredAt).toLocaleTimeString('en-IN') : '-'
         }));
 
         const ws = XLSX.utils.json_to_sheet(exportData);
@@ -150,6 +166,7 @@ const AdminUsers = () => {
         setSearchTerm('');
         setEventFilter('all');
         setCollegeFilter('all');
+        setDateFilter('');
         setSortBy('registeredAt');
         setSortOrder('desc');
     };
@@ -215,7 +232,7 @@ const AdminUsers = () => {
                         <FaFilter size={12} />
                         Filters
                     </button>
-                    {(eventFilter !== 'all' || collegeFilter !== 'all') && (
+                    {(eventFilter !== 'all' || collegeFilter !== 'all' || dateFilter) && (
                         <button
                             onClick={clearFilters}
                             className="flex items-center gap-2 px-4 py-2 bg-white/5 text-gray-400 rounded-xl text-sm hover:text-white"
@@ -231,7 +248,7 @@ const AdminUsers = () => {
                     <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
-                        className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-[#0a0a0a] border border-white/5 rounded-xl"
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-[#0a0a0a] border border-white/5 rounded-xl"
                     >
                         <div>
                             <label className="text-xs text-gray-500 uppercase tracking-wider mb-2 block">Filter by Event</label>
@@ -258,6 +275,15 @@ const AdminUsers = () => {
                                     <option key={college} value={college}>{college}</option>
                                 ))}
                             </select>
+                        </div>
+                        <div>
+                            <label className="text-xs text-gray-500 uppercase tracking-wider mb-2 block">Filter by Date</label>
+                            <input
+                                type="date"
+                                value={dateFilter}
+                                onChange={(e) => setDateFilter(e.target.value)}
+                                className="w-full bg-[#1a1a1a] border border-white/10 rounded-lg py-2 px-3 text-white focus:outline-none focus:border-[#e33e33] [color-scheme:dark]"
+                            />
                         </div>
                         <div>
                             <label className="text-xs text-gray-500 uppercase tracking-wider mb-2 block">Sort By</label>
@@ -357,7 +383,13 @@ const AdminUsers = () => {
                                         <td className="px-6 py-4">
                                             <span className="text-xs text-gray-400 flex items-center gap-1">
                                                 <FaCalendarAlt size={10} />
-                                                {formatDate(user.registeredAt)}
+                                                {user.registeredAt ? new Date(user.registeredAt).toLocaleString('en-IN', {
+                                                    day: 'numeric',
+                                                    month: 'short',
+                                                    year: 'numeric',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                }) : 'N/A'}
                                             </span>
                                         </td>
                                     </motion.tr>
