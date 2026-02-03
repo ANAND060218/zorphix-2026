@@ -2,34 +2,32 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 // Import sponsor images
-import poorvika from '../assets/sponsors/poorvika.jpg';
-import ovidesign from '../assets/sponsors/ovidesign.png';
-import wolfram from '../assets/sponsors/wolframlanguage.jpg';
-import makers from '../assets/sponsors/makers.png';
-import github from '../assets/sponsors/github.jpg';
-import buddyinterview from '../assets/sponsors/buddyinterview.jpg';
-import cw from '../assets/sponsors/cw.jpg';
-import digitalocean from '../assets/sponsors/digitalocean.png';
-import interviewcake from '../assets/sponsors/interviewcake.jpg';
-import jetbrain from '../assets/sponsors/jetbrain.webp';
+import Decathlon from '../assets/sponsors/Decathlon.png';
+import Dhaneesh from '../assets/sponsors/Dhaneesh.png';
+import DMS from '../assets/sponsors/DMS.png';
+import FunCity from '../assets/sponsors/FunCity.png';
+import Gameistry from '../assets/sponsors/Gameistry.png';
+import MRG from '../assets/sponsors/MRG.png';
+import GreenTrends from '../assets/sponsors/GreenTrends.png';
+import MYOP from '../assets/sponsors/MYOP.png';
+import Vimal from '../assets/sponsors/Vimal.jpeg';
 
 const Sponsors = () => {
     // Top row sponsors: poorvika, ovidesign, wolfram, makers, github
     const sponsorsTop = [
-        { name: 'Poorvika', logo: poorvika },
-        { name: 'Ovi Design Academy', logo: ovidesign },
-        { name: 'Wolfram Language', logo: wolfram },
-        { name: "Maker's Cafe", logo: makers },
-        { name: 'GitHub', logo: github },
+        { name: 'Co-Title Sponsor', logo: DMS },
+        { name: 'Title Sponsor', logo: MRG },
+        { name: 'Certificate Sponsor', logo: Vimal },
     ];
 
     // Bottom row sponsors: remaining ones
     const sponsorsBottom = [
-        { name: 'Interview Buddy', logo: buddyinterview },
-        { name: 'Corporate Warranties', logo: cw },
-        { name: 'DigitalOcean', logo: digitalocean },
-        { name: 'Interview Cake', logo: interviewcake },
-        { name: 'JetBrains', logo: jetbrain },
+        { name: 'Product Sponsor', logo: Decathlon },
+        { name: 'Voucher Sponsor', logo: Dhaneesh },
+        { name: 'Voucher Sponsor', logo: GreenTrends },
+        { name: 'Product Sponsor', logo: MYOP },
+        { name: "Voucher Sponsor", logo: FunCity },
+        { name: 'Voucher Sponsor', logo: Gameistry },
     ];
 
     // Duplicate for infinite loop
@@ -38,6 +36,29 @@ const Sponsors = () => {
 
     return (
         <section className="py-24 relative overflow-hidden">
+            <style>
+                {`
+                @keyframes scrollLeft {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-50%); }
+                }
+                @keyframes scrollRight {
+                    0% { transform: translateX(-50%); }
+                    100% { transform: translateX(0); }
+                }
+                .animate-scroll-left {
+                    animation: scrollLeft 40s linear infinite;
+                }
+                .animate-scroll-right {
+                    animation: scrollRight 40s linear infinite;
+                }
+                .pause-on-hover:hover .animate-scroll-left,
+                .pause-on-hover:hover .animate-scroll-right {
+                    animation-play-state: paused;
+                }
+                `}
+            </style>
+
             {/* Cyber Grid Background */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#111_1px,transparent_1px),linear-gradient(to_bottom,#111_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-30"></div>
 
@@ -61,35 +82,27 @@ const Sponsors = () => {
             {/* Marquee Container */}
             <div className="relative flex flex-col gap-12 my-10">
                 {/* Row 1: Left to Right */}
-                <div className="relative flex overflow-hidden group">
+                <div className="relative flex overflow-hidden group pause-on-hover">
                     <div className="absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-[#050505] to-transparent z-10"></div>
                     <div className="absolute inset-y-0 right-0 w-40 bg-gradient-to-l from-[#050505] to-transparent z-10"></div>
 
-                    <motion.div
-                        className="flex gap-8"
-                        animate={{ x: [0, -2500] }}
-                        transition={{ duration: 40, ease: "linear", repeat: Infinity }}
-                    >
+                    <div className="flex gap-8 animate-scroll-left w-fit">
                         {row1.map((sponsor, i) => (
-                            <SponsorCard key={i} sponsor={sponsor} />
+                            <SponsorCard key={i} sponsor={sponsor} isLarge={true} />
                         ))}
-                    </motion.div>
+                    </div>
                 </div>
 
                 {/* Row 2: Right to Left */}
-                <div className="relative flex overflow-hidden group">
+                <div className="relative flex overflow-hidden group pause-on-hover">
                     <div className="absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-[#050505] to-transparent z-10"></div>
                     <div className="absolute inset-y-0 right-0 w-40 bg-gradient-to-l from-[#050505] to-transparent z-10"></div>
 
-                    <motion.div
-                        className="flex gap-8"
-                        animate={{ x: [-2500, 0] }}
-                        transition={{ duration: 45, ease: "linear", repeat: Infinity }}
-                    >
+                    <div className="flex gap-8 animate-scroll-right w-fit">
                         {row2.map((sponsor, i) => (
                             <SponsorCard key={i} sponsor={sponsor} />
                         ))}
-                    </motion.div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -97,8 +110,11 @@ const Sponsors = () => {
 };
 
 // Subcomponent for individual sponsor cards with image
-const SponsorCard = ({ sponsor }) => (
-    <div className="relative group w-[280px] h-[160px] bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 flex items-center justify-center p-6 transition-all duration-500 hover:bg-white/10 hover:border-white/20 hover:scale-105 hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] shrink-0 cursor-pointer overflow-hidden">
+const SponsorCard = ({ sponsor, isLarge = false }) => (
+    <div
+        className={`relative group bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 flex items-center justify-center p-6 transition-all duration-500 hover:bg-white/10 hover:border-white/20 hover:scale-105 hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] shrink-0 cursor-pointer overflow-hidden ${isLarge ? 'w-[350px] h-[200px]' : 'w-[280px] h-[160px]'
+            }`}
+    >
         {/* Shine Effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
 
@@ -107,7 +123,7 @@ const SponsorCard = ({ sponsor }) => (
             src={sponsor.logo}
             alt={sponsor.name}
             className="max-w-full max-h-full w-auto h-auto object-contain filter brightness-90 group-hover:brightness-110 transition-all duration-300"
-            style={{ maxHeight: '100px', maxWidth: '200px' }}
+            style={{ maxHeight: isLarge ? '140px' : '100px', maxWidth: isLarge ? '260px' : '200px' }}
         />
 
         {/* Glow on Hover */}
@@ -117,8 +133,8 @@ const SponsorCard = ({ sponsor }) => (
         <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#e33e33] to-[#97b85d] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
 
         {/* Sponsor name overlay on hover */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-            <span className="text-white text-sm font-bold uppercase tracking-wider">{sponsor.name}</span>
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex justify-center items-end">
+            <span className="text-white text-sm font-bold uppercase tracking-wider text-center">{sponsor.name}</span>
         </div>
     </div>
 );

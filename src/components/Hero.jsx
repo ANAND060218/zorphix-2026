@@ -212,7 +212,7 @@ const Hero = () => {
                 {/* Action Buttons */}
                 <div className="mt-8 md:mt-16 flex flex-col sm:flex-row gap-4 md:gap-8 pointer-events-auto px-4 w-full sm:w-auto">
                     <button className="relative px-8 py-3 md:px-8 md:py-3 bg-transparent border border-[#e33e33] text-[#e33e33] font-bold uppercase tracking-widest hover:bg-[#e33e33] hover:text-white transition-all duration-300 group overflow-hidden text-base md:text-base w-full sm:w-auto">
-                        <a href="/about" className="relative z-10">Learn More</a>
+                        <a href="https://drive.google.com/file/d/1L-8T65GRUfir_k0nDqzL8kTNQTKQT-dG/view?usp=drive_link" target="_blank" className="relative z-10">BUS Routes</a>
                         <div className="absolute inset-0 bg-[#e33e33] transform -translate-x-full skew-x-12 group-hover:translate-x-0 transition-transform duration-300"></div>
                     </button>
                     <button onClick={handleRegisterClick} className="relative px-8 py-3 md:px-8 md:py-3 bg-transparent border border-[#97b85d] text-[#97b85d] font-bold uppercase tracking-widest hover:bg-[#97b85d] hover:text-black transition-all duration-300 group overflow-hidden text-base md:text-base w-full sm:w-auto">

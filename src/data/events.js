@@ -343,7 +343,7 @@ export const paperPresentation = [
             'Exposure to Peer Innovations'
         ],
         price: '₹120',
-        prizes: '1st - ₹1500 | 2nd - ₹1000 | 3rd - ₹700',
+        prizes: '1st - ₹3000 | 2nd - ₹2000 | 3rd - ₹1500',
         quote: 'Present. Publish. Prevail.'
     }
 ];
