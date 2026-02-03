@@ -6,128 +6,43 @@ import {
 } from 'react-icons/fa';
 import { db } from '../../firebase';
 import { collection, getDocs, doc, updateDoc, serverTimestamp, query, orderBy, onSnapshot, arrayUnion } from 'firebase/firestore';
+import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
 
 const AdminQueries = () => {
     const [queries, setQueries] = useState([]);
     const [filteredQueries, setFilteredQueries] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [statusFilter, setStatusFilter] = useState('all');
-    const [selectedQuery, setSelectedQuery] = useState(null);
-    const [replyText, setReplyText] = useState('');
-    const [isReplying, setIsReplying] = useState(false);
+    // ... existing ...
 
-    useEffect(() => {
-        // Real-time listener
-        const unsubscribe = onSnapshot(
-            query(collection(db, 'queries'), orderBy('createdAt', 'desc')),
-            (snapshot) => {
-                const queriesData = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data(),
-                    createdAt: doc.data().createdAt?.toDate?.() || new Date()
-                }));
-                setQueries(queriesData);
-                setLoading(false);
-            },
-            (error) => {
-                console.error('Error fetching queries:', error);
-                toast.error('Failed to load queries');
-                setLoading(false);
-            }
-        );
-
-        return () => unsubscribe();
-    }, []);
-
-    useEffect(() => {
-        let result = queries;
-
-        // Filter by status
-        if (statusFilter !== 'all') {
-            result = result.filter(q => q.status === statusFilter);
+    // Insert export function BEFORE return
+    const exportToExcel = () => {
+        if (queries.length === 0) {
+            toast.error('No queries to export');
+            return;
         }
 
-        // Filter by search term
-        if (searchTerm) {
-            const term = searchTerm.toLowerCase();
-            result = result.filter(q =>
-                q.email?.toLowerCase().includes(term) ||
-                q.message?.toLowerCase().includes(term)
-            );
-        }
+        const exportData = queries.map(q => ({
+            'Query ID': q.id,
+            'User ID': q.userId || 'Guest',
+            'Name': q.name || '-',
+            'Email': q.email || '-',
+            'Status': q.status,
+            'Message': q.message || '-',
+            'Created At': q.createdAt ? new Date(q.createdAt).toLocaleString('en-IN') : '-',
+            'Last Response': q.responses?.length > 0 ? q.responses[q.responses.length - 1].text : (q.response || '-'),
+            'Response Count': q.responses?.length || (q.response ? 1 : 0)
+        }));
 
-        setFilteredQueries(result);
-    }, [queries, searchTerm, statusFilter]);
-
-    const handleReply = async () => {
-        if (!replyText.trim() || !selectedQuery) return;
-
-        setIsReplying(true);
-        try {
-            const queryRef = doc(db, 'queries', selectedQuery.id);
-            const newResponse = {
-                text: replyText.trim(),
-                respondedAt: new Date(),
-                respondedBy: 'admin'
-            };
-
-            await updateDoc(queryRef, {
-                status: 'responded',
-                // Use arrayUnion to append new response to the responses array
-                responses: arrayUnion(newResponse),
-                // Keep legacy field for backward compatibility if needed, or update timestamp
-                lastRespondedAt: serverTimestamp()
-            });
-
-            toast.success('Response sent successfully!');
-            setSelectedQuery(null);
-            setReplyText('');
-        } catch (error) {
-            console.error('Error sending response:', error);
-            toast.error('Failed to send response');
-        } finally {
-            setIsReplying(false);
-        }
-    };
-
-    const handleSendEmail = async (queryItem) => {
-        // For guest users - open email client
-        const subject = encodeURIComponent('Re: Your Query - Zorphix 2026');
-        const body = encodeURIComponent(`Hi,\n\nThank you for reaching out to Zorphix 2026.\n\nRegarding your query: "${queryItem.message}"\n\n[Your response here]\n\nBest regards,\nZorphix Team`);
-        window.open(`mailto:${queryItem.email}?subject=${subject}&body=${body}`);
-
-        // Mark as responded
-        try {
-            const queryRef = doc(db, 'queries', queryItem.id);
-            await updateDoc(queryRef, {
-                status: 'responded',
-                responses: arrayUnion({
-                    text: 'Responded via email',
-                    respondedAt: new Date(),
-                    respondedBy: 'admin'
-                }),
-                lastRespondedAt: serverTimestamp()
-            });
-            toast.success('Email client opened');
-        } catch (error) {
-            console.error('Error updating status:', error);
-        }
-    };
-
-    const formatDate = (date) => {
-        if (!date) return 'N/A';
-        return new Date(date).toLocaleDateString('en-IN', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
+        const ws = XLSX.utils.json_to_sheet(exportData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Queries');
+        const filename = `Zorphix_Queries_${new Date().toISOString().split('T')[0]}.xlsx`;
+        XLSX.writeFile(wb, filename);
+        toast.success(`Exported ${queries.length} queries`);
     };
 
     if (loading) {
+        // ... existing loading block
         return (
             <div className="flex items-center justify-center h-64">
                 <div className="w-8 h-8 border-4 border-[#e33e33] border-t-transparent rounded-full animate-spin"></div>
@@ -148,6 +63,12 @@ const AdminQueries = () => {
                     <p className="text-gray-500 text-sm">Manage and respond to user queries</p>
                 </div>
                 <div className="flex items-center gap-3">
+                    <button
+                        onClick={exportToExcel}
+                        className="flex items-center gap-2 px-4 py-2 bg-[#97b85d] text-white rounded-xl text-sm font-medium hover:bg-[#7a9a4a] transition-colors"
+                    >
+                        <FaEnvelope size={12} /> Export Queries
+                    </button>
                     <span className="text-sm text-gray-500">
                         {queries.filter(q => q.status === 'pending').length} pending
                     </span>
