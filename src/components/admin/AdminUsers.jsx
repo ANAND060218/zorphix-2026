@@ -127,6 +127,7 @@ const AdminUsers = () => {
         }
 
         const exportData = dataToExport.map(user => ({
+            'User ID': user.id || user.userId || user.uid || '-',
             'Name': user.displayName || '-',
             'Email': user.email || '-',
             'Phone': user.phone || '-',
@@ -135,6 +136,7 @@ const AdminUsers = () => {
             'Degree': user.degree || '-',
             'Year': user.year || '-',
             'Events': user.events?.join(', ') || '-',
+            'Payments': user.payments ? JSON.stringify(user.payments) : '-',
             'Registration Date': user.registeredAt ? new Date(user.registeredAt).toLocaleDateString('en-IN') : '-',
             'Registration Time': user.registeredAt ? new Date(user.registeredAt).toLocaleTimeString('en-IN') : '-'
         }));

@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     FaSearch, FaReply, FaTimes, FaEnvelope, FaPaperPlane,
-    FaCheck, FaClock, FaUser, FaFilter
-} from 'react-icons/fa';
+    FaCheck, FaClock, FaUser, FaFilter, FaFileExcel
+} from 'react-icons/fa'; // Added FaFileExcel if available, else FaEnvelope
 import { db } from '../../firebase';
-import { collection, getDocs, doc, updateDoc, serverTimestamp, query, orderBy, onSnapshot, arrayUnion } from 'firebase/firestore';
+import { collection, doc, updateDoc, serverTimestamp, query, orderBy, onSnapshot, arrayUnion } from 'firebase/firestore';
 import toast from 'react-hot-toast';
+import * as XLSX from 'xlsx';
 
 const AdminQueries = () => {
     const [queries, setQueries] = useState([]);
@@ -23,11 +24,15 @@ const AdminQueries = () => {
         const unsubscribe = onSnapshot(
             query(collection(db, 'queries'), orderBy('createdAt', 'desc')),
             (snapshot) => {
-                const queriesData = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data(),
-                    createdAt: doc.data().createdAt?.toDate?.() || new Date()
-                }));
+                const queriesData = snapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        ...data,
+                        // Safe date conversion
+                        createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : (data.createdAt || new Date())
+                    };
+                });
                 setQueries(queriesData);
                 setLoading(false);
             },
@@ -53,13 +58,58 @@ const AdminQueries = () => {
         if (searchTerm) {
             const term = searchTerm.toLowerCase();
             result = result.filter(q =>
-                q.email?.toLowerCase().includes(term) ||
-                q.message?.toLowerCase().includes(term)
+                (q.email && q.email.toLowerCase().includes(term)) ||
+                (q.message && q.message.toLowerCase().includes(term))
             );
         }
 
         setFilteredQueries(result);
     }, [queries, searchTerm, statusFilter]);
+
+    // Export Function
+    const exportToExcel = () => {
+        if (!queries || queries.length === 0) {
+            toast.error('No queries to export');
+            return;
+        }
+
+        try {
+            const exportData = queries.map(q => {
+                // Get last response text safely
+                let lastResponse = '-';
+                if (Array.isArray(q.responses) && q.responses.length > 0) {
+                    lastResponse = q.responses[q.responses.length - 1].text || '-';
+                } else if (q.response) {
+                    lastResponse = q.response;
+                }
+
+                return {
+                    'Query ID': q.id,
+                    'User ID': q.userId || 'Guest',
+                    'Name': q.name || '-',
+                    'Email': q.email || '-',
+                    'Status': q.status || 'pending',
+                    'Message': q.message || '-',
+                    'Created At': q.createdAt ? new Date(q.createdAt).toLocaleString('en-IN') : '-',
+                    'Last Response': lastResponse,
+                    'Response Count': q.responses?.length || (q.response ? 1 : 0)
+                };
+            });
+
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Queries');
+
+            const dateStr = new Date().toISOString().split('T')[0];
+            const filename = `Zorphix_Queries_${dateStr}.xlsx`;
+
+            XLSX.writeFile(wb, filename);
+            toast.success(`Exported ${queries.length} queries`);
+        } catch (err) {
+            console.error("Export failed:", err);
+            toast.error("Export failed");
+        }
+    };
 
     const handleReply = async () => {
         if (!replyText.trim() || !selectedQuery) return;
@@ -75,9 +125,7 @@ const AdminQueries = () => {
 
             await updateDoc(queryRef, {
                 status: 'responded',
-                // Use arrayUnion to append new response to the responses array
                 responses: arrayUnion(newResponse),
-                // Keep legacy field for backward compatibility if needed, or update timestamp
                 lastRespondedAt: serverTimestamp()
             });
 
@@ -93,12 +141,10 @@ const AdminQueries = () => {
     };
 
     const handleSendEmail = async (queryItem) => {
-        // For guest users - open email client
         const subject = encodeURIComponent('Re: Your Query - Zorphix 2026');
         const body = encodeURIComponent(`Hi,\n\nThank you for reaching out to Zorphix 2026.\n\nRegarding your query: "${queryItem.message}"\n\n[Your response here]\n\nBest regards,\nZorphix Team`);
         window.open(`mailto:${queryItem.email}?subject=${subject}&body=${body}`);
 
-        // Mark as responded
         try {
             const queryRef = doc(db, 'queries', queryItem.id);
             await updateDoc(queryRef, {
@@ -118,13 +164,20 @@ const AdminQueries = () => {
 
     const formatDate = (date) => {
         if (!date) return 'N/A';
-        return new Date(date).toLocaleDateString('en-IN', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
+        try {
+            // Ensure date is a valid Date object or timestamp
+            const d = date.toDate ? date.toDate() : new Date(date);
+            if (isNaN(d.getTime())) return 'Invalid Date';
+            return d.toLocaleDateString('en-IN', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        } catch (e) {
+            return 'N/A';
+        }
     };
 
     if (loading) {
@@ -148,6 +201,13 @@ const AdminQueries = () => {
                     <p className="text-gray-500 text-sm">Manage and respond to user queries</p>
                 </div>
                 <div className="flex items-center gap-3">
+                    <button
+                        onClick={exportToExcel}
+                        className="flex items-center gap-2 px-4 py-2 bg-[#97b85d] text-white rounded-xl text-sm font-medium hover:bg-[#7a9a4a] transition-colors"
+                    >
+                        {/* Fallback icon if FaFileExcel is not found */}
+                        <FaEnvelope size={12} /> Export Queries
+                    </button>
                     <span className="text-sm text-gray-500">
                         {queries.filter(q => q.status === 'pending').length} pending
                     </span>
@@ -221,7 +281,7 @@ const AdminQueries = () => {
                                     {/* Discussion Thread */}
                                     <div className="space-y-3 pl-4 border-l-2 border-white/10">
                                         {/* Legacy single response */}
-                                        {q.response && !q.responses && (
+                                        {q.response && (!q.responses || q.responses.length === 0) && (
                                             <div className="relative">
                                                 <div className="absolute -left-[21px] top-3 w-4 h-[2px] bg-white/10"></div>
                                                 <div className="p-3 bg-[#97b85d]/10 border border-[#97b85d]/20 rounded-xl">
@@ -235,13 +295,15 @@ const AdminQueries = () => {
                                         )}
 
                                         {/* New Threaded Responses */}
-                                        {q.responses && q.responses.map((resp, idx) => (
+                                        {Array.isArray(q.responses) && q.responses.map((resp, idx) => (
                                             <div key={idx} className="relative">
                                                 <div className="absolute -left-[21px] top-3 w-4 h-[2px] bg-white/10"></div>
                                                 <div className="p-3 bg-[#97b85d]/10 border border-[#97b85d]/20 rounded-xl">
                                                     <div className="flex justify-between items-center mb-1">
                                                         <span className="text-xs text-[#97b85d] font-bold uppercase tracking-wider">{resp.respondedBy || 'Admin'}</span>
-                                                        <span className="text-[10px] text-gray-400">{formatDate(resp.respondedAt?.toDate ? resp.respondedAt.toDate() : resp.respondedAt)}</span>
+                                                        <span className="text-[10px] text-gray-400">
+                                                            {resp.respondedAt ? formatDate(resp.respondedAt) : 'Just now'}
+                                                        </span>
                                                     </div>
                                                     <p className="text-gray-300 text-sm">{resp.text}</p>
                                                 </div>
@@ -252,7 +314,6 @@ const AdminQueries = () => {
 
                                 {/* Actions */}
                                 <div className="flex md:flex-col gap-2">
-                                    {/* Always show Reply button for registered users to allow follow-up */}
                                     {q.userId ? (
                                         <button
                                             onClick={() => setSelectedQuery(q)}
@@ -311,13 +372,11 @@ const AdminQueries = () => {
                                 </button>
                             </div>
 
-                            {/* Original Query */}
                             <div className="bg-white/5 rounded-xl p-4 mb-4">
                                 <p className="text-xs text-gray-500 mb-1">From: {selectedQuery.email}</p>
                                 <p className="text-gray-300">{selectedQuery.message}</p>
                             </div>
 
-                            {/* Reply Input */}
                             <textarea
                                 value={replyText}
                                 onChange={(e) => setReplyText(e.target.value)}
